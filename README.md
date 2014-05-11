@@ -1,4 +1,4 @@
-grecoman
+Graphical RECOnstruction MANager
 ========
 
-Graphical Reconstruction Manager
+externals/singleSliceFunc.py has to be copied to the home directory of the eaccount
