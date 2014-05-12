@@ -112,6 +112,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.checkAllParamters():
             return
         
+        return
         # (1) Create command line string
         self.createCommand() 
         
