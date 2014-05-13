@@ -31,8 +31,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
             SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
-        QObject.connect(self.setuprecoutputdir,
-            SIGNAL("clicked()"),self.setRecOutputDir)  # recoutput output
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -69,8 +67,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'roi_lower','',[],False)
         ParameterWrap()(self,'binsize','-b',[],False)
         ParameterWrap()(self,'scaleimagefactor','-s',[],False)
-        ParameterWrap()(self,'correctionOnly','-C',[],False)
-        ParameterWrap()(self,'createMissing','-d',[],False)
         ParameterWrap()(self,'steplines','-j',[],False)
         ParameterWrap()(self,'sinogramdirectory','-o',[],True)
         ParameterWrap()(self,'paganinon','-Y',['pag_energy','pag_delta','pag_beta','pag_pxsize','pag_distance'],False)
@@ -89,7 +85,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'centerofrotation','-c',[],False)
         ParameterWrap()(self,'shiftcorrection','-q',[],False)
         ParameterWrap()(self,'rotationangle','-a',[],False)
-        ParameterWrap()(self,'recoutputdir','-O',[],False)
         ParameterWrap()(self,'zingeron','-z',['zinger_thresh','zinger_width'],False)
         ParameterWrap()(self,'zinger_thresh','-H',[],False)
         ParameterWrap()(self,'zinger_width','-w',[],False)
@@ -97,7 +92,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # we also register Comboboxes in order to use them in fileIO etc.
         ParameterWrap()(self,'inputtype','-I',[],False)
         ParameterWrap()(self,'correctiontype','-g',[],False)
-        ParameterWrap()(self,'keepsinograms','-k',[],False)
         ParameterWrap()(self,'wavelettype','-y',[],False)
         ParameterWrap()(self,'waveletpaddingmode','-M',[],False)
         ParameterWrap()(self,'filter','-F',[],False)
@@ -113,10 +107,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.checkAllParamters():
             return
         
-        return
+        
         # (1) Create command line string
         self.createCommand() 
         
+        return
         # (2) run SSH-connector and check all account credentials
         if not self.job.performInitalCheck():
             return
@@ -140,7 +135,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
         if self.afsaccount.isChecked():
-            single_sino = self.checks.afsPath2Cons2(self.sinogramdirectory.text())
+            single_sino = self.dirs.afsPath2Cons2(self.sinogramdirectory.text())
         elif self.cons2.isChecked():
             single_sino = self.sinogramdirectory.text()
         
@@ -176,7 +171,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (6) we display the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = self.checks.cons2Path2afs(single_sino[:-3]+'viewrec/'+new_filename+self.sinograms.currentText()[-3:])
+        img = self.dirs.cons2Path2afs(single_sino[:-3]+'viewrec/'+new_filename+self.sinograms.currentText()[-3:])
         self.displayImageBig(img)
  
 
@@ -186,10 +181,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         defined in the registerAllParameters() method only (and only there!)
         TODO: after having understood how the "prj2sinSGE" script really works this method has to
         be completely rewritten
-        '''        
+        '''
+        self.cmd0 = "prj2sinSGE "
+        self.cmds = []
         self.cmd_string = "prj2sinSGE "
-        pureflags = ['correctionOnly', 'createMissing', 'preflatsonly', 'shiftcorrection']
+        pureflags = ['preflatsonly']
+        standard = '-d -C '
         
+        ## (1) First check whether we need to create CPR-s
+        if self.cpron.isChecked():
+
+            self.cmds.append(cmd1)
+        
+        
+        return
+    
         ## (1) Compose first pure flags 
         for pureflag in pureflags:
             if getattr(self,pureflag).isChecked():
@@ -233,8 +239,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         self.cmd_string += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
         if self.afsaccount.isChecked():
-            sinodir_mod = self.checks.afsPath2Cons2(str(getattr(self,'sinogramdirectory').text()))
-            inputdir_mod= self.checks.afsPath2Cons2(str(self.inputdirectory.text()))
+            sinodir_mod = self.dirs.afsPath2Cons2(str(getattr(self,'sinogramdirectory').text()))
+            inputdir_mod= self.dirs.afsPath2Cons2(str(self.inputdirectory.text()))
             self.cmd_string += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+sinodir_mod+' '
             ## (6) Append input directory
             self.cmd_string += inputdir_mod
@@ -242,6 +248,35 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.cmd_string += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+getattr(self,'sinogramdirectory').text()+' '
             ## (6) Append input directory
             self.cmd_string += self.inputdirectory.text()
+            
+    
+    def createCPRnFLTPcmd(self,g_param,input):
+        '''
+        method for creating the cmd for creating cprs and/or fltps.
+        it is basically the same
+        '''
+        ## Compose all mandatory
+        cmd1 = self.cmd0+standard
+        cmd1 += '-f '+self.raws.text()
+        cmd1 += ','+self.darks.text()
+        cmd1 += ','+self.flats.text()
+        cmd1 += ','+self.interflats.text()
+        cmd1 += ','+self.flatfreq.text()+' '
+        
+        cmd1 += '-g '+g_param+' '
+        cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
+        cmd1 += ParameterWrap.par_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
+        
+        if self.afsaccount.isChecked():
+            sinodir_mod = self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
+            inputdir_mod= self.dirs.afsPath2Cons2(str(self.inputdirectory.text()))
+            cmd1 += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+sinodir_mod+'/ '
+            cmd1 += inputdir_mod+'/'
+        elif self.cons2.isChecked():
+            cmd1 += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+str(self.sinogramdirectory.text())+'/ '
+            cmd1 += self.inputdirectory.text()+'/'
+
+        print cmd1
         
         
     def checkAllParamters(self):
@@ -270,6 +305,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         for param in color_list:
             missing_param = getattr(self,param)
             missing_param.setStyleSheet("QLineEdit { border : 2px solid red;}")
+            
+        ## TODO: also ask to either calculate FLTP or CPR
         
         if not color_list:
             return True
@@ -337,8 +374,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if box is 'correctiontype':
             types_dict = {"0":"7", "1":"1", "2":"2", "3":"3"}
-        elif box is 'keepsinograms':
-            types_dict = {"0":"0", "1":"1", "2":"2"}
         elif box is 'filter':
             types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
                           "5":"lanczos", "6":"dpc", "7":"none"}     
