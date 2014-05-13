@@ -7,7 +7,6 @@ from fileIO import FileIO
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sys
-import os.path
 
 
 class MainWindow(QMainWindow, Ui_reco_mainwin):
@@ -19,15 +18,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     def __init__(self):        
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
+ 
+        self.registerAllParameters()  # we register all command line arguments
+        self.job = Connector(self)  # connector object for submitting the command
+        self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
         QObject.connect(self.inputdirectory,
-            SIGNAL("returnPressed()"),self.initInputDirectory)  # data input through keyboard
+            SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
+        QObject.connect(self.sinogramdirectory,
+            SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
             SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
         QObject.connect(self.setuprecoutputdir,
-            SIGNAL("clicked()"),self.setRecOutputDir)  # sinogram output
+            SIGNAL("clicked()"),self.setRecOutputDir)  # recoutput output
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -40,10 +45,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
- 
-        self.registerAllParameters()  # we register all command line arguments
-        self.job = Connector(self)  # connector object for submitting the command
-        self.homedir = os.path.expanduser('~')
         
     def registerAllParameters(self):
         '''
@@ -129,7 +130,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for renconstructing a single slice for a given sinogram.
         '''
-        if not hasattr(self, 'input_dir'):
+        if not str(self.inputdirectory.text()):
             self.displayErrorMessage('Missing input directory', 'No input directory was set')
             return
         
@@ -308,7 +309,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method when pressing Menu item for loading config file
         '''
         savefile = QFileDialog.getSaveFileName(self,
-                        'Select where the config file should be saved',self.homedir)
+                        'Select where the config file should be saved',self.dirs.homedir)
         if not savefile:
             return
         file_obj = FileIO(savefile)
@@ -320,16 +321,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for loading config-file (from Menu item)
         '''
         loadfile = QFileDialog.getOpenFileName(self,
-                        'Select where the config file is located',self.homedir)
+                        'Select where the config file is located',self.dirs.homedir)
         if not loadfile:
             return
         file_obj = FileIO(loadfile)
         file_obj.loadFile(self,ParameterWrap)
         
-        self.input_dir = self.inputdirectory.text()
-        # TODO: find a better way >> in fact we should call initInputDirectory, but then the prefix
-        #       gets reset. if we call like this, then we don't look for sinograms...
-        self.checks = AdvancedChecks(self,self.input_dir)  # we need to create the object
+        self.dirs.inputdir = self.inputdirectory.text()
+        self.dirs.initSinDirectory()
         
         
     def getComboBoxContent(self,box):
@@ -360,52 +359,26 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         dialog for setting the input directory
         '''
-        self.input_dir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for the projection data',self.homedir)
-        if not self.input_dir:
+        input_dir = QFileDialog.getExistingDirectory(self,
+                            'Select direcory for the projection data',self.dirs.homedir)
+        if not input_dir:
             return
-        self.inputdirectory.setText(self.input_dir)
-        self.initInputDirectory()
-        
-        
-    def initInputDirectory(self):
-        '''
-        method that is run after the input directory is set. it's separated from getInputDirectory()
-        so that we can initialize the input directory by "pasting" the path to the field or by
-        loading a config file 
-        '''
-        
-        # TODO: since setting the input directory is the most crucial step,
-        # here we can perform all further checks
-        # 1.) e.g. search and parse a log file and populate GUI fields from the log-file
-        # 2.) check number of projections and alert if it is not correct
-        # 3.) check whether fltp folder exists and set GUI accordingly
-        # 4.) ...
-        
-        self.input_dir = self.inputdirectory.text()
-        if not self.input_dir:
-            return
- 
-        self.checks = AdvancedChecks(self,self.input_dir)  # object for performing all checks 
-        
-        ## check for sinos
-        self.checks.checkSinFolder()
-        
-        ## PRELIMINARY: find input type
-        if not self.checks.determineInputType():
-            return
-        
-        ## PRELIMINARY: find prefix and set
-        self.checks.determinePrefix()
+        self.inputdirectory.setText(input_dir)
+        self.dirs.initInputDirectory()
     
     
     def getSinogramDirectory(self):
         '''
         dialog for setting the sinogram output directory 
         '''
-        self.sino_dir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for sinograms',self.homedir)
-        self.sinogramdirectory.setText(self.sino_dir)
+        self.dirs.sinodir = QFileDialog.getExistingDirectory(self,
+                            'Select direcory for sinograms',self.dirs.homedir)
+        
+        if not self.dirs.sinodir:
+            return
+        
+        self.sinogramdirectory.setText(self.dirs.sinodir)
+        self.dirs.initSinDirectory()
         
         
     def setRecOutputDir(self):
@@ -413,7 +386,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         sets the output directory if this option is checked in the GUI
         '''
         recoutput = QFileDialog.getExistingDirectory(self,
-                        'Select direcory for the projection data',self.homedir)
+                        'Select direcory for the projection data',self.dirs.homedir)
         self.recoutputdir.setText(recoutput)
             
         

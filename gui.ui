@@ -245,181 +245,84 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QLineEdit" name="firstindex">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>300</y>
-       <width>113</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="Line" name="line_8">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>320</y>
-       <width>301</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="roion">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>370</y>
-       <width>261</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Region of interest in projection (-r)</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="gridLayoutWidget_3">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>390</y>
+       <y>300</y>
        <width>281</width>
-       <height>80</height>
+       <height>121</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="label_19">
         <property name="text">
          <string>Left</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="3" column="1">
        <widget class="QLineEdit" name="roi_left"/>
       </item>
-      <item row="0" column="2">
+      <item row="3" column="2">
        <widget class="QLabel" name="label_20">
         <property name="text">
          <string>Right</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="3" column="3">
        <widget class="QLineEdit" name="roi_right"/>
       </item>
-      <item row="1" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="label_21">
         <property name="text">
          <string>Upper</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="4" column="2">
        <widget class="QLabel" name="label_22">
         <property name="text">
          <string>Lower</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="4" column="1">
        <widget class="QLineEdit" name="roi_upper"/>
       </item>
-      <item row="1" column="3">
+      <item row="4" column="3">
        <widget class="QLineEdit" name="roi_lower"/>
       </item>
+      <item row="2" column="0" colspan="4">
+       <widget class="QCheckBox" name="roion">
+        <property name="text">
+         <string>Region of interest in projection (-r)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="4">
+       <widget class="Line" name="line_12">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="4">
+       <widget class="QCheckBox" name="preflatsonly">
+        <property name="text">
+         <string>Use only preflats (-u)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
-    </widget>
-    <widget class="Line" name="line_12">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>360</y>
-       <width>301</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="preflatsonly">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>340</y>
-       <width>171</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Use only preflats (-u)</string>
-     </property>
-    </widget>
-    <widget class="Line" name="line_15">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>470</y>
-       <width>301</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="correctiontype">
-     <property name="geometry">
-      <rect>
-       <x>160</x>
-       <y>490</y>
-       <width>131</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>all</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>dark</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>flat</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>logarithmic</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_30">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>490</y>
-       <width>131</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Correction type (-g)</string>
-     </property>
     </widget>
     <widget class="Line" name="line_18">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>510</y>
+       <y>420</y>
        <width>301</width>
        <height>20</height>
       </rect>
@@ -428,77 +331,44 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="label_33">
+    <widget class="QWidget" name="gridLayoutWidget_6">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>530</y>
-       <width>121</width>
-       <height>17</height>
+       <y>440</y>
+       <width>281</width>
+       <height>71</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Binning size (-b)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="binsize">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>530</y>
-       <width>111</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="Line" name="line_19">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>550</y>
-       <width>301</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_34">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>570</y>
-       <width>201</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Scale factor of raw img-s (-s)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="scaleimagefactor">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>560</y>
-       <width>51</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_35">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>300</y>
-       <width>101</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>First index (-i)</string>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_33">
+        <property name="text">
+         <string>Binning size (-b)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="binsize"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_34">
+        <property name="text">
+         <string>Scale factor of raw img-s (-s)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="scaleimagefactor"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="Line" name="line_19">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QFrame" name="frame">
@@ -636,47 +506,6 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>131</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Keep sinograms (-k)</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="keepsinograms">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>40</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>If 'none', then the flag is not set at all.</string>
-     </property>
-     <item>
-      <property name="text">
-       <string>none</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>unfiltered</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>filtered</string>
-      </property>
-     </item>
     </widget>
     <widget class="QLineEdit" name="steplines">
      <property name="geometry">
@@ -862,42 +691,6 @@
     <property name="title">
      <string>Reconstruction</string>
     </property>
-    <widget class="QLineEdit" name="recoutputdir">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>540</y>
-       <width>241</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="setuprecoutputdir">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>540</y>
-       <width>30</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_29">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>520</y>
-       <width>191</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Output directory name (-O)</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="gridLayoutWidget_7">
      <property name="geometry">
       <rect>
@@ -1466,9 +1259,9 @@
     <property name="geometry">
      <rect>
       <x>940</x>
-      <y>780</y>
+      <y>710</y>
       <width>291</width>
-      <height>106</height>
+      <height>110</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_5">
@@ -1537,6 +1330,149 @@
      <string>Correction only (-C)</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="keepsinograms">
+    <property name="geometry">
+     <rect>
+      <x>1030</x>
+      <y>920</y>
+      <width>141</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>If 'none', then the flag is not set at all.</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>none</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>unfiltered</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>filtered</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>920</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Keep sinograms (-k)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_35">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>900</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>First index (-i)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="firstindex">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>900</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_30">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>910</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Correction type (-g)</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="correctiontype">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>910</y>
+      <width>131</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>all</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>dark</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>flat</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>logarithmic</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QToolButton" name="setuprecoutputdir">
+    <property name="geometry">
+     <rect>
+      <x>1190</x>
+      <y>870</y>
+      <width>30</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="recoutputdir">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>870</y>
+      <width>241</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_29">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>850</y>
+      <width>191</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Output directory name (-O)</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1544,7 +1480,7 @@
      <x>0</x>
      <y>0</y>
      <width>1251</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

@@ -7,13 +7,64 @@ class AdvancedChecks(object):
     class for implementing all methods that can be used for further advanced checking,
     once the INPUT directory has been set.
     '''
-    def __init__(self,parent,inputdir):
+    def __init__(self,parent):
         '''
         constructor
         '''
-        self.inputdir = inputdir
+        self.inputdir = []
+        self.sinodir = []
+        self.homedir = os.path.expanduser('~')
         self.parent = parent
         
+        
+    def initInputDirectory(self):
+        '''
+        method that is called when a new inputdirectory is set
+        '''
+        self.inputdir = self.parent.inputdirectory.text()
+        
+        ## Clear old sino dirs
+        self.parent.sinogramdirectory.setText('')
+        self.sinodir = ''
+        
+        if not self.inputdir:
+            return
+        
+        if self.determineInputType():
+            self.determinePrefix()
+        
+        ## TODO: check SIN folder (and set if necessary to standard)
+        self.checkSinFolder()
+
+        ## TODO: check FLTP folder (and set if necessary to standard)
+        
+        ## TODO: check CPR folder (and set if necessary to standard)        
+        
+        ## TODO: check scan parameters from log file etc. etc.
+        
+        
+    def initSinDirectory(self):
+        '''
+        method that is run when a sinogram directory is set, either through
+        user or automatically when setting input directory
+        '''
+        self.parent.sinograms.clear()  # clear sin combo box
+        self.sinodir = self.parent.sinogramdirectory.text()
+        
+        if not os.path.exists(self.sinodir):
+            self.parent.displayErrorMessage('"sin" folder missing','No sinograms found in standard sin folder')
+            return
+        
+        tif_list = [name for name in os.listdir(self.sinodir)
+                    if name.lower().endswith('.tif') and not name.startswith('.')]
+        dmp_list = [name for name in os.listdir(self.sinodir)
+                    if name.lower().endswith('.dmp') and not name.startswith('.')]
+        
+        dmp_list = tif_list + dmp_list
+        dmp_list.sort()
+        for item in dmp_list:
+            self.parent.sinograms.addItem(item)
+                
         
     def checkFltpFolder(self):
         '''
@@ -25,25 +76,12 @@ class AdvancedChecks(object):
         '''
         check whether sinograms exist and if yes populate the respective combobox
         '''
-        self.parent.sinograms.clear()  # clear sin combo box
-        
-        tmp_dir = os.path.split(str(self.parent.input_dir))
-        sinfolder = os.path.join(tmp_dir[0],'sin')
-        self.parent.sinogramdirectory.setText(sinfolder)
-        
-        if not os.path.exists(sinfolder):
-            self.parent.displayErrorMessage('"sin" folder missing','No sinograms created yet')
-            return
-        
-        tif_list = [name for name in os.listdir(sinfolder)
-                    if name.lower().endswith('.tif') and not name.startswith('.')]
-        dmp_list = [name for name in os.listdir(sinfolder)
-                    if name.lower().endswith('.dmp') and not name.startswith('.')]
-        
-        dmp_list = tif_list + dmp_list
-        dmp_list.sort()
-        for item in dmp_list:
-            self.parent.sinograms.addItem(item)
+        if not self.sinodir:
+            tmp_dir = os.path.split(str(self.inputdir))
+            sinfolder = os.path.join(tmp_dir[0],'sin')
+            self.parent.sinogramdirectory.setText(sinfolder)
+            
+        self.initSinDirectory()
             
             
     def afsPath2Cons2(self,path):
