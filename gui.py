@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Tue May 13 23:24:00 2014
+# Created: Tue May 13 23:33:46 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -615,10 +615,10 @@ class Ui_reco_mainwin(object):
         self.label_26.setText(_translate("reco_mainwin", "Delta", None))
         self.groupBox_4.setTitle(_translate("reco_mainwin", "Reconstruction", None))
         self.geometry.setToolTip(_translate("reco_mainwin", "If \'none\', then the flag is not set at all.", None))
-        self.geometry.setItemText(0, _translate("reco_mainwin", "sampling from 0->pi", None))
-        self.geometry.setItemText(1, _translate("reco_mainwin", "angles in angle.txt", None))
-        self.geometry.setItemText(2, _translate("reco_mainwin", "sampling from 0->2pi", None))
-        self.geometry.setItemText(3, _translate("reco_mainwin", "none", None))
+        self.geometry.setItemText(0, _translate("reco_mainwin", "none", None))
+        self.geometry.setItemText(1, _translate("reco_mainwin", "sampling from 0->pi", None))
+        self.geometry.setItemText(2, _translate("reco_mainwin", "angles in angle.txt", None))
+        self.geometry.setItemText(3, _translate("reco_mainwin", "sampling from 0->2pi", None))
         self.label_40.setText(_translate("reco_mainwin", "Threshold (-H)", None))
         self.label_38.setText(_translate("reco_mainwin", "Edge-padding (-Z)", None))
         self.label_23.setText(_translate("reco_mainwin", "Output format (-t)", None))

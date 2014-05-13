@@ -709,6 +709,11 @@
         </property>
         <item>
          <property name="text">
+          <string>none</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>sampling from 0-&gt;pi</string>
          </property>
         </item>
@@ -720,11 +725,6 @@
         <item>
          <property name="text">
           <string>sampling from 0-&gt;2pi</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>none</string>
          </property>
         </item>
        </widget>

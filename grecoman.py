@@ -383,7 +383,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif box is 'outputtype':
             types_dict = {"0":"8", "1":"0", "2":"1", "3":"16"}
         elif box is 'geometry':
-            types_dict = {"0":"1", "1":"0", "2":"2"}
+            types_dict = {"0":"1", "1":"1", "2":"0", "3":"2"}
         elif box is 'waveletpaddingmode':
             types_dict = {"0":"zpd", "1":"cpd", "2":"sym","3":"ppd", "4":"sp1"}
         elif box is 'inputtype':
