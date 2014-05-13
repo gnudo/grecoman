@@ -13,6 +13,9 @@ class AdvancedChecks(object):
         '''
         self.inputdir = []
         self.sinodir = []
+        self.fltpdir = []
+        self.cprdir = []
+        self.recodir = []
         self.homedir = os.path.expanduser('~')
         self.parent = parent
         
@@ -35,10 +38,15 @@ class AdvancedChecks(object):
         
         ## TODO: check SIN folder (and set if necessary to standard)
         self.checkSinFolder()
+        
+        ## TODO: check CPR folder (and set if necessary to standard)
+        self.checkCprFolder()  
 
         ## TODO: check FLTP folder (and set if necessary to standard)
+        self.checkFltpFolder()
         
-        ## TODO: check CPR folder (and set if necessary to standard)        
+        ## TODO: check rec8bit folder (and set if necessary to standard)
+        self.checkRecoFolder()     
         
         ## TODO: check scan parameters from log file etc. etc.
         
@@ -46,7 +54,9 @@ class AdvancedChecks(object):
     def initSinDirectory(self):
         '''
         method that is run when a sinogram directory is set, either through
-        user or automatically when setting input directory
+        user or automatically when setting input directory.
+        if the sinogram-directory exist it populates the sino-combobox, otherwise it displays an
+        error message
         '''
         self.parent.sinograms.clear()  # clear sin combo box
         self.sinodir = self.parent.sinogramdirectory.text()
@@ -64,12 +74,49 @@ class AdvancedChecks(object):
         dmp_list.sort()
         for item in dmp_list:
             self.parent.sinograms.addItem(item)
+            
+            
+    def checkCprFolder(self):
+        '''
+        check whether cpr folder exists etc.
+        '''
+        tmp_dir = os.path.split(str(self.inputdir))
+        self.cprdir = os.path.join(tmp_dir[0],'cpr')
+        if not os.path.exists(self.cprdir):
+            self.parent.cprdirectory.setText(self.cprdir)
+            return
+        else:
+            # TODO: maybe use different error handling >> create new dir or something
+            self.parent.displayErrorMessage('Existing cpr-directory','Rename the destination')
                 
         
     def checkFltpFolder(self):
         '''
         check whether fltp folder exists etc.
+        TODO: all 3 methods: checkFltpFolder,checkCprFolder,checkSinFolder > too similar!
         '''
+        tmp_dir = os.path.split(str(self.inputdir))
+        self.fltpdir = os.path.join(tmp_dir[0],'fltp')
+        if not os.path.exists(self.fltpdir):
+            self.parent.fltpdirectory.setText(self.fltpdir)
+            return
+        else:
+            # TODO: maybe use different error handling >> create new dir or something
+            self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
+                
+        
+    def checkRecoFolder(self):
+        '''
+        check whether reco folder exists etc.
+        '''
+        tmp_dir = os.path.split(str(self.inputdir))
+        self.recodir = os.path.join(tmp_dir[0],'rec_8bit')
+        if not os.path.exists(self.recodir):
+            self.parent.recodirectory.setText(self.recodir)
+            return
+        else:
+            # TODO: maybe use different error handling >> create new dir or something
+            self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
         
         
     def checkSinFolder(self):
