@@ -20,10 +20,12 @@
 
 
 ####  GENERIC PYTHON MODULES
+import subprocess
 import sys
 import os
 import numpy as np
-import argparse
+from optparse import OptionParser 
+
 
 
 
@@ -37,54 +39,50 @@ import argparse
 ###########################################################
 
 def getArgs():
-    parser = argparse.ArgumentParser(description='''
-                                                 Wrapper to run GRIDREC and
-                                                 SIN2REC2 on multiple cores
-                                                 ''' ,
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = OptionParser()
     
-    parser.add_argument( '-Di' , dest='pathin' , default='./',
-                        help = 'Path to the input sinogram' )
-    parser.add_argument( '-i' , dest='sino' ,
+    parser.add_option( '--Di' , dest='pathin' , default='./',
+                        help = 'Path to the input sinogram [default: %default]' )
+    parser.add_option( '-i' , dest='sino' ,
                         help = 'Select filename of the sinogram to be reconstructed')
-    parser.add_argument( '-Do' , dest='pathout' ,
+    parser.add_option( '--Do' , dest='pathout' ,
                         help = 'Output folder' )
-    parser.add_argument( '-o' , dest='reco' ,
+    parser.add_option( '-o' , dest='reco' ,
                         help = 'Select filename of the ouput reconstruction' ) 
-    parser.add_argument( '-F' , dest='filter' , default='shepp-logan' ,
-                        help = 'Select filter for the reconstruction with gridrec' )
-    parser.add_argument( '-Z' , dest='edgepad' , type=np.float32 , default=0.5 ,
-                        help = 'Select edge padding for reconstruction with gridrec' )
-    parser.add_argument( '-g' , dest='geometry' , default='1',
+    parser.add_option( '-F' , dest='filter' , default='shepp-logan' ,
+                        help = 'Select filter for the reconstruction with gridrec [default: %default]' )
+    parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.5 ,
+                        help = 'Select edge padding for reconstruction with gridrec [default: %default]' )
+    parser.add_option( '-g' , dest='geometry' , default='1',
                         help = 'Specify projection geometry for gridrec:'
                                +' 0 (projections angles specified in'
                                +' a file, named angles.txt), 1 (homogeneous'
                                +' sampling between 0 and pi) and (homogeneous'
-                               +' sampling between 0 and 2pi); default=1' )
-    parser.add_argument( '-c' , dest='center' , type=np.float32 , 
+                               +' sampling between 0 and 2pi); [default: %default]' )
+    parser.add_option( '-c' , dest='center' , type='float' , 
                         help = 'Select the center of rotation axis' ) 
-    parser.add_argument( '-t' , dest='file_type' , default = '0' ,
+    parser.add_option( '-t' , dest='file_type' , default = '0' ,
                         help = 'Select edge padding to the input sinogram (as '
-                        +' percentage of the width of the sinogram)' )
-    parser.add_argument( '-a' , dest='angle_start' , default = '0' ,
+                        +' percentage of the width of the sinogram) [default: %default]' )
+    parser.add_option( '-a' , dest='angle_start' , default = '0' ,
                         help = 'Select edge padding to the input sinogram (as '
-                        +' percentage of the width of the sinogram)' )
-    parser.add_argument( '-y' , dest='wavelet_type' , 
+                        +' percentage of the width of the sinogram) [default: %default]' )
+    parser.add_option( '-y' , dest='wavelet_type' , 
                         help = 'Specify wavelet type for ring removal' )
-    parser.add_argument( '-M' , dest='edgepad_type' , 
+    parser.add_option( '-M' , dest='edgepad_type' , 
                         help = 'Specify edge padding type for ring removal' )
-    parser.add_argument( '-V' , dest='multiresol' , 
+    parser.add_option( '-V' , dest='multiresol' , 
                         help = 'Specify start and end resolution level' )
-    parser.add_argument( '-E' , dest='sigma' , 
+    parser.add_option( '-E' , dest='sigma' , 
                         help = 'Specify sigma of the gaussian smoothing for ring removal' )
-    parser.add_argument( '-z' , dest='zinger' , 
+    parser.add_option( '-z' , dest='zinger' , 
                         help = 'do apply zinger removal' )
-    parser.add_argument( '-H' , dest='zinger_thresh' , 
+    parser.add_option( '-H' , dest='zinger_thresh' , 
                         help = 'Specify Threshold used in zinger removal routine' )
-    parser.add_argument( '-w' , dest='zinger_width' , 
-                        help = 'Width of smoothing kernel used in zinger removal routine' )
+    parser.add_option( '-w' , dest='zinger_width' , 
+                        help = 'WIdth of smoothing kernel used in zinger removal routine' )
 
-    args = parser.parse_args()
+    args , options = parser.parse_args()
 
     if args.sino is None:
         parser.print_help()
@@ -147,16 +145,20 @@ def main():
     
     ##  Ring removal
     flag_ring_removal = 0
-
+    
     if args.wavelet_type is not None:
-        command_line = 'python ring_removal_waveletfft.py '
-        command_line += '-Di ' + pathin + ' '
-        command_line += '-i ' + sino_file + ' '
-        command_line += '-Do ' + pathout + ' '
+        command_line = 'module load xbl/epd_free/7.3-2-2013.06; ' + \
+                       'module load xbl/PyWavelets/0.2.2; ' + \
+                       'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/src/Reconstruction/' + \
+                       'waveletFFT.py '
+#python waveletFFT.py -t db2 -d 8 -O h -f 5.0 -p ds_ -M sym -o /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/ /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/Hornby_a1661.tif                       
         command_line += '-t ' + args.wavelet_type + ' '
-        command_line += '-M ' + args.edgepad_type + ' '
         command_line += '-d ' + args.multiresol + ' '
+        command_line += '-O v '
         command_line += '-f ' + args.sigma + ' '
+        command_line += '-M ' + args.edgepad_type + ' '         
+        command_line += '-o ' + pathout + ' '        
+        command_line += pathin + sino_file
 
         print command_line
 
@@ -185,14 +187,14 @@ def main():
 
     if flag_ring_removal:
         command_line += '-D ' + pathout + ' '
-        name_file = sino_file[:len(sino_file)-4]
-        command_line += name_file + '_destrip.DMP'
+        command_line += 'x' + sino_file
         print command_line
         os.system( command_line )
-        print 'rm ' + pathout + name_file + '_destrip.DMP'
-        os.system('rm ' + pathout + name_file + '_destrip.DMP')
-        reco = pathout + name_file + '_destrip.rec.DMP'        
-        reco_new = reco.replace('.sin_destrip','')
+        print 'rm ' + pathout + 'x' + sino_file
+        os.system('rm ' + pathout + 'x' + sino_file )
+        os.system('rm ' + pathout + 'difference.tif') 
+        reco = pathout + 'x' + sino_file[:len(sino_file)-7] + 'rec.DMP'        
+        reco_new = pathout + sino_file[:len(sino_file)-7] + 'rec.DMP' 
         print reco 
         os.system( 'mv ' + reco + ' ' + reco_new )
         print 'mv ' + reco + ' ' + reco_new         
@@ -216,6 +218,5 @@ def main():
 ###########################################################
 
 if __name__ == '__main__':
-
     ##  Call to main
     main()
