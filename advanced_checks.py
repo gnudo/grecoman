@@ -86,7 +86,8 @@ class AdvancedChecks(object):
             self.parent.cprdirectory.setText(self.cprdir)
             return
         else:
-            # TODO: maybe use different error handling >> create new dir or something
+            # TODO: maybe use different error handling >> create new dir or warn
+            # that the older one will be deleted
             self.parent.displayErrorMessage('Existing cpr-directory','Rename the destination')
                 
         
@@ -101,7 +102,8 @@ class AdvancedChecks(object):
             self.parent.fltpdirectory.setText(self.fltpdir)
             return
         else:
-            # TODO: maybe use different error handling >> create new dir or something
+            # TODO: maybe use different error handling >> create new dir or warn
+            # that the older one will be deleted
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
                 
         
@@ -115,7 +117,8 @@ class AdvancedChecks(object):
             self.parent.recodirectory.setText(self.recodir)
             return
         else:
-            # TODO: maybe use different error handling >> create new dir or something
+            # TODO: maybe use different error handling >> create new dir or warn
+            # that the older one will be deleted
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
         
         

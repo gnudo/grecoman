@@ -1261,41 +1261,47 @@
      <rect>
       <x>940</x>
       <y>710</y>
-      <width>291</width>
-      <height>130</height>
+      <width>305</width>
+      <height>162</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_5">
-     <item row="1" column="0" colspan="2">
+     <item row="1" column="0" colspan="3">
       <widget class="QCheckBox" name="paganinon">
        <property name="text">
-        <string>Use Paganin phase retrieval (-Y)</string>
+        <string>Paganin phase retrieval</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" colspan="2">
+     <item row="0" column="0" colspan="3">
       <widget class="QCheckBox" name="cpron">
        <property name="text">
-        <string>Correct projections (create CPR)</string>
+        <string>Create CPR-s</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="5" column="0" colspan="3">
       <widget class="QCheckBox" name="reconstructon">
        <property name="text">
         <string>Do reconstruction (-R)</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
+     <item row="2" column="0" colspan="3">
       <widget class="QCheckBox" name="sinon">
        <property name="text">
         <string>Create sinograms (sin)</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="4" column="3">
       <widget class="QLineEdit" name="steplines">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>27</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -1304,7 +1310,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="4" column="0" colspan="3">
       <widget class="QLabel" name="label_36">
        <property name="text">
         <string>Interleave sino creation (-j)</string>
@@ -1313,6 +1319,39 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QRadioButton" name="fromcpr">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>from cpr</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QRadioButton" name="fromfltp">
+       <property name="text">
+        <string>from fltp</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </widget>
@@ -1323,7 +1362,7 @@
      <x>0</x>
      <y>0</y>
      <width>1251</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

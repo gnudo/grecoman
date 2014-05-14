@@ -40,7 +40,9 @@ class Parameter(object):
         elif type(name_handle).__name__ == 'QComboBox':
             if not str(name_handle.currentText()) == 'none':
                 return True
-        
+        elif type(name_handle).__name__ == 'QRadioButton':
+            if name_handle.isChecked():
+                return True
         return False
     
     
@@ -58,6 +60,11 @@ class Parameter(object):
             return
         elif type(name_handle).__name__ == 'QComboBox':
             name_handle.setCurrentIndex(0)
+            return
+        elif type(name_handle).__name__ == 'QRadioButton':
+            name_handle.setAutoExclusive(False)
+            name_handle.setChecked(False);
+            name_handle.setAutoExclusive(True);
             return
         
 

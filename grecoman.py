@@ -23,6 +23,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         
+        ## TODO: just for GUI testin
+        self.afsaccount.setChecked(1)
+        
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
         QObject.connect(self.inputdirectory,
@@ -100,6 +103,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'filter','-F',[],False)
         ParameterWrap()(self,'outputtype','-t',[],False)
         ParameterWrap()(self,'geometry','-G',[],False)
+        
+        # we add radio box as well which depend on input directories
+        ParameterWrap()(self,'fromcpr','',['cprdirectory'],False)
+        ParameterWrap()(self,'fromfltp','',['fltpdirectory'],False)
         
  
     def submitToCluster(self):
@@ -190,12 +197,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmd_string = "prj2sinSGE "
         pureflags = ['preflatsonly']
         standard = '-d -C '
+        jobname = 'job0815'
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
-
+            cmd1 = self.createCPRnFLTPcmd('cpr',jobname)
             self.cmds.append(cmd1)
         
+        ## (2) Then we check whether we need FLTP-s
+        if self.paganinon.isChecked():
+            cmd2 = self.createCPRnFLTPcmd('fltp',jobname)
+            self.cmds.append(cmd2)
+            
+        ## (3) Whether we need sinograms
+        if self.sinon.isChecked():
+            cmd3 = self.createSincmd()
+        
+        print '1::: '+self.cmds[0]
+        print '2::: '+self.cmds[1]
         
         return
     
@@ -253,33 +272,96 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.cmd_string += self.inputdirectory.text()
             
     
-    def createCPRnFLTPcmd(self,g_param,input):
+    def createCPRnFLTPcmd(self,mode,jobname):
         '''
         method for creating the cmd for creating cprs and/or fltps.
-        it is basically the same
+        it is basically very similar. only for the fltp command the Paganin
+        parameters are added and a few flags changed
         '''
         ## Compose all mandatory
+        standard = '-d -C '
         cmd1 = self.cmd0+standard
-        cmd1 += '-f '+self.raws.text()
-        cmd1 += ','+self.darks.text()
-        cmd1 += ','+self.flats.text()
-        cmd1 += ','+self.interflats.text()
-        cmd1 += ','+self.flatfreq.text()+' '
         
-        cmd1 += '-g '+g_param+' '
+        if self.cpron.isChecked() and not self.paganinon.isChecked():
+            g_param = 7
+        elif not self.cpron.isChecked() or mode == 'cpr':
+            g_param = 3
+        else:
+            g_param = 0
+        
+        ## only in CPR if set, else only in FLTP
+        if mode == 'cpr' or not self.cpron.isChecked():
+            optional = ['binsize', 'scaleimagefactor']
+            cmd1 += '-f '+self.raws.text()
+            cmd1 += ','+self.darks.text()
+            cmd1 += ','+self.flats.text()
+            cmd1 += ','+self.interflats.text()
+            cmd1 += ','+self.flatfreq.text()+' '
+            for param in optional:
+                if not getattr(self,param).text() == '':
+                    cmd1 += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+            
+            # Region of interest optional
+            if getattr(self,'roion').isChecked():
+                cmd1 += ParameterWrap.par_dict['roion'].flag+' '
+                for child in ParameterWrap.par_dict['roion'].child_list:
+                    cmd1 += getattr(self,child).text()+','
+        else:
+            cmd1 += '-f '+self.raws.text()
+            cmd1 += ',0,0,0,0 '
+            cmd1 += '--hold='+jobname+'_cpr '
+        
+        cmd1 += '--jobname='+jobname+'_'+mode+' '
+  
+        ## only for Paganin phase retrieval
+        if mode == 'fltp':
+            cmd1 += ParameterWrap.par_dict['paganinon'].flag+' '
+            for child in ParameterWrap.par_dict['paganinon'].child_list:
+                cmd1 += getattr(self,child).text()+','
+            cmd1 = cmd1[:-2]
+            cmd1 = cmd1[:-len(str(getattr(self,child).text()))]+' '  # hack: delete last child
+                
+        ## only in CPR if cpr is set , else only in FLTP
+        if mode == 'cpr' or not self.cpron.isChecked():
+            if getattr(self,'preflatsonly').isChecked():
+                cmd1 += ParameterWrap.par_dict['preflatsonly'].flag+' '
+        
+        cmd1 += '-g '+str(g_param)+' '
         cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
-        cmd1 += ParameterWrap.par_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
+        
+        ## TODO: include maybe above
+        if mode == 'cpr' or not self.cpron.isChecked():
+            cmd1 += ParameterWrap.par_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
+        else:
+            cmd1 += '-I 0 '
+        
+        ## define input and output dirs
+        if mode == 'cpr':
+            inputdir = str(self.inputdirectory.text())
+            outputdir = str(self.cprdirectory.text())
+        elif mode == 'fltp' and not self.cpron.isChecked():
+            inputdir = str(self.inputdirectory.text())
+            outputdir = str(self.fltpdirectory.text())
+        else:
+            inputdir = str(self.cprdirectory.text())
+            outputdir = str(self.fltpdirectory.text())
+        
         
         if self.afsaccount.isChecked():
-            sinodir_mod = self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
-            inputdir_mod= self.dirs.afsPath2Cons2(str(self.inputdirectory.text()))
-            cmd1 += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+sinodir_mod+'/ '
+            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
+            outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
+            cmd1 += '-o '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
-            cmd1 += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+str(self.sinogramdirectory.text())+'/ '
-            cmd1 += self.inputdirectory.text()+'/'
+            cmd1 += '-o '+inputdir+'/ '
+            cmd1 += outputdir+'/'
 
-        print cmd1
+        return cmd1
+    
+    
+    def createSincmd(self):
+        '''
+        '''
         
         
     def checkAllParamters(self):
