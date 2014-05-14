@@ -166,7 +166,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 self.cmd_string += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
-            self.setWavletParameters()
+            self.cmd_string += self.setWavletParameters()
         
         self.cmd_string += '-Di '+single_sino+' -i '+self.sinograms.currentText()
         
@@ -211,10 +211,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         ## (3) Whether we need sinograms
         if self.sinon.isChecked():
-            cmd3 = self.createSincmd()
+            cmd3 = self.createSincmd(jobname)
+            self.cmds.append(cmd3)
+            
+        ## (4) Whether we want reconstructions
         
-        print '1::: '+self.cmds[0]
-        print '2::: '+self.cmds[1]
+        
+        for kk, la in enumerate(self.cmds):
+            print str(kk)+'::: '+la
         
         return
     
@@ -277,6 +281,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for creating the cmd for creating cprs and/or fltps.
         it is basically very similar. only for the fltp command the Paganin
         parameters are added and a few flags changed
+        TODO: prefix missing
         '''
         ## Compose all mandatory
         standard = '-d -C '
@@ -359,9 +364,44 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         return cmd1
     
     
-    def createSincmd(self):
+    def createSincmd(self,jobname):
         '''
+        method for creating command line for sinograms
         '''
+        standard = '-d -k 2 -g 0 -I 0 '
+        cmd1 = self.cmd0+standard
+        cmd1 += '-f '+self.raws.text()
+        cmd1 += ',0,0,0,0 '
+        
+        if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+            cmd1 += self.setWavletParameters()
+        
+        # TODO: use jobname in IO so that we don't need to hardcode
+        if self.cpron.isChecked() and not self.paganinon.isChecked():
+            cmd1 += '--hold='+jobname+'_cpr '
+        elif self.paganinon.isChecked():
+            cmd1 += '--hold='+jobname+'_fltp '
+            
+        cmd1 += '--jobname='+jobname+'_sin '
+        
+        # TODO: to be modified (we need more specific prefix)
+        cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
+        
+        if self.fromcpr.isChecked():
+            inputdir = str(self.cprdirectory.text())
+        elif self.fromfltp.isChecked():
+            inputdir = str(self.fltpdirectory.text())
+            
+        if self.afsaccount.isChecked():
+            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
+            outputdir_mod= self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
+            cmd1 += '-o '+outputdir_mod+'/ '
+            cmd1 += inputdir_mod+'/'
+        elif self.cons2.isChecked():
+            cmd1 += '-o '+inputdir+'/ '
+            cmd1 += outputdir+'/'
+            
+        return cmd1
         
         
     def checkAllParamters(self):
@@ -399,7 +439,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def checkComputingLocation(self):
         '''
-        make sure the radiobox from the the computing takes place has been set
+        make sure the radiobox from where the computing takes place has been set
         '''
         if not self.afsaccount.isChecked() and not self.cons2.isChecked():
             self.displayErrorMessage('Missing radio box', 'From where are you running the application?')
@@ -516,11 +556,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
-        
-        self.cmd_string += ParameterWrap.par_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
-        self.cmd_string += ParameterWrap.par_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
-        self.cmd_string += ParameterWrap.par_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
-        self.cmd_string += ParameterWrap.par_dict[combos[1]].flag+' '+self.getComboBoxContent(combos[1])+' '
+        cmd = ''
+        cmd += ParameterWrap.par_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
+        cmd += ParameterWrap.par_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
+        cmd += ParameterWrap.par_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
+        cmd += ParameterWrap.par_dict[combos[1]].flag+' '+self.getComboBoxContent(combos[1])+' '
+        return cmd
         
         
     def setZingerParameters(self):
