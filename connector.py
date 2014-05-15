@@ -23,16 +23,29 @@ class Connector(object):
         '''
         method for checking both AFS and EACCOUNT credentials
         '''
-        # (0) first we check whether we have AFS-credentials AND whether we actually get them
+        # (0) if we are on cons-2 we don't need any credentials (at least for now)
+        if self.parent.cons2.isChecked():
+            return True 
+        
+        # (1) first we check whether we have AFS-credentials AND whether we actually get them
         if not self.afsuser or not self.afspw:
             if not self.inputCredentials('AFS'):
                 return False
             
-        # (1) ... whether we have eaccount number and password
+        # (2) ... whether we have eaccount number and password
         if not self.eaccountuser or not self.eaccountpw:
             if not self.inputCredentials('E-ACCOUNT'):
                 return False
         return True
+    
+    
+    def submitJobLocally(self,cmd,name):
+        '''
+        method to run a job locally on cons-2
+        TODO: probably this one will be united with a more generic submitJob() method (to be
+        compatible also with Merlin)
+        '''
+        subprocess.check_call(cmd,shell=True)
         
         
     def submitJobViaGateway(self,cmd_str,gw,target,name):

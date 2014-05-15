@@ -127,15 +127,20 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # (1) Create command line string
         cmd = self.createCommand()
         
+        print cmd
+        if self.print_cmd.isChecked():
+            if not self.displayYesNoMessage('Submit to cons-2?', cmd):
+                return
+        
         # (2) run SSH-connector and check all account credentials
         if not self.job.performInitalCheck():
             return
         
         # (3) run SSh-connector to launch the job
-        if self.print_cmd.isChecked():
-            self.displayErrorMessage('Submitted to cons-2', cmd)
-
-        self.job.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
+        if self.afsaccount.isChecked():
+            self.job.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
+        elif self.cons2.isChecked():
+            self.job.submitJobLocally(cmd, 'randomname')
             
             
     def calcSingleSlice(self):
@@ -153,9 +158,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
         if self.afsaccount.isChecked():
             single_sino = self.dirs.afsPath2Cons2(self.sinogramdirectory.text())
-
         elif self.cons2.isChecked():
-            single_sino = self.sinogramdirectory.text()
+            single_sino = str(self.sinogramdirectory.text())
 
         ## (3) create the command line string for single slice reconstruction
         self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/singleSliceFunc.py '
@@ -178,17 +182,29 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         self.cmd_string += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
+        if self.print_cmd.isChecked():
+            if not self.displayYesNoMessage('Submit to cons-2?', self.cmd_string):
+                return
+        
         ## (4) now we check credentials
         if not self.job.performInitalCheck():
             self.displayErrorMessage('Unsuccessful authentification', 'Could not login with AFS and/OR eaccount credentials')
             return
         
         ## (5) after all checks completed, Filippos wrapper is called to perform
-        self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2','random name')
+        if self.afsaccount.isChecked():
+            self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2','randomname')
+        elif self.cons2.isChecked():
+            self.job.submitJobLocally(self.cmd_string, 'randomname')
         
         ## (6) we display the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino)+'/viewrec/'+new_filename+self.sinograms.currentText()[-3:])
+        if self.afsaccount.isChecked():
+            basedir = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino))
+        elif self.cons2.isChecked():
+            basedir = self.dirs.getParentDir(single_sino)
+                                                   
+        img = basedir+'/viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
         self.displayImageBig(img)
  
 
@@ -607,6 +623,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method to display random error messages with QMessageBox
         '''
         QMessageBox.warning(self, head, msg)
+        
+        
+    def displayYesNoMessage(self,head,txt):
+        '''
+        show dialog with yes/no answer and defined text
+        '''
+        question = QMessageBox.warning(self, head, txt, QMessageBox.Yes, QMessageBox.No)
+        
+        if question == QMessageBox.Yes:
+            return True
+        else:
+            return False 
         
         
     def displayImageBig(self,img_file):
