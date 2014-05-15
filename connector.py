@@ -89,10 +89,8 @@ class Connector(object):
         p = subprocess.call(['rm ~/pw2.sh'],shell=True)
         
         # (5) submit the command line string from the GUI on target
-        sshProcess.stdin.write('module load xbl/epd_free/7.3-2-2013.06\n') # TODO: move this to Filippos function
-        sshProcess.stdin.write('module load xbl/PyWavelets/0.2.2\n') # TODO: move this to Filippos function
         sshProcess.stdin.write(cmd_str)
-        sshProcess.stdout.readline()  # will hang here if there is "cmd_str" doesn't return !!!!!
+        sshProcess.stdout.readline()  # will hang here if "cmd_str" doesn't return a value !!!!!
         
         
     def inputCredentials(self,mode):

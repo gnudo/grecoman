@@ -148,11 +148,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
         if self.afsaccount.isChecked():
             single_sino = self.dirs.afsPath2Cons2(self.sinogramdirectory.text())
+
         elif self.cons2.isChecked():
             single_sino = self.sinogramdirectory.text()
-        
+
         ## (3) create the command line string for single slice reconstruction
-        self.cmd_string = 'python singleSliceFunc.py '
+        self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/singleSliceFunc.py '
         
         combos_single = ['filter']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
@@ -170,7 +171,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             self.cmd_string += self.setWavletParameters()
         
-        self.cmd_string += '-Di '+single_sino+' -i '+self.sinograms.currentText()
+        self.cmd_string += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
         ## (4) now we check credentials
         if not self.job.performInitalCheck():
@@ -178,7 +179,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         ## (5) after all checks completed, Filippos wrapper is called to perform
-        print self.cmd_string
         self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2','random name')
         
         ## (6) we display the image
