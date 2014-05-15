@@ -2,6 +2,7 @@ import subprocess
 from multiprocessing import Process, Queue
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+import os.path
 
 
 class Connector(object):
@@ -31,7 +32,6 @@ class Connector(object):
         if not self.eaccountuser or not self.eaccountpw:
             if not self.inputCredentials('E-ACCOUNT'):
                 return False
-        
         return True
         
         
@@ -124,8 +124,14 @@ class Connector(object):
         whether it was mounted successfully. also when run, it needs to ask for eaccount
         credentials
         '''
-        ## TODO: probably test only whether a blmount is successful
-        return True
+        mountdir = self.parent.dirs.homedir+'/slsbl/x02da/'+self.eaccountuser
+        p1 = subprocess.check_call(['blumount -d '+mountdir],shell=True)
+        p1 = subprocess.check_call(['blmount -a '+self.eaccountuser+' -s x02da -p '+self.eaccountpw],shell=True)
+        
+        if not os.listdir(mountdir):
+            return False
+        else:
+            return True
         
     
     def checkAfsCredentials(self):

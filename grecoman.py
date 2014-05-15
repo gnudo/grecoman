@@ -73,7 +73,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'scaleimagefactor','-s',[],False)
         ParameterWrap()(self,'steplines','-j',[],False)
         ParameterWrap()(self,'sinogramdirectory','-o',[],True)
-        ParameterWrap()(self,'paganinon','-Y',['pag_energy','pag_delta','pag_beta','pag_pxsize','pag_distance','fltpdirectory'],False)
+        ParameterWrap()(self,'paganinon','-Y',['pag_energy','pag_pxsize','pag_delta','pag_beta','pag_distance','fltpdirectory'],False)
         ParameterWrap()(self,'pag_energy','',[],False)
         ParameterWrap()(self,'pag_delta','',[],False)
         ParameterWrap()(self,'pag_beta','',[],False)
@@ -119,9 +119,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.checkAllParamters():
             return
         
-        
         # (1) Create command line string
-        self.createCommand() 
+        cmd = self.createCommand()
+        
+        print cmd
         
         return
         # (2) run SSH-connector and check all account credentials
@@ -217,11 +218,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if not self.createRecoCmd(jobname):
                 return False
         
+        cmd = ''
+        for cmd_tmp in self.cmds:
+            cmd = cmd+cmd_tmp+';' 
         
-        for kk, la in enumerate(self.cmds):
-            print str(kk)+'::: '+la
-        
-        return
+        return cmd
             
     
     def createCprAndFltpCmd(self,mode,jobname):
@@ -229,7 +230,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for creating the cmd for creating cprs and/or fltps.
         it is basically very similar. only for the fltp command the Paganin
         parameters are added and a few flags changed
-        TODO: prefix missing
         '''
         ## Compose all mandatory
         standard = '-d -C '

@@ -46,7 +46,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Input directory (TIF or FLTP folder)</string>
+      <string>Input directory (TIF folder)</string>
      </property>
     </widget>
     <widget class="QToolButton" name="setinputdirectory">
@@ -1373,17 +1373,7 @@
     <addaction name="menusavesettings"/>
     <addaction name="exitapp"/>
    </widget>
-   <widget class="QMenu" name="menuScenarios">
-    <property name="title">
-     <string>Scenarios</string>
-    </property>
-    <addaction name="actionCreate_only_CPR"/>
-    <addaction name="actionCreate_CPR_FLTP"/>
-    <addaction name="actionCreate_CPR_FLTP_sinograms"/>
-    <addaction name="actionDo_everything_CPR_FLTP_Reconstruction"/>
-   </widget>
    <addaction name="menuMenu"/>
-   <addaction name="menuScenarios"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuloadsettings">

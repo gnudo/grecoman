@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Thu May 15 10:21:39 2014
+# Created: Thu May 15 14:39:02 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -518,8 +518,6 @@ class Ui_reco_mainwin(object):
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
-        self.menuScenarios = QtGui.QMenu(self.menubar)
-        self.menuScenarios.setObjectName("menuScenarios")
         reco_mainwin.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(reco_mainwin)
         self.statusbar.setObjectName("statusbar")
@@ -541,12 +539,7 @@ class Ui_reco_mainwin(object):
         self.menuMenu.addAction(self.menuloadsettings)
         self.menuMenu.addAction(self.menusavesettings)
         self.menuMenu.addAction(self.exitapp)
-        self.menuScenarios.addAction(self.actionCreate_only_CPR)
-        self.menuScenarios.addAction(self.actionCreate_CPR_FLTP)
-        self.menuScenarios.addAction(self.actionCreate_CPR_FLTP_sinograms)
-        self.menuScenarios.addAction(self.actionDo_everything_CPR_FLTP_Reconstruction)
         self.menubar.addAction(self.menuMenu.menuAction())
-        self.menubar.addAction(self.menuScenarios.menuAction())
 
         self.retranslateUi(reco_mainwin)
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
@@ -554,7 +547,7 @@ class Ui_reco_mainwin(object):
     def retranslateUi(self, reco_mainwin):
         reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF or FLTP folder)", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("reco_mainwin", "Input type (-I)", None, QtGui.QApplication.UnicodeUTF8))
         self.inputtype.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "DMP", None, QtGui.QApplication.UnicodeUTF8))
@@ -669,7 +662,6 @@ class Ui_reco_mainwin(object):
         self.fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
         self.fromfltp.setText(QtGui.QApplication.translate("reco_mainwin", "from fltp", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuScenarios.setTitle(QtGui.QApplication.translate("reco_mainwin", "Scenarios", None, QtGui.QApplication.UnicodeUTF8))
         self.menuloadsettings.setText(QtGui.QApplication.translate("reco_mainwin", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.menusavesettings.setText(QtGui.QApplication.translate("reco_mainwin", "Save settings", None, QtGui.QApplication.UnicodeUTF8))
         self.exitapp.setText(QtGui.QApplication.translate("reco_mainwin", "Exit", None, QtGui.QApplication.UnicodeUTF8))

@@ -20,7 +20,6 @@
 
 
 ####  GENERIC PYTHON MODULES
-import subprocess
 import sys
 import os
 import numpy as np
