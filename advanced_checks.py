@@ -173,6 +173,13 @@ class AdvancedChecks(object):
             path = path_tmp
         parts.reverse()
         return parts
+    
+    def getParentDir(self,dir):
+        '''
+        method that returns the parent directory of a directory
+        '''
+        tmp_dir = os.path.split(dir)
+        return tmp_dir[0]
         
         
     def loadAndParseLogFile(self):

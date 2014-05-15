@@ -36,6 +36,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
+        QObject.connect(self.paganinon,
+            SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -97,6 +99,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'sinogramdirectory','',[],False)
         ParameterWrap()(self,'reconstructon','',['recodirectory', 'sinogramdirectory'],False)
         ParameterWrap()(self,'recodirectory','',[],False)
+        ParameterWrap()(self,'withlog','',[],False)
         
         # we also register Comboboxes in order to use them in fileIO etc.
         ParameterWrap()(self,'inputtype','-I',[],False)
@@ -107,8 +110,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'geometry','-G',[],False)
         
         # we add radio box as well which depend on input directories
-        ParameterWrap()(self,'fromcpr','',['cprdirectory'],False)
-        ParameterWrap()(self,'fromfltp','',['fltpdirectory'],False)
+        ParameterWrap()(self,'sin_fromcpr','',['cprdirectory'],False)
+        ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
+        ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
+        ParameterWrap()(self,'fltp_fromtif','',['cprdirectory'],False)
         
  
     def submitToCluster(self):
@@ -122,16 +127,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # (1) Create command line string
         cmd = self.createCommand()
         
-        print cmd
-        
-        return
         # (2) run SSH-connector and check all account credentials
         if not self.job.performInitalCheck():
             return
         
         # (3) run SSh-connector to launch the job
-        print self.cmd_string
-        self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2','random name')  # TODO: set job-name also in GUI
+        if self.print_cmd.isChecked():
+            self.displayErrorMessage('Submitted to cons-2', cmd)
+
+        self.job.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
             
             
     def calcSingleSlice(self):
@@ -184,7 +188,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (6) we display the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = self.dirs.cons2Path2afs(single_sino[:-3]+'viewrec/'+new_filename+self.sinograms.currentText()[-3:])
+        img = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino)+'/viewrec/'+new_filename+self.sinograms.currentText()[-3:])
         self.displayImageBig(img)
  
 
@@ -220,6 +224,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         cmd = ''
         for cmd_tmp in self.cmds:
+#             print '++ '+cmd_tmp
             cmd = cmd+cmd_tmp+';' 
         
         return cmd
@@ -230,20 +235,26 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for creating the cmd for creating cprs and/or fltps.
         it is basically very similar. only for the fltp command the Paganin
         parameters are added and a few flags changed
+        TODO: rewrite IF-statements here because now it's really a mess
         '''
         ## Compose all mandatory
         standard = '-d -C '
         cmd1 = self.cmd0+standard
         
         if self.cpron.isChecked() and not self.paganinon.isChecked():
-            g_param = 7
-        elif not self.cpron.isChecked() or mode == 'cpr':
-            g_param = 3
-        else:
+            if self.withlog.isChecked():
+                g_param = 7
+            else:
+                g_param = 3
+        elif self.fltp_fromcpr.isChecked() and mode == 'fltp':
             g_param = 0
+        elif self.fltp_fromtif.isChecked() and mode == 'fltp':
+            g_param = 3
+        else: # case for mode == 'cpr'
+            g_param = 3
         
         ## only in CPR if set, else only in FLTP
-        if mode == 'cpr' or not self.cpron.isChecked():
+        if mode == 'cpr' or self.fltp_fromtif.isChecked():
             optional = ['binsize', 'scaleimagefactor']
             cmd1 += '-f '+self.raws.text()
             cmd1 += ','+self.darks.text()
@@ -263,7 +274,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
-            cmd1 += '--hold='+jobname+'_cpr '
+            if self.cpron.isChecked():
+                cmd1 += '--hold='+jobname+'_cpr '
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+jobname+'_'+mode+' '
@@ -284,7 +296,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         cmd1 += '-g '+str(g_param)+' '
         
         ## TODO: include maybe above
-        if mode == 'cpr' or not self.cpron.isChecked():
+        if mode == 'cpr' or self.fltp_fromtif.isChecked(): # or not self.cpron.isChecked():
             cmd1 += ParameterWrap.par_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
         else:
             cmd1 += '-I 0 '
@@ -293,8 +305,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if mode == 'cpr':
             inputdir = str(self.inputdirectory.text())
             outputdir = str(self.cprdirectory.text())
-        elif mode == 'fltp' and not self.cpron.isChecked():
-            inputdir = str(self.inputdirectory.text())
+        elif mode == 'fltp':# and not self.cpron.isChecked():
+            if self.fltp_fromcpr.isChecked():
+                inputdir = str(self.cprdirectory.text())
+            else:
+                inputdir = str(self.inputdirectory.text())
             outputdir = str(self.fltpdirectory.text())
         else:
             inputdir = str(self.cprdirectory.text())
@@ -338,10 +353,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if ParameterWrap.par_dict['steplines'].performCheck():
             cmd1 += ParameterWrap.par_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
         
-        if self.fromcpr.isChecked():
+        if self.sin_fromcpr.isChecked():
             inputdir = str(self.cprdirectory.text())
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
-        elif self.fromfltp.isChecked():
+        elif self.sin_fromfltp.isChecked():
             inputdir = str(self.fltpdirectory.text())
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
         else:
@@ -450,8 +465,17 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method that is challed when checking/unchecking the sinobox
         '''
         if not self.sinon.isChecked():
-            ParameterWrap.par_dict['fromcpr'].resetField()
-            ParameterWrap.par_dict['fromfltp'].resetField()
+            ParameterWrap.par_dict['sin_fromcpr'].resetField()
+            ParameterWrap.par_dict['sin_fromfltp'].resetField()
+            
+            
+    def setUnsetPaganinCheckBox(self):
+        '''
+        method that is challed when checking/unchecking the Paganin-box
+        '''
+        if not self.paganinon.isChecked():
+            ParameterWrap.par_dict['fltp_fromcpr'].resetField()
+            ParameterWrap.par_dict['fltp_fromtif'].resetField()
             
     
     def resetAllStyleSheets(self):
@@ -604,6 +628,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         playground for testing of new code
         '''
         
+            
 
 if __name__ == "__main__":
     mainapp = QApplication(sys.argv,True)  # create Qt application
