@@ -63,8 +63,8 @@ class Parameter(object):
             return
         elif type(name_handle).__name__ == 'QRadioButton':
             name_handle.setAutoExclusive(False)
-            name_handle.setChecked(False);
-            name_handle.setAutoExclusive(True);
+            name_handle.setChecked(False)
+            name_handle.setAutoExclusive(True)
             return
         
 

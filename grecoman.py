@@ -34,6 +34,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
             SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
+        QObject.connect(self.sinon,
+            SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -189,94 +191,40 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         main method for creating the command line string. for consistency reasons the flags are
         defined in the registerAllParameters() method only (and only there!)
-        TODO: after having understood how the "prj2sinSGE" script really works this method has to
-        be completely rewritten
         '''
         self.cmd0 = "prj2sinSGE "
         self.cmds = []
         self.cmd_string = "prj2sinSGE "
-        pureflags = ['preflatsonly']
-        standard = '-d -C '
         jobname = 'job0815'
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
-            cmd1 = self.createCPRnFLTPcmd('cpr',jobname)
-            self.cmds.append(cmd1)
+            if not self.createCprAndFltpCmd('cpr',jobname):
+                return False
         
         ## (2) Then we check whether we need FLTP-s
         if self.paganinon.isChecked():
-            cmd2 = self.createCPRnFLTPcmd('fltp',jobname)
-            self.cmds.append(cmd2)
+            if not self.createCprAndFltpCmd('fltp',jobname):
+                return False
             
         ## (3) Whether we need sinograms
         if self.sinon.isChecked():
-            cmd3 = self.createSincmd(jobname)
-            self.cmds.append(cmd3)
+            if not self.createSinCmd(jobname):
+                return False
             
         ## (4) Whether we want reconstructions
+        if self.reconstructon.isChecked():
+            if not self.createRecoCmd(jobname):
+                return False
         
         
         for kk, la in enumerate(self.cmds):
             print str(kk)+'::: '+la
         
         return
-    
-        ## (1) Compose first pure flags 
-        for pureflag in pureflags:
-            if getattr(self,pureflag).isChecked():
-                self.cmd_string += ParameterWrap.par_dict[pureflag].flag+' '
-        
-        ## (2) Non-mandatory parameters with children (wavelet we do separately)
-        non_madatory_with_child = ['roion', 'paganinon', 'reconstructon']
-        for param in non_madatory_with_child:
-            if getattr(self,param).isChecked():
-                self.cmd_string += ParameterWrap.par_dict[param].flag+' '
-                for child in ParameterWrap.par_dict[param].child_list:
-                    self.cmd_string += getattr(self,child).text()+','
-                self.cmd_string = self.cmd_string[:-1]+' '
-            
-        ## (3) Optional parameters that should only be added if they are non-empty
-        optional = ['firstindex', 'binsize', 'scaleimagefactor', 'steplines', 'cutofffrequency',
-                    'edgepadding', 'centerofrotation','rotationangle']
-        for param in optional:
-            if not getattr(self,param).text() == '':
-                self.cmd_string += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
-        
-        if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
-            self.setWavletParameters()
-            
-        if self.zingeron.isChecked():  # the zinger parameters are composed separately as well
-            self.setZingerParameters()
-                
-        ## (4) Comboboxes with respective dictionaries (except wavelet comboboxes)
-        comboboxes = ['correctiontype', 'keepsinograms', 'filter', 'outputtype', 'geometry','inputtype']
-        
-        for combo in comboboxes:
-            if ParameterWrap.par_dict[combo].performCheck():
-                self.cmd_string += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' '        
-        
-        ## (5) Compose all mandatory
-        self.cmd_string += '-f '+self.raws.text()
-        self.cmd_string += ','+self.darks.text()
-        self.cmd_string += ','+self.flats.text()
-        self.cmd_string += ','+self.interflats.text()
-        self.cmd_string += ','+self.flatfreq.text()+' '
-        
-        self.cmd_string += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
-        if self.afsaccount.isChecked():
-            sinodir_mod = self.dirs.afsPath2Cons2(str(getattr(self,'sinogramdirectory').text()))
-            inputdir_mod= self.dirs.afsPath2Cons2(str(self.inputdirectory.text()))
-            self.cmd_string += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+sinodir_mod+' '
-            ## (6) Append input directory
-            self.cmd_string += inputdir_mod
-        elif self.cons2.isChecked():
-            self.cmd_string += ParameterWrap.par_dict['sinogramdirectory'].flag+' '+getattr(self,'sinogramdirectory').text()+' '
-            ## (6) Append input directory
-            self.cmd_string += self.inputdirectory.text()
             
     
-    def createCPRnFLTPcmd(self,mode,jobname):
+    def createCprAndFltpCmd(self,mode,jobname):
         '''
         method for creating the cmd for creating cprs and/or fltps.
         it is basically very similar. only for the fltp command the Paganin
@@ -311,10 +259,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 cmd1 += ParameterWrap.par_dict['roion'].flag+' '
                 for child in ParameterWrap.par_dict['roion'].child_list:
                     cmd1 += getattr(self,child).text()+','
+            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
             cmd1 += '--hold='+jobname+'_cpr '
+            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+jobname+'_'+mode+' '
   
@@ -332,7 +282,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 cmd1 += ParameterWrap.par_dict['preflatsonly'].flag+' '
         
         cmd1 += '-g '+str(g_param)+' '
-        cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
         
         ## TODO: include maybe above
         if mode == 'cpr' or not self.cpron.isChecked():
@@ -351,7 +300,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             inputdir = str(self.cprdirectory.text())
             outputdir = str(self.fltpdirectory.text())
         
-        
+        ## TODO: probably outsource whole snippet
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
@@ -361,10 +310,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-o '+inputdir+'/ '
             cmd1 += outputdir+'/'
 
-        return cmd1
+#         return cmd1
+        self.cmds.append(cmd1)
+        return True
     
     
-    def createSincmd(self,jobname):
+    def createSinCmd(self,jobname):
         '''
         method for creating command line for sinograms
         '''
@@ -384,14 +335,20 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 += '--jobname='+jobname+'_sin '
         
-        # TODO: to be modified (we need more specific prefix)
-        cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+' '
+        if ParameterWrap.par_dict['steplines'].performCheck():
+            cmd1 += ParameterWrap.par_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
         
         if self.fromcpr.isChecked():
             inputdir = str(self.cprdirectory.text())
+            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         elif self.fromfltp.isChecked():
             inputdir = str(self.fltpdirectory.text())
-            
+            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
+        else:
+            self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
+            return
+        
+        # TODO: probably outsource like before
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
@@ -401,7 +358,48 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-o '+inputdir+'/ '
             cmd1 += outputdir+'/'
             
-        return cmd1
+        self.cmds.append(cmd1)
+        return True
+    
+    
+    def createRecoCmd(self,jobname):
+        '''
+        method for creating command line string for reconstruction job
+        '''
+        ## Compose all mandatory
+        standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        cmd1 = self.cmd0+standard
+
+        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
+        for param in optional:
+            if not getattr(self,param).text() == '':
+                cmd1 += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+        
+        ## (4) Comboboxes with respective dictionaries (except wavelet comboboxes)
+        comboboxes = ['filter', 'outputtype', 'geometry']
+        for combo in comboboxes:
+            if ParameterWrap.par_dict[combo].performCheck():
+                cmd1 += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+                
+        # TODO: use jobname in IO so that we don't need to hardcode
+        if self.sinon.isChecked():
+            cmd1 += '--hold='+jobname+'_sin '
+            
+        cmd1 += '--jobname='+jobname+'_reco '
+        
+        inputdir = str(self.sinogramdirectory.text())
+        outputdir = str(self.recodirectory.text())
+        if self.afsaccount.isChecked():
+            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
+            outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
+            cmd1 += '-O '+outputdir_mod+'/ '
+            cmd1 += inputdir_mod+'/'
+        elif self.cons2.isChecked():
+            cmd1 += '-O '+inputdir+'/ '
+            cmd1 += outputdir+'/'
+        
+        self.cmds.append(cmd1)
+        return True
         
         
     def checkAllParamters(self):
@@ -445,6 +443,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.displayErrorMessage('Missing radio box', 'From where are you running the application?')
             return False
         return True
+    
+    
+    def setUnsetSinoCheckBox(self):
+        '''
+        method that is challed when checking/unchecking the sinobox
+        '''
+        if not self.sinon.isChecked():
+            ParameterWrap.par_dict['fromcpr'].resetField()
+            ParameterWrap.par_dict['fromfltp'].resetField()
             
     
     def resetAllStyleSheets(self):
@@ -497,9 +504,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for getting content from ComboBox and containing custom dictionaries
         '''
-        if box is 'correctiontype':
-            types_dict = {"0":"7", "1":"1", "2":"2", "3":"3"}
-        elif box is 'filter':
+        if box is 'filter':
             types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
                           "5":"lanczos", "6":"dpc", "7":"none"}     
         elif box is 'outputtype':

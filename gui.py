@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Wed May 14 11:37:47 2014
+# Created: Thu May 15 10:21:39 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -286,7 +286,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_4.setGeometry(QtCore.QRect(940, 50, 301, 641))
         self.groupBox_4.setObjectName("groupBox_4")
         self.gridLayoutWidget_7 = QtGui.QWidget(self.groupBox_4)
-        self.gridLayoutWidget_7.setGeometry(QtCore.QRect(10, 30, 281, 481))
+        self.gridLayoutWidget_7.setGeometry(QtCore.QRect(10, 30, 281, 421))
         self.gridLayoutWidget_7.setObjectName("gridLayoutWidget_7")
         self.gridLayout_7 = QtGui.QGridLayout(self.gridLayoutWidget_7)
         self.gridLayout_7.setObjectName("gridLayout_7")
