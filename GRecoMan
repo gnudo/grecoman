@@ -1,0 +1,5 @@
+#!/bin/bash
+# Description: small caller script for GRecoMan
+# Author: Goran Lovric
+
+python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/grecoman.py
