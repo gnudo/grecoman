@@ -441,7 +441,7 @@
        <number>0</number>
       </property>
       <item row="3" column="1">
-       <widget class="QToolButton" name="toolButton_3">
+       <widget class="QToolButton" name="setfltpdirectory">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -471,7 +471,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QToolButton" name="toolButton_2">
+       <widget class="QToolButton" name="setcprdirectory">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -564,7 +564,7 @@
        </widget>
       </item>
       <item row="8" column="1">
-       <widget class="QToolButton" name="toolButton_4">
+       <widget class="QToolButton" name="setrecodirectory">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -1406,8 +1406,6 @@
           </item>
          </layout>
         </widget>
-        <zorder>fltp_fromcpr</zorder>
-        <zorder>horizontalLayoutWidget</zorder>
        </widget>
       </item>
      </layout>

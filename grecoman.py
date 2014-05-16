@@ -34,10 +34,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
             SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
+        QObject.connect(self.setcprdirectory,
+            SIGNAL("clicked()"),self.getCprDirectory)  # cpr output
+        QObject.connect(self.setfltpdirectory,
+            SIGNAL("clicked()"),self.getFltpDirectory)  # fltp output
+        QObject.connect(self.setrecodirectory,
+            SIGNAL("clicked()"),self.getRecoDirectory)  # reconstructions output
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
-            SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # sinogram checkbox ("toggled" not working)
+            SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # Paganin checkbox ("toggled" not working)
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -584,6 +590,44 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         self.sinogramdirectory.setText(self.dirs.sinodir)
         self.dirs.initSinDirectory()
+        
+    def getCprDirectory(self):
+        '''
+        dialog for setting the cpr output directory
+        '''
+        self.dirs.cprdir = QFileDialog.getExistingDirectory(self,
+                            'Select direcory for cpr-s',self.dirs.homedir)
+        
+        if not self.dirs.cprdir:
+            return
+        
+        self.cprdirectory.setText(self.dirs.cprdir)
+        
+        
+    def getFltpDirectory(self):
+        '''
+        dialog for setting the fltp output directory
+        '''
+        self.dirs.fltpdir = QFileDialog.getExistingDirectory(self,
+                            'Select direcory for cpr-s',self.dirs.homedir)
+        
+        if not self.dirs.fltpdir:
+            return
+        
+        self.fltpdirectory.setText(self.dirs.fltpdir)
+        
+        
+    def getRecoDirectory(self):
+        '''
+        dialog for setting the fltp output directory
+        '''
+        self.dirs.recodir = QFileDialog.getExistingDirectory(self,
+                            'Select direcory for cpr-s',self.dirs.homedir)
+        
+        if not self.dirs.recodir:
+            return
+        
+        self.recodirectory.setText(self.dirs.recodir)
         
         
     def setRecOutputDir(self):
