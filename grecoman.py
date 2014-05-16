@@ -386,7 +386,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-o '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
-            cmd1 += '-o '+outputdir+'/ '
+            cmd1 += '-o '+str(self.sinogramdirectory.text())+'/ '
             cmd1 += inputdir+'/'
             
         self.cmds.append(cmd1)
