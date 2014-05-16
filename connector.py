@@ -45,7 +45,10 @@ class Connector(object):
         TODO: probably this one will be united with a more generic submitJob() method (to be
         compatible also with Merlin)
         '''
-        subprocess.call(cmd,shell=True)
+        proc = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE,shell=True)
+        proc.stdin.write(cmd+'\n')
+        #subprocess.check_call(cmd,shell=True,executable='/bin/bash')
         
         
     def submitJobViaGateway(self,cmd_str,gw,target,name):
