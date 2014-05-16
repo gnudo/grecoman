@@ -338,8 +338,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-o '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
-            cmd1 += '-o '+inputdir+'/ '
-            cmd1 += outputdir+'/'
+            cmd1 += '-o '+outputdir+'/ '
+            cmd1 += inputdir+'/'
 
 #         return cmd1
         self.cmds.append(cmd1)
@@ -386,8 +386,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-o '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
-            cmd1 += '-o '+inputdir+'/ '
-            cmd1 += outputdir+'/'
+            cmd1 += '-o '+outputdir+'/ '
+            cmd1 += inputdir+'/'
             
         self.cmds.append(cmd1)
         return True
@@ -426,8 +426,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '-O '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
-            cmd1 += '-O '+inputdir+'/ '
-            cmd1 += outputdir+'/'
+            cmd1 += '-O '+outputdir+'/ '
+            cmd1 += inputdir+'/'
         
         self.cmds.append(cmd1)
         return True
