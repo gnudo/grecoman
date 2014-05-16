@@ -21,4 +21,4 @@ Since it's still a beta version, there are missing warnings in the GUI when mist
 
 ## Problems
 
-Bugs, problems, questions, wishes and remarks please indicate through [github issues](https://github.com/gnudo/source-size-calculator/issues).
+Bugs, problems, questions, wishes and remarks please indicate through [github issues](https://github.com/gnudo/grecoman/issues).
