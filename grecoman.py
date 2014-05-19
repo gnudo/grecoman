@@ -136,7 +136,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         if self.print_cmd.isChecked():
-            if not self.displayYesNoMessage('Submit to cons-2?', cmd):
+            if not self.displayYesNoMessage('Submit to cons-2?', self.cmd):
                 return
         
         # (2) run SSH-connector and check all account credentials
