@@ -131,7 +131,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         # (1) Create command line string
-        cmd = self.createCommand()
+        self.cmd = ''
+        if not self.createCommand():
+            return
         
         print cmd
         if self.print_cmd.isChecked():
@@ -222,34 +224,35 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmd0 = "prj2sinSGE "
         self.cmds = []
         self.cmd_string = "prj2sinSGE "
-        jobname = 'job0815'
+        self.jobname = 'job0815'
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
-            if not self.createCprAndFltpCmd('cpr',jobname):
+            if not self.createCprAndFltpCmd('cpr',self.jobname):
                 return False
         
         ## (2) Then we check whether we need FLTP-s
         if self.paganinon.isChecked():
-            if not self.createCprAndFltpCmd('fltp',jobname):
+            if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
+                self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
+            if not self.createCprAndFltpCmd('fltp',self.jobname):
                 return False
             
         ## (3) Whether we need sinograms
         if self.sinon.isChecked():
-            if not self.createSinCmd(jobname):
+            if not self.createSinCmd(self.jobname):
                 return False
             
         ## (4) Whether we want reconstructions
         if self.reconstructon.isChecked():
-            if not self.createRecoCmd(jobname):
+            if not self.createRecoCmd(self.jobname):
                 return False
         
-        cmd = ''
         for cmd_tmp in self.cmds:
 #             print '++ '+cmd_tmp
-            cmd = cmd+cmd_tmp+';' 
+            self.cmd = cmd+cmd_tmp+';' 
         
-        return cmd
+        return True
             
     
     def createCprAndFltpCmd(self,mode,jobname):
@@ -449,6 +452,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         if not self.checkComputingLocation():
             return
+        
+        # (0) Make sure that at least one action is checked
+        if not (self.cpron.isChecked() and self.paganinon.isChecked() and self.sinon.isChecked() and self.reconstructon.isChecked()):
+            self.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
     
         # (1) all parameters that are mandatory (they cannot have any child parameters)
         for key,param in ParameterWrap.par_dict.iteritems():
@@ -465,8 +472,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         for param in color_list:
             missing_param = getattr(self,param)
             missing_param.setStyleSheet("QLineEdit { border : 2px solid red;}")
-            
-        ## TODO: also ask to either calculate FLTP or CPR
         
         if not color_list:
             return True
