@@ -454,7 +454,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         # (0) Make sure that at least one action is checked
-        if not (self.cpron.isChecked() and self.paganinon.isChecked() and self.sinon.isChecked() and self.reconstructon.isChecked()):
+        if not self.cpron.isChecked() and not self.paganinon.isChecked() and not self.sinon.isChecked() and not self.reconstructon.isChecked()):
             self.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
     
         # (1) all parameters that are mandatory (they cannot have any child parameters)
