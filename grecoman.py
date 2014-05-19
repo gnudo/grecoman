@@ -135,7 +135,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.createCommand():
             return
         
-        print cmd
         if self.print_cmd.isChecked():
             if not self.displayYesNoMessage('Submit to cons-2?', cmd):
                 return
@@ -146,9 +145,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         # (3) run SSh-connector to launch the job
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
+            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
         elif self.cons2.isChecked():
-            self.job.submitJobLocally(cmd, 'randomname')
+            self.job.submitJobLocally(self.cmd, 'randomname')
             
             
     def calcSingleSlice(self):
@@ -250,7 +249,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         for cmd_tmp in self.cmds:
 #             print '++ '+cmd_tmp
-            self.cmd = cmd+cmd_tmp+';' 
+            self.cmd = self.cmd+cmd_tmp+';' 
         
         return True
             
