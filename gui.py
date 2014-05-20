@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Fri May 16 17:55:21 2014
+# Created: Tue May 20 12:00:20 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -286,7 +286,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_4.setGeometry(QtCore.QRect(940, 50, 301, 521))
         self.groupBox_4.setObjectName("groupBox_4")
         self.gridLayoutWidget_7 = QtGui.QWidget(self.groupBox_4)
-        self.gridLayoutWidget_7.setGeometry(QtCore.QRect(10, 30, 281, 421))
+        self.gridLayoutWidget_7.setGeometry(QtCore.QRect(10, 30, 281, 441))
         self.gridLayoutWidget_7.setObjectName("gridLayoutWidget_7")
         self.gridLayout_7 = QtGui.QGridLayout(self.gridLayoutWidget_7)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -399,6 +399,7 @@ class Ui_reco_mainwin(object):
         self.line_11.setObjectName("line_11")
         self.gridLayout_7.addWidget(self.line_11, 6, 0, 1, 2)
         self.label_41 = QtGui.QLabel(self.gridLayoutWidget_7)
+        self.label_41.setMinimumSize(QtCore.QSize(0, 35))
         self.label_41.setWordWrap(True)
         self.label_41.setObjectName("label_41")
         self.gridLayout_7.addWidget(self.label_41, 20, 0, 1, 1)
@@ -481,7 +482,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_6.setGeometry(QtCore.QRect(940, 590, 301, 271))
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayoutWidget_5 = QtGui.QWidget(self.groupBox_6)
-        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 30, 291, 231))
+        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 30, 291, 251))
         self.gridLayoutWidget_5.setObjectName("gridLayoutWidget_5")
         self.gridLayout_5 = QtGui.QGridLayout(self.gridLayoutWidget_5)
         self.gridLayout_5.setObjectName("gridLayout_5")

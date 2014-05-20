@@ -698,7 +698,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>421</height>
+       <height>441</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -948,6 +948,12 @@
       </item>
       <item row="20" column="0">
        <widget class="QLabel" name="label_41">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>35</height>
+         </size>
+        </property>
         <property name="text">
          <string>Width of smoothin kernel (-w)</string>
         </property>
@@ -1274,7 +1280,7 @@
        <x>10</x>
        <y>30</y>
        <width>291</width>
-       <height>231</height>
+       <height>251</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
