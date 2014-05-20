@@ -88,7 +88,7 @@ class Connector(object):
         #sshProcess.stdin.write('export SSH_ASKPASS=~/returnpass.sh\n')
         #sshProcess.stdin.write('echo \\\"'+self.afspw+'\\\"|ssh '+self.afsuser+'@'+x02dagw+'\n')
         sshProcess.stdin.write('export SSH_ASKPASS=~/pw1.sh\n')
-        sshProcess.stdin.write('ssh '+self.afsuser+'@'+gw+'\n')
+        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" '+self.afsuser+'@'+gw+'\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
         
@@ -96,7 +96,7 @@ class Connector(object):
         sshProcess.stdin.write('export SSH_ASKPASS=~/pw2.sh\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
-        sshProcess.stdin.write('ssh '+self.eaccountuser+'@'+target+'\n')
+        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" '+self.eaccountuser+'@'+target+'\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
         
@@ -191,7 +191,7 @@ class Connector(object):
         p = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, shell=True)
         p.stdin.write('export SSH_ASKPASS=~/pw.sh\n')
-        p.stdin.write('ssh '+self.afsuser+'@'+comp+'\n')
+        p.stdin.write('ssh -o \"GSSAPIAuthentication no\" '+self.afsuser+'@'+comp+'\n')
         p.stdin.write('echo $HOSTNAME\n')
         host = p.stdout.readline() ### this method hangs if password is wrong!!!
         if str(host[:len(comp)]) == str(comp):
