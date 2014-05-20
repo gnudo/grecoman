@@ -5,7 +5,7 @@ Graphical RECOnstruction MANager 1.0-beta
 Run the following command from x02da-cons-2 *or* on your AFS account:
 
 ```
-curl -o ~/Desktop/GRecoMan http://raw.githubusercontent.com/gnudo/grecoman/master/GRecoMan;chmod a+x ~/Desktop/GRecoMan;
+curl -o ~/Desktop/GRecoMan https://raw.githubusercontent.com/gnudo/grecoman/master/GRecoMan;chmod a+x ~/Desktop/GRecoMan;
 ```
 
 For running the application, you'll find a Desktop-icon for GRecoMan that you simply need to double-click.
