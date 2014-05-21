@@ -259,6 +259,7 @@ class AdvancedChecks(object):
         '''
         prefix = self.splitOsPath(str(self.inputdir))[-2]
         self.parent.prefix.setText(prefix)
+        self.parent.jobname.setText(prefix)
 
 
 if __name__ == "__main__":

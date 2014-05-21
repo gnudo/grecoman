@@ -39,7 +39,7 @@ class Connector(object):
         return True
     
     
-    def submitJobLocally(self,cmd,name):
+    def submitJobLocally(self,cmd):
         '''
         method to run a job locally on cons-2
         TODO: probably this one will be united with a more generic submitJob() method (to be
@@ -51,12 +51,11 @@ class Connector(object):
         #subprocess.check_call(cmd,shell=True,executable='/bin/bash')
         
         
-    def submitJobViaGateway(self,cmd_str,gw,target,name):
+    def submitJobViaGateway(self,cmd_str,gw,target):
         '''
-        method to submit the job with a given name (optional) via a gateway. we assume
-        AFS credentials for the gateway and eaccount credentials for the target
-        when running this method, we must already be sure the the AFS and eaccount credentials are
-        correct - otherwise it will hang forever...
+        method to submit the job with via a gateway. we assume AFS credentials for the gateway
+        and eaccount credentials for the target when running this method, we must already be sure
+        the the AFS and eaccount credentials are orrect - otherwise it will hang forever...
         
         GORAN-EXPLANATION: confronted with the problem that we cannot have public-key auth on 
         AFS machines and the impossibility to establish direct connections to beamline computers,

@@ -579,32 +579,6 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QPushButton" name="testbutton">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>940</y>
-      <width>112</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Test</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="submit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>940</y>
-      <width>112</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Submit</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox_5">
     <property name="geometry">
      <rect>
@@ -698,7 +672,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>441</height>
+       <height>480</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -1236,39 +1210,13 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="clearfields">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>940</y>
-      <width>112</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Clear</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="singleslice">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>940</y>
-      <width>112</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Single slice</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox_6">
     <property name="geometry">
      <rect>
       <x>940</x>
       <y>590</y>
       <width>301</width>
-      <height>271</height>
+      <height>291</height>
      </rect>
     </property>
     <property name="title">
@@ -1417,18 +1365,74 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QCheckBox" name="print_cmd">
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>940</y>
-      <width>261</width>
-      <height>23</height>
+      <x>20</x>
+      <y>890</y>
+      <width>231</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Print command line string (debug)</string>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_30">
+       <property name="text">
+        <string>Job name:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="jobname"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>930</y>
+      <width>661</width>
+      <height>32</height>
+     </rect>
     </property>
+    <layout class="QGridLayout" name="gridLayout_9">
+     <item row="0" column="3">
+      <widget class="QPushButton" name="singleslice">
+       <property name="text">
+        <string>Single slice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="testbutton">
+       <property name="text">
+        <string>Test</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="submit">
+       <property name="text">
+        <string>Submit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="clearfields">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QCheckBox" name="print_cmd">
+       <property name="text">
+        <string>Print command line string (debug)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1437,7 +1441,7 @@
      <x>0</x>
      <y>0</y>
      <width>1251</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -1464,26 +1468,6 @@
   <action name="exitapp">
    <property name="text">
     <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionCreate_only_CPR">
-   <property name="text">
-    <string>Create only CPR</string>
-   </property>
-  </action>
-  <action name="actionCreate_CPR_FLTP">
-   <property name="text">
-    <string>Create CPR+FLTP</string>
-   </property>
-  </action>
-  <action name="actionCreate_CPR_FLTP_sinograms">
-   <property name="text">
-    <string>Create CPR+FLTP+sinograms</string>
-   </property>
-  </action>
-  <action name="actionDo_everything_CPR_FLTP_Reconstruction">
-   <property name="text">
-    <string>CPR+FLTP+Reconstruction</string>
    </property>
   </action>
  </widget>

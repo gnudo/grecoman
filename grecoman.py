@@ -134,6 +134,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         # (1) Create command line string
+        if str(self.jobname.text()) == '':
+            self.jobname = 'GRecoM'
+        else:
+            self.jobname = str(self.jobname.text())
+            
         self.cmd = ''
         if not self.createCommand():
             return
@@ -148,9 +153,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         # (3) run SSh-connector to launch the job
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2','job_testname')  # TODO: set job-name also in GUI
+            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
         elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd, 'randomname')
+            self.job.submitJobLocally(self.cmd)
             
             
     def calcSingleSlice(self):
@@ -203,9 +208,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (5) after all checks completed, Filippos wrapper is called to perform
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2','randomname')
+            self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2')
         elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd_string, 'randomname')
+            self.job.submitJobLocally(self.cmd_string)
         
         ## (6) we display the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
@@ -236,7 +241,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmd0 = "prj2sinSGE "
         self.cmds = []
         self.cmd_string = "prj2sinSGE "
-        self.jobname = 'job0815'
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
