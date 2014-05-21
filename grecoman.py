@@ -6,6 +6,8 @@ from advanced_checks import AdvancedChecks
 from fileIO import FileIO
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from time import sleep # TODO: preliminary
+import os.path  # TODO: preliminary
 import sys
 
 
@@ -22,6 +24,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.registerAllParameters()  # we register all command line arguments
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
+        self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
         
         ## TODO: just for GUI testin
         self.afsaccount.setChecked(1)
@@ -169,7 +172,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             single_sino = str(self.sinogramdirectory.text())
 
         ## (3) create the command line string for single slice reconstruction
-        self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/singleSliceFunc.py '
+        self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
         combos_single = ['filter']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
@@ -210,8 +213,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             basedir = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino))
         elif self.cons2.isChecked():
             basedir = self.dirs.getParentDir(single_sino)
-                                                   
+        
+        # TODO: just preliminary as the whole PATH-modification things should be
+        #       outsourced (we want to avoid spaghetti-code!)
         img = basedir+'/viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+        for kk in range(10):
+            if os.path.isfile(img):
+                break
+            else:
+                sleep(0.5)
+        else:
+            self.displayErrorMessage('No reconstructed slice found', 'After waiting 5 sec the reconstructed slice was not found')
+                                                   
         self.displayImageBig(img)
  
 
@@ -528,11 +541,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method when pressing Menu item for loading config file
         '''
         savefile = QFileDialog.getSaveFileName(self,
-                        'Select where the config file should be saved',self.dirs.homedir)
+                        'Select where the config file should be saved',self.lastdir)
         if not savefile:
             return
         file_obj = FileIO(savefile)
         file_obj.writeFile(self, ParameterWrap)
+        self.lastdir = self.dirs.getParentDir(str(savefile))
         
         
     def loadConfigFile(self):
@@ -540,7 +554,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for loading config-file (from Menu item)
         '''
         loadfile = QFileDialog.getOpenFileName(self,
-                        'Select where the config file is located',self.dirs.homedir)
+                        'Select where the config file is located',self.lastdir)
         if not loadfile:
             return
         file_obj = FileIO(loadfile)
@@ -548,6 +562,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
+        self.lastdir = self.dirs.getParentDir(str(loadfile))
         
         
     def getComboBoxContent(self,box):
@@ -575,11 +590,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         dialog for setting the input directory
         '''
         input_dir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for the projection data',self.dirs.homedir)
+                            'Select direcory for the projection data',self.lastdir)
         if not input_dir:
             return
         self.inputdirectory.setText(input_dir)
         self.dirs.initInputDirectory()
+        self.lastdir = self.dirs.getParentDir(str(input_dir))
     
     
     def getSinogramDirectory(self):
@@ -587,25 +603,27 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         dialog for setting the sinogram output directory 
         '''
         self.dirs.sinodir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for sinograms',self.dirs.homedir)
+                            'Select direcory for sinograms',self.lastdir)
         
         if not self.dirs.sinodir:
             return
         
         self.sinogramdirectory.setText(self.dirs.sinodir)
         self.dirs.initSinDirectory()
+        self.lastdir = self.dirs.getParentDir(str(self.dirs.sinodir))
         
     def getCprDirectory(self):
         '''
         dialog for setting the cpr output directory
         '''
         self.dirs.cprdir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.dirs.homedir)
+                            'Select direcory for cpr-s',self.lastdir)
         
         if not self.dirs.cprdir:
             return
         
         self.cprdirectory.setText(self.dirs.cprdir)
+        self.lastdir = self.dirs.getParentDir(str(self.dirs.cprdir))
         
         
     def getFltpDirectory(self):
@@ -613,12 +631,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         dialog for setting the fltp output directory
         '''
         self.dirs.fltpdir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.dirs.homedir)
+                            'Select direcory for cpr-s',self.lastdir)
         
         if not self.dirs.fltpdir:
             return
         
         self.fltpdirectory.setText(self.dirs.fltpdir)
+        self.lastdir = self.dirs.getParentDir(str(self.dirs.fltpdir))
         
         
     def getRecoDirectory(self):
@@ -626,12 +645,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         dialog for setting the fltp output directory
         '''
         self.dirs.recodir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.dirs.homedir)
+                            'Select direcory for cpr-s',self.lastdir)
         
         if not self.dirs.recodir:
             return
         
         self.recodirectory.setText(self.dirs.recodir)
+        self.lastdir = self.dirs.getParentDir(str(self.dirs.recodir))
         
         
     def setRecOutputDir(self):
@@ -639,7 +659,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         sets the output directory if this option is checked in the GUI
         '''
         recoutput = QFileDialog.getExistingDirectory(self,
-                        'Select direcory for the projection data',self.dirs.homedir)
+                        'Select direcory for the projection data',self.lastdir)
         self.recoutputdir.setText(recoutput)
             
         
@@ -703,7 +723,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         playground for testing of new code
         '''
-        
+        for kk in range(10):
+            print kk
+            sleep(0.5)
             
 
 if __name__ == "__main__":

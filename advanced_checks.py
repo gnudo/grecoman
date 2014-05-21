@@ -33,6 +33,8 @@ class AdvancedChecks(object):
         if not self.inputdir:
             return
         
+        self.parent.lastdir = self.getParentDir(str(self.inputdir))
+        
         if self.determineInputType():
             self.determinePrefix()
         
