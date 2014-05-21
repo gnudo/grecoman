@@ -1,4 +1,4 @@
-Graphical RECOnstruction MANager 1.0-beta
+Graphical RECOnstruction MANager 1.1-beta
 ========
 
 ## Installation
@@ -17,6 +17,7 @@ Since it's still a beta version, there are a few missing warnings in the GUI whe
 * everything starts by loading a tif directory and selecting the location from where GRecoMan is running
 * after that correct the prefix to be the same as in the logfile (since logfile-parsing is not yet implemented)
 * note that for running a full reconstruction you must also check the sinogram-creation box
+* on computers with newer OpenSSH versions (above 5.6), you cannot run the program from the terminal - just by double-clicking the Desktop-icon
 
 ## Problems
 
