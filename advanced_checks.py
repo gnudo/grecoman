@@ -49,6 +49,7 @@ class AdvancedChecks(object):
         self.checkRecoFolder()     
         
         ## TODO: check scan parameters from log file etc. etc.
+        self.loadAndParseLogFile()
         
         
     def initSinDirectory(self):
@@ -186,6 +187,40 @@ class AdvancedChecks(object):
         '''
         load log-file and set GUI fields from the log-file automatically
         '''
+        for name in os.listdir(self.inputdir):
+            if name.lower().endswith('.log') and not name.startswith('.'):
+                logfile = name
+                break
+        else: # if for-loop is run w/o break
+            return
+        
+        logfile_handle = open(os.path.join(str(self.inputdir),logfile), 'r')
+        # Go through all the lines in the logfile
+        for line in logfile_handle:
+            # Only do this for existing lines
+            if len(line.split()) > 0:
+                
+                # Scan parameters
+                if (line.split()[0] == 'Number' and
+                        line.split()[2] == 'projections'):
+                    self.parent.raws.setText(str(line.split(':')[1]).strip())
+                elif (line.split()[0] == 'Number' and line.split()[2] == 'darks'):
+                    self.parent.darks.setText(str(line.split(':')[1]).strip())
+                elif (line.split()[0] == 'Number' and line.split()[2] == 'flats'):
+                    self.parent.flats.setText(str(line.split(':')[1]).strip())
+                elif (line.split()[0] == 'Number' and line.split()[2] == 'inter-flats'):
+                    self.parent.interflats.setText(str(line.split(':')[1]).strip())
+                elif (line.split()[0] == 'Flat' and line.split()[1] == 'frequency'):
+                    self.parent.flatfreq.setText(str(line.split(':')[1]).strip())
+                
+                # Beam Energy
+                elif (line.split()[0] == 'Beam' and line.split()[1] == 'energy'):
+                    self.parent.pag_energy.setText(str(line.split(':')[1]).strip())
+                    
+                # Magnification and pixel size
+                elif (line.split()[0] == 'Actual' and line.split()[1] == 'pixel'):
+                    self.parent.pag_pxsize.setText(str(line.split(':')[1]).strip()+'E-6')
+                
     
     def checkNumberOfProjs(self):
         '''
@@ -197,59 +232,31 @@ class AdvancedChecks(object):
     def determineInputType(self):
         '''
         method for checking and setting input type
-        TODO: this is a very preliminary and unefficient method
-        (just for concept)
         '''
         for imgfile in listdir(self.inputdir):
             if imgfile.lower().endswith(".tif"):
                 self.parent.inputtype.setCurrentIndex(2)
                 self.filetype = 'tif'
-                break
+                return True
             elif imgfile.lower().endswith(".dmp"):
                 self.parent.inputtype.setCurrentIndex(0)
                 self.filetype = 'dmp'
-                break
+                return True
             elif imgfile.lower().endswith(".HD5"):
                 self.parent.inputtype.setCurrentIndex(1)
                 self.filetype = 'hd5'
-                break
+                return True
             else:
                 self.parent.displayErrorMessage('No images found', 'There are no tif, dmp, nor hd5 files in the input folder!')
                 return False
-        return True
+
             
     def determinePrefix(self):
         '''
-        method for determining and setting prefix
-        TODO: again very preliminary >> more elegant would be to read from log file
-        (for this we need to implement a log-file parser)
+        the prefix is determined from the parent directory name of the tif-folder
         '''
-        two_files_list = []
-        for filename in listdir(self.inputdir):
-            if filename.lower().endswith("."+self.filetype):
-                two_files_list.append(filename)
-                if len(two_files_list) >= 2:
-                    break
-                else:
-                    continue
-        com_str = self.common_substring_finder(two_files_list[0],two_files_list[1])
-        self.parent.prefix.setText(com_str+"#")
-        ## let's color it green for now since we know this method is not correct
-        self.parent.prefix.setStyleSheet("QLineEdit { border : 2px solid green;}")
-        
-        
-    def common_substring_finder(self,str_a, str_b):
-        '''
-        find longest common substring from the beginning
-        TODO: just for testing purposes
-        '''
-        def _iter():
-            for a, b in zip(str_a, str_b):
-                if a == b:
-                    yield a
-                else:
-                    return
-        return ''.join(_iter())
+        prefix = self.splitOsPath(str(self.inputdir))[-2]
+        self.parent.prefix.setText(prefix)
 
 
 if __name__ == "__main__":
