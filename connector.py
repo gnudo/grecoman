@@ -73,11 +73,12 @@ class Connector(object):
         
         ## (1) first we create files with passwords
         kk = 1
+        afshome = '/afs/psi.ch/user/'+self.afsuser[0]+'/'+self.afsuser
         for ii in [self.afspw,self.eaccountpw]:
             pw = 'echo \\\"'+ii+'\\\"'
-            p1 = subprocess.call(['echo "#!/bin/bash\n" > ~/pw'+str(kk)+'.sh'],shell=True)
-            p2 = subprocess.call(['echo '+pw+' >> ~/pw'+str(kk)+'.sh'],shell=True)
-            p3 = subprocess.call(['chmod a+x ~/pw'+str(kk)+'.sh'],shell=True)
+            p1 = subprocess.call(['echo "#!/bin/bash\n" > '+afshome+'/pw'+str(kk)+'.sh'],shell=True)
+            p2 = subprocess.call(['echo '+pw+' >> '+afshome+'/pw'+str(kk)+'.sh'],shell=True)
+            p3 = subprocess.call(['chmod a+x '+afshome+'/pw'+str(kk)+'.sh'],shell=True)
             kk = kk+1
                 
         ## (2) establish the connection to gateway
@@ -87,13 +88,15 @@ class Connector(object):
         # TODO: substitute below lines so that we don't save cleartext pw-files >> didn't work for eaccount
         #sshProcess.stdin.write('export SSH_ASKPASS=~/returnpass.sh\n')
         #sshProcess.stdin.write('echo \\\"'+self.afspw+'\\\"|ssh '+self.afsuser+'@'+x02dagw+'\n')
-        sshProcess.stdin.write('export SSH_ASKPASS=~/pw1.sh\n')
+        sshProcess.stdin.write('export SSH_ASKPASS='+afshome+'/pw1.sh\n')
+        sshProcess.stdin.write('export DISPLAY=dummydisplay:0\n')
         sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" '+self.afsuser+'@'+gw+'\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
         
         # (3) from gateway connect to target
-        sshProcess.stdin.write('export SSH_ASKPASS=~/pw2.sh\n')
+        sshProcess.stdin.write('export SSH_ASKPASS='+afshome+'/pw2.sh\n')
+        sshProcess.stdin.write('export DISPLAY=dummydisplay:0\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
         sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" '+self.eaccountuser+'@'+target+'\n')
@@ -101,8 +104,8 @@ class Connector(object):
         sshProcess.stdout.readline()
         
         # (4) now we first delete the password files (before continuing)
-        p = subprocess.call(['rm ~/pw1.sh'],shell=True)
-        p = subprocess.call(['rm ~/pw2.sh'],shell=True)
+        p = subprocess.call(['rm '+afshome+'/pw1.sh'],shell=True)
+        p = subprocess.call(['rm '+afshome+'/pw2.sh'],shell=True)
         
         # (5) submit the command line string from the GUI on target
         sshProcess.stdin.write(cmd_str)
