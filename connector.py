@@ -199,6 +199,18 @@ class Connector(object):
         if str(host[:len(comp)]) == str(comp):
             queue1.put(True)
             
+            
+    def isInstalled(self,application):
+        '''
+        checks whether an application is installed on the system and returns
+        True or False
+        '''
+        p = subprocess.call('which '+application,shell=True)
+        if p == 0:
+            return True
+        else:
+            return False
+            
 
 class Login(QDialog):
     '''

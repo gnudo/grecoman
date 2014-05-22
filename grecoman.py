@@ -47,6 +47,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
             SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # Paganin checkbox ("toggled" not working)
+        QObject.connect(self.openinfiji,
+            SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji previw image checkbox ("toggled" not working)
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -212,7 +214,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif self.cons2.isChecked():
             self.job.submitJobLocally(self.cmd_string)
         
-        ## (6) we display the image
+        ## (6) we look for the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
         if self.afsaccount.isChecked():
             basedir = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino))
@@ -229,8 +231,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 sleep(0.5)
         else:
             self.displayErrorMessage('No reconstructed slice found', 'After waiting 5 sec the reconstructed slice was not found')
-                                                   
-        self.displayImageBig(img)
+                                    
+        ## (7) we display the image
+        if self.openinfiji.isChecked():
+            self.job.submitJobLocally('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\"'+');open(\\"'+img+'\\")\"')
+        else:
+            self.displayImageBig(img)
  
 
     def createCommand(self):
@@ -520,6 +526,19 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             ParameterWrap.par_dict['fltp_fromcpr'].resetField()
             ParameterWrap.par_dict['fltp_fromtif'].resetField()
             
+            
+    def setUnsetFijiOn(self):
+        '''
+        method that is called when checking/unchecking whether to open
+        preview image in Fiji. in that case we check whether the fiji
+        command is available in the path
+        '''
+        if self.openinfiji.isChecked():
+            if not self.job.isInstalled('fiji'):
+                self.openinfiji.setCheckState(0)
+                self.displayErrorMessage('Fiji not found', 'fiji must be in PATH, e.g. installed in /urs/bin')
+                return
+            
     
     def resetAllStyleSheets(self):
         '''
@@ -727,9 +746,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         playground for testing of new code
         '''
-        for kk in range(10):
-            print kk
-            sleep(0.5)
+        
             
 
 if __name__ == "__main__":
