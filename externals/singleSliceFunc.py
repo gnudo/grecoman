@@ -52,7 +52,7 @@ def getArgs():
                         help = 'Select filter for the reconstruction with gridrec [default: %default]' )
     parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.5 ,
                         help = 'Select edge padding for reconstruction with gridrec [default: %default]' )
-    parser.add_option( '-g' , dest='geometry' , default='1',
+    parser.add_option( '-G' , dest='geometry' , default='1',
                         help = 'Specify projection geometry for gridrec:'
                                +' 0 (projections angles specified in'
                                +' a file, named angles.txt), 1 (homogeneous'
@@ -160,7 +160,8 @@ def main():
         command_line += pathin + sino_file
 
         print command_line
-
+        
+        os.chdir(pathin)
         os.system( command_line )
         flag_ring_removal = 1
 
@@ -182,6 +183,8 @@ def main():
         command_line += '-T ' + args.zinger_thresh + ' '
     if args.zinger_width is not None:
         command_line += '-k ' + args.zinger_width + ' '
+    if args.geometry is not None:
+        command_line += '-g ' + args.geometry + ' '
     command_line += '-O ' + pathout + ' '
 
     if flag_ring_removal:

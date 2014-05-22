@@ -181,7 +181,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## (3) create the command line string for single slice reconstruction
         self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
-        combos_single = ['filter']  # removed: 'outputtype' (let's always have DMP!)
+        combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
             if ParameterWrap.par_dict[combo].performCheck():
                 self.cmd_string += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
