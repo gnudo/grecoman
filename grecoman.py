@@ -113,6 +113,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'withlog','',[],False)
         ParameterWrap()(self,'tifmin','-n',[],False)
         ParameterWrap()(self,'tifmax','-x',[],False)
+        ParameterWrap()(self,'jobname','',[],False) 
         
         # we also register Comboboxes in order to use them in fileIO etc.
         ParameterWrap()(self,'inputtype','-I',[],False)
@@ -166,8 +167,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for renconstructing a single slice for a given sinogram.
         '''
-        if not str(self.inputdirectory.text()):
-            self.displayErrorMessage('Missing input directory', 'No input directory was set')
+        if not str(self.sinograms.currentText()):
+            self.displayErrorMessage('No sinogram selected', 'Select the Sinogram directory and press Enter. Then select one to be reconstructed.')
             return
         
         ## (1) check whether we have defined the location from where we run the reconstruction
