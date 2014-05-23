@@ -139,9 +139,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         # (1) Create command line string
         if not str(self.jobname.text()):
-            self.jobname = 'GRecoM'
+            self.jobname_str = 'GRecoM'
         else:
-            self.jobname = str(self.jobname.text())
+            self.jobname_str = str(self.jobname.text())
             
         self.cmd = ''
         if not self.createCommand():
@@ -252,24 +252,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
-            if not self.createCprAndFltpCmd('cpr',self.jobname):
+            if not self.createCprAndFltpCmd('cpr',self.jobname_str):
                 return False
         
         ## (2) Then we check whether we need FLTP-s
         if self.paganinon.isChecked():
             if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
                 self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
-            if not self.createCprAndFltpCmd('fltp',self.jobname):
+            if not self.createCprAndFltpCmd('fltp',self.jobname_str):
                 return False
             
         ## (3) Whether we need sinograms
         if self.sinon.isChecked():
-            if not self.createSinCmd(self.jobname):
+            if not self.createSinCmd(self.jobname_str):
                 return False
             
         ## (4) Whether we want reconstructions
         if self.reconstructon.isChecked():
-            if not self.createRecoCmd(self.jobname):
+            if not self.createRecoCmd(self.jobname_str):
                 return False
         
         for cmd_tmp in self.cmds:
