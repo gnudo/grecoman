@@ -111,6 +111,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'reconstructon','',['recodirectory', 'sinogramdirectory'],False)
         ParameterWrap()(self,'recodirectory','',[],False)
         ParameterWrap()(self,'withlog','',[],False)
+        ParameterWrap()(self,'tifmin','-n',[],False)
+        ParameterWrap()(self,'tifmax','-x',[],False)
         
         # we also register Comboboxes in order to use them in fileIO etc.
         ParameterWrap()(self,'inputtype','-I',[],False)
@@ -136,7 +138,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         # (1) Create command line string
-        if str(self.jobname.text()) == '':
+        if not str(self.jobname.text()):
             self.jobname = 'GRecoM'
         else:
             self.jobname = str(self.jobname.text())
@@ -432,7 +434,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         standard = '-d -k 1 -I 3 -R 0 -g 0 '
         cmd1 = self.cmd0+standard
 
-        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
+        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
         for param in optional:
             if not getattr(self,param).text() == '':
                 cmd1 += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
