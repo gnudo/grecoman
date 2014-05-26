@@ -716,8 +716,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method to display random error messages with QMessageBox
         '''
-        QMessageBox.warning(self, head, msg)
-        
+        QMessageBox.warning(self, head, msg)        
+
         
     def displayYesNoMessage(self,head,txt):
         '''
@@ -749,6 +749,17 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         playground for testing of new code
         '''
+        ww = QInputDialog()
+        text,pressOK =  ww.getText(ww,'Save Frames(Movie)','First,Last:')
+        if pressOK:
+            frameNumbers = str(text).split(',')
+            if len(frameNumbers) == 2 :
+                if (int(frameNumbers[0]) < int(frameNumbers[1])):
+                    print 'asd'
+                else:
+                    print 'starting frame > ending frame, encountered a causality Error'
+            else:
+                print 'wrong inputs'
         
             
 
