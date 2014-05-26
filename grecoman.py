@@ -124,6 +124,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'geometry','-G',[],False)
         
         # we add radio box as well which depend on input directories
+        ParameterWrap()(self,'sin_fromraw','',['inputdirectory'],False)
         ParameterWrap()(self,'sin_fromcpr','',['cprdirectory'],False)
         ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
         ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
