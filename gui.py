@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Fri May 23 11:09:36 2014
+# Created: Mon May 26 16:27:49 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -162,7 +162,7 @@ class Ui_reco_mainwin(object):
         self.ImgViewer.setGeometry(QtCore.QRect(0, 0, 611, 611))
         self.ImgViewer.setObjectName("ImgViewer")
         self.gridLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(410, 0, 441, 21))
+        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(410, 0, 441, 23))
         self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
         self.gridLayout_2 = QtGui.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -513,9 +513,7 @@ class Ui_reco_mainwin(object):
         self.gridLayout_5.addWidget(self.sin_fromcpr, 5, 1, 1, 1)
         self.sin_fromfltp = QtGui.QRadioButton(self.gridLayoutWidget_5)
         self.sin_fromfltp.setObjectName("sin_fromfltp")
-        self.gridLayout_5.addWidget(self.sin_fromfltp, 5, 2, 1, 1)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_5.addItem(spacerItem, 5, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.sin_fromfltp, 5, 2, 1, 2)
         self.withlog = QtGui.QCheckBox(self.gridLayoutWidget_5)
         self.withlog.setObjectName("withlog")
         self.gridLayout_5.addWidget(self.withlog, 1, 1, 1, 2)
@@ -533,7 +531,10 @@ class Ui_reco_mainwin(object):
         self.fltp_fromcpr = QtGui.QRadioButton(self.horizontalLayoutWidget)
         self.fltp_fromcpr.setObjectName("fltp_fromcpr")
         self.horizontalLayout.addWidget(self.fltp_fromcpr)
-        self.gridLayout_5.addWidget(self.widget, 3, 1, 1, 2)
+        self.gridLayout_5.addWidget(self.widget, 3, 1, 1, 3)
+        self.sin_fromraw = QtGui.QRadioButton(self.gridLayoutWidget_5)
+        self.sin_fromraw.setObjectName("sin_fromraw")
+        self.gridLayout_5.addWidget(self.sin_fromraw, 5, 0, 1, 1)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 820, 231, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -711,6 +712,7 @@ class Ui_reco_mainwin(object):
         self.withlog.setText(QtGui.QApplication.translate("reco_mainwin", "with log correction", None, QtGui.QApplication.UnicodeUTF8))
         self.fltp_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from TIF", None, QtGui.QApplication.UnicodeUTF8))
         self.fltp_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
+        self.sin_fromraw.setText(QtGui.QApplication.translate("reco_mainwin", "from raw", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("reco_mainwin", "Job name:", None, QtGui.QApplication.UnicodeUTF8))
         self.singleslice.setText(QtGui.QApplication.translate("reco_mainwin", "Single slice", None, QtGui.QApplication.UnicodeUTF8))
         self.testbutton.setText(QtGui.QApplication.translate("reco_mainwin", "Test", None, QtGui.QApplication.UnicodeUTF8))
