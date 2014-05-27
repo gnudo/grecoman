@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Mon May 26 16:27:49 2014
+# Created: Tue May 27 11:30:43 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -482,7 +482,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_6.setGeometry(QtCore.QRect(940, 540, 301, 281))
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayoutWidget_5 = QtGui.QWidget(self.groupBox_6)
-        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 30, 291, 251))
+        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 30, 293, 251))
         self.gridLayoutWidget_5.setObjectName("gridLayoutWidget_5")
         self.gridLayout_5 = QtGui.QGridLayout(self.gridLayoutWidget_5)
         self.gridLayout_5.setObjectName("gridLayout_5")
@@ -532,9 +532,9 @@ class Ui_reco_mainwin(object):
         self.fltp_fromcpr.setObjectName("fltp_fromcpr")
         self.horizontalLayout.addWidget(self.fltp_fromcpr)
         self.gridLayout_5.addWidget(self.widget, 3, 1, 1, 3)
-        self.sin_fromraw = QtGui.QRadioButton(self.gridLayoutWidget_5)
-        self.sin_fromraw.setObjectName("sin_fromraw")
-        self.gridLayout_5.addWidget(self.sin_fromraw, 5, 0, 1, 1)
+        self.sin_fromtif = QtGui.QRadioButton(self.gridLayoutWidget_5)
+        self.sin_fromtif.setObjectName("sin_fromtif")
+        self.gridLayout_5.addWidget(self.sin_fromtif, 5, 0, 1, 1)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 820, 231, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -712,7 +712,7 @@ class Ui_reco_mainwin(object):
         self.withlog.setText(QtGui.QApplication.translate("reco_mainwin", "with log correction", None, QtGui.QApplication.UnicodeUTF8))
         self.fltp_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from TIF", None, QtGui.QApplication.UnicodeUTF8))
         self.fltp_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
-        self.sin_fromraw.setText(QtGui.QApplication.translate("reco_mainwin", "from raw", None, QtGui.QApplication.UnicodeUTF8))
+        self.sin_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from tif", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("reco_mainwin", "Job name:", None, QtGui.QApplication.UnicodeUTF8))
         self.singleslice.setText(QtGui.QApplication.translate("reco_mainwin", "Single slice", None, QtGui.QApplication.UnicodeUTF8))
         self.testbutton.setText(QtGui.QApplication.translate("reco_mainwin", "Test", None, QtGui.QApplication.UnicodeUTF8))

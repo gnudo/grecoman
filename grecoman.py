@@ -124,7 +124,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'geometry','-G',[],False)
         
         # we add radio box as well which depend on input directories
-        ParameterWrap()(self,'sin_fromraw','',['inputdirectory'],False)
+        ParameterWrap()(self,'sin_fromtif','',['inputdirectory'],False)
         ParameterWrap()(self,'sin_fromcpr','',['cprdirectory'],False)
         ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
         ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
@@ -385,13 +385,28 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for creating command line for sinograms
         '''
-        standard = '-d -k 2 -g 0 -I 0 '
-        cmd1 = self.cmd0+standard
-        cmd1 += '-f '+self.raws.text()
-        cmd1 += ',0,0,0,0 '
+        if self.sin_fromtif.isChecked():
+            standard = '-d -g 7 -I 1 '
+            cmd1 = self.cmd0+standard
+            cmd1 += '-f '+self.raws.text()
+            cmd1 += ','+self.darks.text()
+            cmd1 += ','+self.flats.text()
+            cmd1 += ','+self.interflats.text()
+            cmd1 += ','+self.flatfreq.text()+' '            
+        else:
+            standard = '-d -k 2 -g 0 -I 0 '
+            cmd1 = self.cmd0+standard
+            cmd1 += '-f '+self.raws.text()
+            cmd1 += ',0,0,0,0 '
+            
+        if getattr(self,'preflatsonly').isChecked():
+                cmd1 += ParameterWrap.par_dict['preflatsonly'].flag+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+            cmd1 += '-k 2 '
             cmd1 += self.setWavletParameters()
+        else:
+            cmd1 += '-k 1 '
         
         # TODO: use jobname in IO so that we don't need to hardcode
         if self.cpron.isChecked() and not self.paganinon.isChecked():
@@ -410,6 +425,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif self.sin_fromfltp.isChecked():
             inputdir = str(self.fltpdirectory.text())
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
+        elif self.sin_fromtif.isChecked():
+            inputdir = str(self.inputdirectory.text())
+            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
             return
@@ -487,6 +505,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         for key,param in ParameterWrap.par_dict.iteritems():
             if param.ismandatory and not param.performCheck():
                 color_list.append(param.name)
+                
         # (2) all parameters that are NOT mandatory, but are set anyways --> then we need to
         # perform a check of their children because in that case those must be set as well
         for key,param in ParameterWrap.par_dict.iteritems():
@@ -494,6 +513,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     for child_param in param.child_list:
                         if not ParameterWrap.par_dict[child_param].performCheck():
                             color_list.append(child_param)
+                            
         # (3) color the boxes
         for param in color_list:
             missing_param = getattr(self,param)

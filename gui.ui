@@ -1247,7 +1247,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>291</width>
+       <width>293</width>
        <height>251</height>
       </rect>
      </property>
@@ -1370,9 +1370,9 @@
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QRadioButton" name="sin_fromraw">
+       <widget class="QRadioButton" name="sin_fromtif">
         <property name="text">
-         <string>from raw</string>
+         <string>from tif</string>
         </property>
        </widget>
       </item>
