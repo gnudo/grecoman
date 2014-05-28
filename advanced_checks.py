@@ -85,13 +85,10 @@ class AdvancedChecks(object):
         '''
         tmp_dir = os.path.split(str(self.inputdir))
         self.cprdir = os.path.join(tmp_dir[0],'cpr')
-        if not os.path.exists(self.cprdir):
-            self.parent.cprdirectory.setText(self.cprdir)
-            return
-        else:
-            # TODO: maybe use different error handling >> create new dir or warn
-            # that the older one will be deleted
+        if os.path.exists(self.cprdir):
             self.parent.displayErrorMessage('Existing cpr-directory','Rename the destination')
+            
+        self.parent.cprdirectory.setText(self.cprdir)
                 
         
     def checkFltpFolder(self):
@@ -101,13 +98,10 @@ class AdvancedChecks(object):
         '''
         tmp_dir = os.path.split(str(self.inputdir))
         self.fltpdir = os.path.join(tmp_dir[0],'fltp')
-        if not os.path.exists(self.fltpdir):
-            self.parent.fltpdirectory.setText(self.fltpdir)
-            return
-        else:
-            # TODO: maybe use different error handling >> create new dir or warn
-            # that the older one will be deleted
+        if os.path.exists(self.fltpdir):
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
+            
+        self.parent.fltpdirectory.setText(self.fltpdir)
                 
         
     def checkRecoFolder(self):
@@ -116,13 +110,10 @@ class AdvancedChecks(object):
         '''
         tmp_dir = os.path.split(str(self.inputdir))
         self.recodir = os.path.join(tmp_dir[0],'rec_8bit')
-        if not os.path.exists(self.recodir):
-            self.parent.recodirectory.setText(self.recodir)
-            return
-        else:
-            # TODO: maybe use different error handling >> create new dir or warn
-            # that the older one will be deleted
+        if os.path.exists(self.recodir):
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
+            
+        self.parent.recodirectory.setText(self.recodir)
         
         
     def checkSinFolder(self):
@@ -177,11 +168,12 @@ class AdvancedChecks(object):
         parts.reverse()
         return parts
     
-    def getParentDir(self,dir):
+    
+    def getParentDir(self,directory):
         '''
         method that returns the parent directory of a directory
         '''
-        tmp_dir = os.path.split(dir)
+        tmp_dir = os.path.split(directory)
         return tmp_dir[0]
         
         
