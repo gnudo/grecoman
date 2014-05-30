@@ -261,6 +261,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.paganinon.isChecked():
             if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
                 self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
+                return False
             if not self.createCprAndFltpCmd('fltp',self.jobname_str):
                 return False
             
