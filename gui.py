@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Fri May 30 11:29:22 2014
+# Created: Fri May 30 16:02:09 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -594,7 +594,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-16-ge887338", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-16-g9b52c89", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -702,7 +702,7 @@ class Ui_reco_mainwin(object):
         self.label_8.setText(QtGui.QApplication.translate("reco_mainwin", "Wavelet padding mode (-M)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("reco_mainwin", "Activate wavelet ring removal", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_6.setTitle(QtGui.QApplication.translate("reco_mainwin", "Actions", None, QtGui.QApplication.UnicodeUTF8))
-        self.paganinon.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin phase retrieval", None, QtGui.QApplication.UnicodeUTF8))
+        self.paganinon.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin phase retrieval (fltp)", None, QtGui.QApplication.UnicodeUTF8))
         self.cpron.setText(QtGui.QApplication.translate("reco_mainwin", "Create CPR-s", None, QtGui.QApplication.UnicodeUTF8))
         self.reconstructon.setText(QtGui.QApplication.translate("reco_mainwin", "Do reconstruction (-R)", None, QtGui.QApplication.UnicodeUTF8))
         self.sinon.setText(QtGui.QApplication.translate("reco_mainwin", "Create sinograms (sin)", None, QtGui.QApplication.UnicodeUTF8))
