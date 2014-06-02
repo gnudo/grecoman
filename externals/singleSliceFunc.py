@@ -105,6 +105,12 @@ def main():
     args = getArgs()
 
 
+
+    ##  Get input sinogram
+    sino_file = args.sino
+    print '\nSelected input sinogram:\n', sino_file
+
+    
     
     ##  Get input/output folders
     pathin = args.pathin
@@ -136,12 +142,18 @@ def main():
 
 
     
-    ##  Get input sinogram
-    sino_file = args.sino
-    print '\nSelected input sinogram:\n', sino_file 
+    ##  Set name of the output reconstruction and
+    ##  check whether the reconstruction file already
+    ##  exists: if yes, the reconstruction file gets 
+    ##  deleted
+    reco_new = pathout + sino_file[:len(sino_file)-7] + 'rec.DMP'
+
+    if os.path.exists( reco_new ):
+        os.remove( reco_new )
+        print '\nFile: ', reco_new, 'already existing ---> it gets deleted'
 
 
-    
+
     ##  Ring removal
     flag_ring_removal = 0
     
@@ -196,8 +208,8 @@ def main():
         os.system('rm ' + pathout + 'x' + sino_file )
         os.system('rm ' + pathout + 'difference.tif') 
         reco = pathout + 'x' + sino_file[:len(sino_file)-7] + 'rec.DMP'        
-        reco_new = pathout + sino_file[:len(sino_file)-7] + 'rec.DMP' 
-        print reco 
+        print reco
+        print reco_new
         os.system( 'mv ' + reco + ' ' + reco_new )
         print 'mv ' + reco + ' ' + reco_new         
 
