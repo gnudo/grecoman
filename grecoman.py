@@ -150,8 +150,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         if self.print_cmd.isChecked():
-            if not self.displayYesNoMessage('Submit to cons-2?', self.cmd):
-                return
+            if not self.debugTextField():
+                 return
         
         # (2) run SSH-connector and check all account credentials
         if not self.job.performInitalCheck():
@@ -183,12 +183,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             single_sino = str(self.sinogramdirectory.text())
 
         ## (3) create the command line string for single slice reconstruction
-        self.cmd_string = 'python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
+        self.cmd = 'python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
         combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
             if ParameterWrap.par_dict[combo].performCheck():
-                self.cmd_string += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+                self.cmd += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
         
         if self.zingeron.isChecked():
             self.setZingerParameters()
@@ -196,16 +196,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
         for param in optional_single:
             if not getattr(self,param).text() == '':
-                self.cmd_string += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+                self.cmd += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
-            self.cmd_string += self.setWavletParameters()
+            self.cmd += self.setWavletParameters()
         
-        self.cmd_string += '--Di '+single_sino+' -i '+self.sinograms.currentText()
+        self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
         if self.print_cmd.isChecked():
-            if not self.displayYesNoMessage('Submit to cons-2?', self.cmd_string):
-                return
+            if not self.debugTextField():
+                 return
         
         ## (4) now we check credentials
         if not self.job.performInitalCheck():
@@ -214,9 +214,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (5) after all checks completed, Filippos wrapper is called to perform
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd_string+'\n','x02da-gw','x02da-cons-2')
+            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
         elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd_string)
+            self.job.submitJobLocally(self.cmd)
         
         ## (6) we look for the image
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
@@ -250,7 +250,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         self.cmd0 = "prj2sinSGE "
         self.cmds = []
-        self.cmd_string = "prj2sinSGE "
         
         ## (1) First check whether we need to create CPR-s
         if self.cpron.isChecked():
@@ -261,6 +260,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.paganinon.isChecked():
             if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
                 self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
+                return False
             if not self.createCprAndFltpCmd('fltp',self.jobname_str):
                 return False
             
@@ -728,9 +728,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for adding zinger removal parameters
         '''
-        self.cmd_string += '-z 1 '
-        self.cmd_string += ParameterWrap.par_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-        self.cmd_string += ParameterWrap.par_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
+        self.cmd += '-z 1 '
+        self.cmd += ParameterWrap.par_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
+        self.cmd += ParameterWrap.par_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
                 
         
     def displayErrorMessage(self,head,msg):
@@ -764,25 +764,51 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         myScaledPixmap = myPixmap.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
         self.ImgViewer.setPixmap(myScaledPixmap)
+        
+        
+    def debugTextField(self):
+        '''
+        prints the command line string into a textfield that can be edited and
+        saves the (un)edited text string into the class property self.cmd to
+        be submitted to the cluster
+        '''
+        debugwin = DebugCommand(self.parent)
+        QTextEdit.insertPlainText(debugwin.textfield, self.cmd)
+        if debugwin.exec_() == QDialog.Accepted:
+            tmp_string = str(QTextEdit.toPlainText(debugwin.textfield)).strip()
+            self.cmd = ' '.join(tmp_string.split())
+            print self.cmd
+            return True
+        else:
+            return False
     
     
     def test_button(self):
         '''
         playground for testing of new code
         '''
-        ww = QInputDialog()
-        text,pressOK =  ww.getText(ww,'Save Frames(Movie)','First,Last:')
-        if pressOK:
-            frameNumbers = str(text).split(',')
-            if len(frameNumbers) == 2 :
-                if (int(frameNumbers[0]) < int(frameNumbers[1])):
-                    print 'asd'
-                else:
-                    print 'starting frame > ending frame, encountered a causality Error'
-            else:
-                print 'wrong inputs'
         
-            
+
+class DebugCommand(QDialog):
+    '''
+    window for displaying and changing debug command
+    '''
+    def __init__(self,parent):
+        QDialog.__init__(self)
+        self.heading = QLabel()
+        self.heading.setObjectName("head")
+        self.heading.setText(QApplication.translate("Debug command", "Command to be submitted to", None, QApplication.UnicodeUTF8))
+        self.buttonsubmit = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+        self.textfield = QTextEdit(self)
+        self.buttonsubmit.accepted.connect(self.accept)
+        self.buttonsubmit.rejected.connect(self.reject)
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.heading)
+        layout.addWidget(self.textfield)
+        layout.addWidget(self.buttonsubmit)
+        self.resize(600, 300)
+        
+
 
 if __name__ == "__main__":
     mainapp = QApplication(sys.argv,True)  # create Qt application

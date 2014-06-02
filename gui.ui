@@ -1255,7 +1255,7 @@
       <item row="2" column="0" colspan="3">
        <widget class="QCheckBox" name="paganinon">
         <property name="text">
-         <string>Paganin phase retrieval</string>
+         <string>Paganin phase retrieval (fltp)</string>
         </property>
        </widget>
       </item>
