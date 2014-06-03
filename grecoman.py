@@ -212,22 +212,26 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.displayErrorMessage('Unsuccessful authentification', 'Could not login with AFS and/OR eaccount credentials')
             return
         
-        ## (5) after all checks completed, Filippos wrapper is called to perform
-        if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
-        elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd)
-        
-        ## (6) we look for the image
-        new_filename = self.sinograms.currentText()[:-7]+'rec.'
+        ## (5) we look for the image and delete it if it exists
+        # TODO: just preliminary as the whole PATH-modification things should be
+        #       outsourced (we want to avoid spaghetti-code!)
         if self.afsaccount.isChecked():
             basedir = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino))
         elif self.cons2.isChecked():
             basedir = self.dirs.getParentDir(single_sino)
-        
-        # TODO: just preliminary as the whole PATH-modification things should be
-        #       outsourced (we want to avoid spaghetti-code!)
+            
+        new_filename = self.sinograms.currentText()[:-7]+'rec.'
         img = basedir+'/viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+        
+        if os.path.isfile(img):
+            self.job.submitJobLocally('rm '+img)      
+        
+        ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
+        if self.afsaccount.isChecked():
+            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
+        elif self.cons2.isChecked():
+            self.job.submitJobLocally(self.cmd)
+            
         for kk in range(10):
             if os.path.isfile(img):
                 break
@@ -235,6 +239,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 sleep(0.5)
         else:
             self.displayErrorMessage('No reconstructed slice found', 'After waiting 5 sec the reconstructed slice was not found')
+            return
                                     
         ## (7) we display the image
         if self.openinfiji.isChecked():

@@ -216,6 +216,7 @@ def main():
     else:
         command_line += '-D ' + pathin + ' '
         command_line += sino_file
+        os.chdir(pathin)
         os.system( command_line ) 
 
     return 0
