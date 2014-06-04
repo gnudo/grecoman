@@ -209,7 +209,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (4) now we check credentials
         if not self.job.performInitalCheck():
-            self.displayErrorMessage('Unsuccessful authentification', 'Could not login with AFS and/OR eaccount credentials')
             return
         
         ## (5) we look for the image and delete it if it exists
@@ -223,8 +222,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
         img = basedir+'/viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
         
+        if self.openinfiji.isChecked():
+            self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
+        
         if os.path.isfile(img):
-            self.job.submitJobLocally('rm '+img)      
+            self.job.submitJobLocally('rm '+img)  
         
         ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
         if self.afsaccount.isChecked():
@@ -243,7 +245,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                                     
         ## (7) we display the image
         if self.openinfiji.isChecked():
-            self.job.submitJobLocally('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\"'+');open(\\"'+img+'\\")\"')
+            self.job.submitJobLocally('fiji -eval \"open(\\"'+img+'\\")\"')
         else:
             self.displayImageBig(img)
  

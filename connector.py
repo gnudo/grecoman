@@ -51,6 +51,13 @@ class Connector(object):
         #subprocess.check_call(cmd,shell=True,executable='/bin/bash')
         
         
+    def submitJobLocallyAndWait(self,cmd):
+        '''
+        method to run a job locally and wait until finished
+        '''
+        subprocess.check_call(cmd, shell=True)
+        
+        
     def submitJobViaGateway(self,cmd_str,gw,target):
         '''
         method to submit the job with via a gateway. we assume AFS credentials for the gateway
