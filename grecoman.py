@@ -47,6 +47,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
             SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # Paganin checkbox ("toggled" not working)
+        QObject.connect(self.reconstructon,
+            SIGNAL("clicked()"),self.setUnsetRecoCheckBox)  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji previw image checkbox ("toggled" not working)
         QObject.connect(self.submit,
@@ -108,7 +110,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'fltpdirectory','',[],False)
         ParameterWrap()(self,'sinon','',['sinogramdirectory'],False)
         ParameterWrap()(self,'sinogramdirectory','',[],False)
-        ParameterWrap()(self,'reconstructon','',['recodirectory', 'sinogramdirectory'],False)
+        ParameterWrap()(self,'reconstructon','',['recodirectory'],False)
         ParameterWrap()(self,'recodirectory','',[],False)
         ParameterWrap()(self,'withlog','',[],False)
         ParameterWrap()(self,'tifmin','-n',[],False)
@@ -129,6 +131,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
         ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
         ParameterWrap()(self,'fltp_fromtif','',['cprdirectory'],False)
+        ParameterWrap()(self,'rec_fromtif','',['inputdirectory'],False)
+        ParameterWrap()(self,'rec_fromsino','',['sinogramdirectory'],False)
         
  
     def submitToCluster(self):
@@ -461,7 +465,22 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for creating command line string for reconstruction job
         '''
         ## Compose all mandatory
-        standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        if self.rec_fromtif.isChecked():
+            inputdir = str(self.inputdirectory.text())
+            standard = '-d -R 0 -k 0 -I 1 -g 7 '
+            standard += '-f '+self.raws.text()
+            standard += ','+self.darks.text()
+            standard += ','+self.flats.text()
+            standard += ','+self.interflats.text()
+            standard += ','+self.flatfreq.text()+' '
+            standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+        elif self.rec_fromsino.isChecked():
+            inputdir = str(self.sinogramdirectory.text())
+            standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        else:
+            self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
+            return
+            
         cmd1 = self.cmd0+standard
 
         optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
@@ -476,19 +495,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 cmd1 += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
                 
         # TODO: use jobname in IO so that we don't need to hardcode
-        if self.sinon.isChecked():
+        if self.sinon.isChecked() and self.rec_fromsino.isChecked():
             cmd1 += '--hold='+jobname+'_sin '
             
         cmd1 += '--jobname='+jobname+'_reco '
         
-        inputdir = str(self.sinogramdirectory.text())
         outputdir = str(self.recodirectory.text())
+        sinodir_tmp = self.dirs.getParentDir(inputdir)+'/sino_tmp'
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
+            if self.rec_fromtif.isChecked():
+                sinodir_tmp_mod = self.dirs.afsPath2Cons2(sinodir_tmp)
+                cmd1 += '-o '+sinodir_tmp_mod+'/ '
             cmd1 += '-O '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
+            if self.rec_fromtif.isChecked():
+                cmd1 += '-o '+sinodir_tmp+'/ '
             cmd1 += '-O '+outputdir+'/ '
             cmd1 += inputdir+'/'
         
@@ -510,6 +534,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # (0) Make sure that at least one action is checked
         if not self.cpron.isChecked() and not self.paganinon.isChecked() and not self.sinon.isChecked() and not self.reconstructon.isChecked():
             self.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
+            return
     
         # (1) all parameters that are mandatory (they cannot have any child parameters)
         for key,param in ParameterWrap.par_dict.iteritems():
@@ -560,6 +585,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.paganinon.isChecked():
             ParameterWrap.par_dict['fltp_fromcpr'].resetField()
             ParameterWrap.par_dict['fltp_fromtif'].resetField()
+            
+            
+    def setUnsetRecoCheckBox(self):
+        '''
+        method that is challed when checking/unchecking the Reconstruction-box
+        '''
+        if not self.reconstructon.isChecked():
+            ParameterWrap.par_dict['rec_fromtif'].resetField()
+            ParameterWrap.par_dict['rec_fromsino'].resetField()
             
             
     def setUnsetFijiOn(self):

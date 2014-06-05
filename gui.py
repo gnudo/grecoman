@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Thu Jun  5 10:12:49 2014
+# Created: Thu Jun  5 14:42:44 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -535,6 +535,23 @@ class Ui_reco_mainwin(object):
         self.sin_fromtif = QtGui.QRadioButton(self.gridLayoutWidget_5)
         self.sin_fromtif.setObjectName("sin_fromtif")
         self.gridLayout_5.addWidget(self.sin_fromtif, 5, 0, 1, 1)
+        self.widget_2 = QtGui.QWidget(self.gridLayoutWidget_5)
+        self.widget_2.setMinimumSize(QtCore.QSize(0, 21))
+        self.widget_2.setObjectName("widget_2")
+        self.widget1 = QtGui.QWidget(self.widget_2)
+        self.widget1.setGeometry(QtCore.QRect(5, 2, 211, 23))
+        self.widget1.setObjectName("widget1")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.widget1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.rec_fromtif = QtGui.QRadioButton(self.widget1)
+        self.rec_fromtif.setMinimumSize(QtCore.QSize(0, 21))
+        self.rec_fromtif.setObjectName("rec_fromtif")
+        self.horizontalLayout_3.addWidget(self.rec_fromtif)
+        self.rec_fromsino = QtGui.QRadioButton(self.widget1)
+        self.rec_fromsino.setMinimumSize(QtCore.QSize(0, 21))
+        self.rec_fromsino.setObjectName("rec_fromsino")
+        self.horizontalLayout_3.addWidget(self.rec_fromsino)
+        self.gridLayout_5.addWidget(self.widget_2, 8, 0, 1, 3)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 820, 231, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -547,7 +564,7 @@ class Ui_reco_mainwin(object):
         self.jobname.setObjectName("jobname")
         self.horizontalLayout_2.addWidget(self.jobname)
         self.gridLayoutWidget_8 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(20, 860, 861, 32))
+        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(20, 860, 881, 32))
         self.gridLayoutWidget_8.setObjectName("gridLayoutWidget_8")
         self.gridLayout_9 = QtGui.QGridLayout(self.gridLayoutWidget_8)
         self.gridLayout_9.setObjectName("gridLayout_9")
@@ -597,7 +614,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-26-g797f2ad", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-27-g7453d46", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -716,13 +733,15 @@ class Ui_reco_mainwin(object):
         self.fltp_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from TIF", None, QtGui.QApplication.UnicodeUTF8))
         self.fltp_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
         self.sin_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from tif", None, QtGui.QApplication.UnicodeUTF8))
+        self.rec_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from TIF", None, QtGui.QApplication.UnicodeUTF8))
+        self.rec_fromsino.setText(QtGui.QApplication.translate("reco_mainwin", "from sino", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("reco_mainwin", "Job name:", None, QtGui.QApplication.UnicodeUTF8))
         self.singleslice.setText(QtGui.QApplication.translate("reco_mainwin", "Single slice", None, QtGui.QApplication.UnicodeUTF8))
         self.testbutton.setText(QtGui.QApplication.translate("reco_mainwin", "Test", None, QtGui.QApplication.UnicodeUTF8))
         self.submit.setText(QtGui.QApplication.translate("reco_mainwin", "Submit", None, QtGui.QApplication.UnicodeUTF8))
         self.clearfields.setText(QtGui.QApplication.translate("reco_mainwin", "Clear", None, QtGui.QApplication.UnicodeUTF8))
         self.print_cmd.setText(QtGui.QApplication.translate("reco_mainwin", "Print command line string (debug)", None, QtGui.QApplication.UnicodeUTF8))
-        self.develbranchon.setText(QtGui.QApplication.translate("reco_mainwin", "Use \"devel\" branch", None, QtGui.QApplication.UnicodeUTF8))
+        self.develbranchon.setText(QtGui.QApplication.translate("reco_mainwin", "Use SGE \"devel\" branch", None, QtGui.QApplication.UnicodeUTF8))
         self.openinfiji.setText(QtGui.QApplication.translate("reco_mainwin", "Open preview image in Fiji (externally)", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuloadsettings.setText(QtGui.QApplication.translate("reco_mainwin", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
