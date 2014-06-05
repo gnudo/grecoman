@@ -255,7 +255,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         main method for creating the command line string. for consistency reasons the flags are
         defined in the registerAllParameters() method only (and only there!)
         '''
-        self.cmd0 = "prj2sinSGE "
+        if self.develbranchon.isChecked():
+            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/src/prj2sinSGE.sh "
+        else:
+            self.cmd0 = "prj2sinSGE "
         self.cmds = []
         
         ## (1) First check whether we need to create CPR-s
@@ -547,6 +550,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.sinon.isChecked():
             ParameterWrap.par_dict['sin_fromcpr'].resetField()
             ParameterWrap.par_dict['sin_fromfltp'].resetField()
+            ParameterWrap.par_dict['sin_fromtif'].resetField()
             
             
     def setUnsetPaganinCheckBox(self):

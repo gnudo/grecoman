@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Tue Jun  3 09:13:30 2014
+# Created: Thu Jun  5 10:12:49 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -547,7 +547,7 @@ class Ui_reco_mainwin(object):
         self.jobname.setObjectName("jobname")
         self.horizontalLayout_2.addWidget(self.jobname)
         self.gridLayoutWidget_8 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(20, 860, 661, 32))
+        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(20, 860, 861, 32))
         self.gridLayoutWidget_8.setObjectName("gridLayoutWidget_8")
         self.gridLayout_9 = QtGui.QGridLayout(self.gridLayoutWidget_8)
         self.gridLayout_9.setObjectName("gridLayout_9")
@@ -566,6 +566,9 @@ class Ui_reco_mainwin(object):
         self.print_cmd = QtGui.QCheckBox(self.gridLayoutWidget_8)
         self.print_cmd.setObjectName("print_cmd")
         self.gridLayout_9.addWidget(self.print_cmd, 0, 4, 1, 1)
+        self.develbranchon = QtGui.QCheckBox(self.gridLayoutWidget_8)
+        self.develbranchon.setObjectName("develbranchon")
+        self.gridLayout_9.addWidget(self.develbranchon, 0, 5, 1, 1)
         self.openinfiji = QtGui.QCheckBox(self.centralwidget)
         self.openinfiji.setGeometry(QtCore.QRect(320, 820, 281, 23))
         self.openinfiji.setObjectName("openinfiji")
@@ -594,7 +597,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-24-gc0bf658", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-26-g797f2ad", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -719,6 +722,7 @@ class Ui_reco_mainwin(object):
         self.submit.setText(QtGui.QApplication.translate("reco_mainwin", "Submit", None, QtGui.QApplication.UnicodeUTF8))
         self.clearfields.setText(QtGui.QApplication.translate("reco_mainwin", "Clear", None, QtGui.QApplication.UnicodeUTF8))
         self.print_cmd.setText(QtGui.QApplication.translate("reco_mainwin", "Print command line string (debug)", None, QtGui.QApplication.UnicodeUTF8))
+        self.develbranchon.setText(QtGui.QApplication.translate("reco_mainwin", "Use \"devel\" branch", None, QtGui.QApplication.UnicodeUTF8))
         self.openinfiji.setText(QtGui.QApplication.translate("reco_mainwin", "Open preview image in Fiji (externally)", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuloadsettings.setText(QtGui.QApplication.translate("reco_mainwin", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
