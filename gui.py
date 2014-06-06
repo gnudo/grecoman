@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Fri Jun  6 10:15:28 2014
+# Created: Fri Jun  6 13:56:12 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -484,7 +484,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_6.setGeometry(QtCore.QRect(940, 550, 301, 281))
         self.groupBox_6.setObjectName("groupBox_6")
         self.gridLayoutWidget_5 = QtGui.QWidget(self.groupBox_6)
-        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 30, 293, 251))
+        self.gridLayoutWidget_5.setGeometry(QtCore.QRect(10, 20, 293, 261))
         self.gridLayoutWidget_5.setObjectName("gridLayoutWidget_5")
         self.gridLayout_5 = QtGui.QGridLayout(self.gridLayoutWidget_5)
         self.gridLayout_5.setObjectName("gridLayout_5")
@@ -526,6 +526,7 @@ class Ui_reco_mainwin(object):
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 191, 31))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.fltp_fromtif = QtGui.QRadioButton(self.horizontalLayoutWidget)
         self.fltp_fromtif.setObjectName("fltp_fromtif")
@@ -541,9 +542,10 @@ class Ui_reco_mainwin(object):
         self.widget_2.setMinimumSize(QtCore.QSize(0, 21))
         self.widget_2.setObjectName("widget_2")
         self.layoutWidget = QtGui.QWidget(self.widget_2)
-        self.layoutWidget.setGeometry(QtCore.QRect(5, 2, 211, 23))
+        self.layoutWidget.setGeometry(QtCore.QRect(5, 2, 211, 31))
         self.layoutWidget.setObjectName("layoutWidget")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.rec_fromtif = QtGui.QRadioButton(self.layoutWidget)
         self.rec_fromtif.setMinimumSize(QtCore.QSize(0, 21))
@@ -616,7 +618,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-30-g166cbf5", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1-beta-32-ga3e83c3", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))

@@ -1258,9 +1258,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>20</y>
        <width>293</width>
-       <height>251</height>
+       <height>261</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
@@ -1363,6 +1363,9 @@
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="fltp_fromtif">
             <property name="text">
@@ -1402,10 +1405,13 @@
            <x>5</x>
            <y>2</y>
            <width>211</width>
-           <height>23</height>
+           <height>31</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="rec_fromtif">
             <property name="minimumSize">
