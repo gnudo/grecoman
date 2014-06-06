@@ -1,5 +1,7 @@
-Graphical RECOnstruction MANager 1.0.0
+GRecoMan 1.0.0
 ========
+
+Public repository of the Graphical Reconstruction Manager for use at the [TOMCAT beamline](http://www.psi.ch/sls/tomcat/).
 
 ## Installation
 Run the following command from x02da-cons-2 *or* on your AFS account:
