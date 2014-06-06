@@ -473,7 +473,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             standard += ','+self.flats.text()
             standard += ','+self.interflats.text()
             standard += ','+self.flatfreq.text()+' '
-            standard += self.setWavletParameters()
+            if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+                standard += self.setWavletParameters()
             standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
             inputdir = str(self.sinogramdirectory.text())
