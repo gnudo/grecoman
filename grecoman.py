@@ -26,9 +26,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
         
-        ## TODO: just for GUI testin
-        self.afsaccount.setChecked(1)
-        
         ## GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
