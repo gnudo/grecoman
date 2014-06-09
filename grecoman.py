@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## TODO: just for GUI testin
         self.afsaccount.setChecked(1)
         
+        ## GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
         QObject.connect(self.inputdirectory,
@@ -47,8 +48,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
             SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # Paganin checkbox ("toggled" not working)
+        QObject.connect(self.reconstructon,
+            SIGNAL("clicked()"),self.setUnsetRecoCheckBox)  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji previw image checkbox ("toggled" not working)
+        
+        ## GUI buttons connections
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -57,10 +62,35 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("released()"),self.test_button)  # BUTTON test button
         QObject.connect(self.singleslice,
             SIGNAL("released()"),self.calcSingleSlice)  # BUTTON Single Slice calculation
+        
+        ## MENU connections
         QObject.connect(self.menuloadsettings,
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+        QObject.connect(self.menuCreateCpr,
+            SIGNAL("triggered()"),lambda param='createCpr': self.loadTemplate(param))  # MENU create CPR
+        QObject.connect(self.menuCreateCprLog,
+            SIGNAL("triggered()"),lambda param='createCprLog': self.loadTemplate(param))  # MENU create CPR with log correction
+        QObject.connect(self.menuCreateFltp,
+            SIGNAL("triggered()"),lambda param='createFltp': self.loadTemplate(param))  # MENU create Fltp
+        QObject.connect(self.menuCreateFltpCpr,
+            SIGNAL("triggered()"),lambda param='createFltpCpr': self.loadTemplate(param))  # MENU create Fltp+CPR
+        QObject.connect(self.menuCreateSinosQuick,
+            SIGNAL("triggered()"),lambda param='createSinosQuick': self.loadTemplate(param))  # MENU create Sinos quick
+        QObject.connect(self.menuCreateSinosFromTif,
+            SIGNAL("triggered()"),lambda param='createSinosFromTif': self.loadTemplate(param))  # MENU create Sinos from TIF
+        QObject.connect(self.menuCreateSinosFromFltp,
+            SIGNAL("triggered()"),lambda param='createSinosFromFltp': self.loadTemplate(param))  # MENU create Sinos from FLTP
+        QObject.connect(self.menuCreateRecoStandard,
+            SIGNAL("triggered()"),lambda param='createRecoStandard': self.loadTemplate(param))  # MENU create Recos from TIF
+        QObject.connect(self.menuCreateRecoPaganin,
+            SIGNAL("triggered()"),lambda param='createRecoPaganin': self.loadTemplate(param))  # MENU create Recos from FLTP
+        QObject.connect(self.menuRingRemoval1,
+            SIGNAL("triggered()"),lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
+        QObject.connect(self.menuRingRemoval2,
+            SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
+        
         
     def registerAllParameters(self):
         '''
@@ -108,7 +138,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'fltpdirectory','',[],False)
         ParameterWrap()(self,'sinon','',['sinogramdirectory'],False)
         ParameterWrap()(self,'sinogramdirectory','',[],False)
-        ParameterWrap()(self,'reconstructon','',['recodirectory', 'sinogramdirectory'],False)
+        ParameterWrap()(self,'reconstructon','',['recodirectory'],False)
         ParameterWrap()(self,'recodirectory','',[],False)
         ParameterWrap()(self,'withlog','',[],False)
         ParameterWrap()(self,'tifmin','-n',[],False)
@@ -129,6 +159,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
         ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
         ParameterWrap()(self,'fltp_fromtif','',['cprdirectory'],False)
+        ParameterWrap()(self,'rec_fromtif','',['inputdirectory'],False)
+        ParameterWrap()(self,'rec_fromsino','',['sinogramdirectory'],False)
         
  
     def submitToCluster(self):
@@ -255,7 +287,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         main method for creating the command line string. for consistency reasons the flags are
         defined in the registerAllParameters() method only (and only there!)
         '''
-        self.cmd0 = "prj2sinSGE "
+        if self.develbranchon.isChecked():
+            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/src/prj2sinSGE.sh "
+        else:
+            self.cmd0 = "prj2sinSGE "
         self.cmds = []
         
         ## (1) First check whether we need to create CPR-s
@@ -458,7 +493,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for creating command line string for reconstruction job
         '''
         ## Compose all mandatory
-        standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        if self.rec_fromtif.isChecked():
+            inputdir = str(self.inputdirectory.text())
+            standard = '-d -R 0 -k 0 -I 1 -g 7 '
+            standard += '-f '+self.raws.text()
+            standard += ','+self.darks.text()
+            standard += ','+self.flats.text()
+            standard += ','+self.interflats.text()
+            standard += ','+self.flatfreq.text()+' '
+            if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+                standard += self.setWavletParameters()
+            standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+        elif self.rec_fromsino.isChecked():
+            inputdir = str(self.sinogramdirectory.text())
+            standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        else:
+            self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
+            return
+            
         cmd1 = self.cmd0+standard
 
         optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
@@ -473,19 +525,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 cmd1 += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
                 
         # TODO: use jobname in IO so that we don't need to hardcode
-        if self.sinon.isChecked():
+        if self.sinon.isChecked() and self.rec_fromsino.isChecked():
             cmd1 += '--hold='+jobname+'_sin '
             
         cmd1 += '--jobname='+jobname+'_reco '
         
-        inputdir = str(self.sinogramdirectory.text())
         outputdir = str(self.recodirectory.text())
+        sinodir_tmp = self.dirs.getParentDir(inputdir)+'/sino_tmp'
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
+            if self.rec_fromtif.isChecked():
+                sinodir_tmp_mod = self.dirs.afsPath2Cons2(sinodir_tmp)
+                cmd1 += '-o '+sinodir_tmp_mod+'/ '
             cmd1 += '-O '+outputdir_mod+'/ '
             cmd1 += inputdir_mod+'/'
         elif self.cons2.isChecked():
+            if self.rec_fromtif.isChecked():
+                cmd1 += '-o '+sinodir_tmp+'/ '
             cmd1 += '-O '+outputdir+'/ '
             cmd1 += inputdir+'/'
         
@@ -507,6 +564,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # (0) Make sure that at least one action is checked
         if not self.cpron.isChecked() and not self.paganinon.isChecked() and not self.sinon.isChecked() and not self.reconstructon.isChecked():
             self.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
+            return
     
         # (1) all parameters that are mandatory (they cannot have any child parameters)
         for key,param in ParameterWrap.par_dict.iteritems():
@@ -547,6 +605,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.sinon.isChecked():
             ParameterWrap.par_dict['sin_fromcpr'].resetField()
             ParameterWrap.par_dict['sin_fromfltp'].resetField()
+            ParameterWrap.par_dict['sin_fromtif'].resetField()
             
             
     def setUnsetPaganinCheckBox(self):
@@ -556,6 +615,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.paganinon.isChecked():
             ParameterWrap.par_dict['fltp_fromcpr'].resetField()
             ParameterWrap.par_dict['fltp_fromtif'].resetField()
+            
+            
+    def setUnsetRecoCheckBox(self):
+        '''
+        method that is challed when checking/unchecking the Reconstruction-box
+        '''
+        if not self.reconstructon.isChecked():
+            ParameterWrap.par_dict['rec_fromtif'].resetField()
+            ParameterWrap.par_dict['rec_fromsino'].resetField()
             
             
     def setUnsetFijiOn(self):
@@ -603,20 +671,39 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.lastdir = self.dirs.getParentDir(str(savefile))
         
         
-    def loadConfigFile(self):
+    def loadConfigFile(self, loadfile = '', returnvalue = False):
         '''
-        method for loading config-file (from Menu item)
+        method for loading config-file (from Menu item) or by giving absolute config-file path name
+        (loadfile). if returnvalue is set True then the method returns the config-file object.
         '''
-        loadfile = QFileDialog.getOpenFileName(self,
+        if not loadfile:
+            loadfile = QFileDialog.getOpenFileName(self,
                         'Select where the config file is located',self.lastdir)
         if not loadfile:
             return
+        self.lastdir = self.dirs.getParentDir(str(loadfile))
         file_obj = FileIO(loadfile)
         file_obj.loadFile(self,ParameterWrap)
         
+        if returnvalue:
+            return file_obj
+        
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
-        self.lastdir = self.dirs.getParentDir(str(loadfile))
+        
+        
+    def loadTemplate(self, templatename):
+        '''
+        method for loading menu template for SGE-script. it's basically the same as loading a
+        config file, only with additional color-highlighting
+        '''
+        template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
+        template_obj = self.loadConfigFile(template_file, True)
+        
+        self.resetAllStyleSheets()
+        for param in template_obj.config.options(template_obj.heading):
+            name_handle = getattr(self,param)
+            name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
         
         
     def getComboBoxContent(self,box):

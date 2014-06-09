@@ -1,0 +1,16 @@
+[GRecoMan Config]
+cprdirectory = 
+darks = 
+prefix = 
+cpron = true
+raws = 
+paganinon = false
+flatfreq = 
+inputdirectory = 
+jobname = 
+fltp_fromtif = false
+sinon = false
+reconstructon = false
+withlog = false
+interflats = 
+flats = 

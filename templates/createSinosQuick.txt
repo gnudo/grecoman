@@ -1,0 +1,18 @@
+[GRecoMan Config] 
+darks = 
+prefix =  
+cpron = false
+steplines = 50
+raws = 
+paganinon = false
+flatfreq = 
+inputdirectory = 
+jobname = 
+sinon = true
+sinogramdirectory = 
+reconstructon = false
+withlog = false 
+interflats = 
+flats = 
+sin_fromtif = true
+

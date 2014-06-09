@@ -1,0 +1,25 @@
+[GRecoMan Config] 
+darks = 
+prefix =  
+cpron = false
+steplines = 1
+raws = 
+paganinon = false
+flatfreq = 
+inputdirectory = 
+jobname = 
+sinon = true
+sinogramdirectory = 
+reconstructon = false
+withlog = false 
+interflats = 
+flats = 
+sin_fromfltp = true
+pag_delta = 
+fltpdirectory = 
+pag_distance = 
+paganinon = true
+fltp_fromtif = true
+pag_energy = 
+pag_beta = 
+pag_pxsize = 

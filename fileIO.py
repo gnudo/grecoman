@@ -50,7 +50,7 @@ class FileIO(object):
             if type(name_handle).__name__ == 'QLineEdit':
                 txt = self.config.get(self.heading, param)
                 name_handle.setText(txt)
-            if type(name_handle).__name__ == 'QCheckBox':
+            if type(name_handle).__name__ == 'QCheckBox' or type(name_handle).__name__ == 'QRadioButton':
                 checkstatus = self.config.getboolean(self.heading, param)
                 name_handle.setChecked(checkstatus)
             if type(name_handle).__name__ == 'QComboBox':

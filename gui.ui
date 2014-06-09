@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
+      <y>30</y>
       <width>301</width>
       <height>521</height>
      </rect>
@@ -357,7 +357,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>210</y>
+      <y>220</y>
       <width>611</width>
       <height>611</height>
      </rect>
@@ -388,12 +388,18 @@
       <x>410</x>
       <y>0</y>
       <width>441</width>
-      <height>23</height>
+      <height>31</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QLabel" name="label_18">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>21</height>
+        </size>
+       </property>
        <property name="text">
         <string>Application is running on:</string>
        </property>
@@ -401,6 +407,12 @@
      </item>
      <item row="0" column="1">
       <widget class="QRadioButton" name="afsaccount">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>21</height>
+        </size>
+       </property>
        <property name="text">
         <string>AFS-account</string>
        </property>
@@ -408,6 +420,12 @@
      </item>
      <item row="0" column="2">
       <widget class="QRadioButton" name="cons2">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>21</height>
+        </size>
+       </property>
        <property name="text">
         <string>x02da-cons-2</string>
        </property>
@@ -419,7 +437,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>540</y>
+      <y>550</y>
       <width>301</width>
       <height>271</height>
      </rect>
@@ -583,7 +601,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>20</y>
+      <y>30</y>
       <width>301</width>
       <height>171</height>
      </rect>
@@ -658,7 +676,7 @@
     <property name="geometry">
      <rect>
       <x>940</x>
-      <y>20</y>
+      <y>30</y>
       <width>301</width>
       <height>521</height>
      </rect>
@@ -672,7 +690,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>480</height>
+       <height>544</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -969,7 +987,7 @@
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>20</y>
+      <y>30</y>
       <width>301</width>
       <height>191</height>
      </rect>
@@ -1234,7 +1252,7 @@
     <property name="geometry">
      <rect>
       <x>940</x>
-      <y>540</y>
+      <y>550</y>
       <width>301</width>
       <height>281</height>
      </rect>
@@ -1246,9 +1264,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>20</y>
        <width>293</width>
-       <height>251</height>
+       <height>261</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
@@ -1351,6 +1369,9 @@
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="fltp_fromtif">
             <property name="text">
@@ -1374,6 +1395,57 @@
         <property name="text">
          <string>from tif</string>
         </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="3">
+       <widget class="QWidget" name="widget_2" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>21</height>
+         </size>
+        </property>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>5</x>
+           <y>2</y>
+           <width>211</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="rec_fromtif">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>21</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>from TIF</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rec_fromsino">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>21</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>from sino</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -1406,7 +1478,7 @@
      <rect>
       <x>20</x>
       <y>860</y>
-      <width>661</width>
+      <width>881</width>
       <height>32</height>
      </rect>
     </property>
@@ -1446,13 +1518,20 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="5">
+      <widget class="QCheckBox" name="develbranchon">
+       <property name="text">
+        <string>Use SGE &quot;devel&quot; branch</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QCheckBox" name="openinfiji">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>820</y>
+      <y>830</y>
       <width>281</width>
       <height>23</height>
      </rect>
@@ -1468,7 +1547,7 @@
      <x>0</x>
      <y>0</y>
      <width>1256</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -1479,7 +1558,49 @@
     <addaction name="menusavesettings"/>
     <addaction name="exitapp"/>
    </widget>
+   <widget class="QMenu" name="menuRun">
+    <property name="title">
+     <string>Run</string>
+    </property>
+    <widget class="QMenu" name="menuReconstruction">
+     <property name="title">
+      <string>Reconstruction</string>
+     </property>
+     <addaction name="menuCreateRecoStandard"/>
+     <addaction name="menuCreateRecoPaganin"/>
+    </widget>
+    <widget class="QMenu" name="menuProjections">
+     <property name="title">
+      <string>Projections</string>
+     </property>
+     <addaction name="menuCreateCpr"/>
+     <addaction name="menuCreateCprLog"/>
+     <addaction name="menuCreateFltp"/>
+     <addaction name="menuCreateFltpCpr"/>
+    </widget>
+    <widget class="QMenu" name="menuSinograms">
+     <property name="title">
+      <string>Sinograms</string>
+     </property>
+     <addaction name="menuCreateSinosQuick"/>
+     <addaction name="menuCreateSinosFromTif"/>
+     <addaction name="menuCreateSinosFromFltp"/>
+    </widget>
+    <widget class="QMenu" name="menuRing_removal">
+     <property name="title">
+      <string>Ring removal</string>
+     </property>
+     <addaction name="menuRingRemoval1"/>
+     <addaction name="menuRingRemoval2"/>
+    </widget>
+    <addaction name="menuProjections"/>
+    <addaction name="menuSinograms"/>
+    <addaction name="menuReconstruction"/>
+    <addaction name="separator"/>
+    <addaction name="menuRing_removal"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuRun"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuloadsettings">
@@ -1495,6 +1616,61 @@
   <action name="exitapp">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="menuCreateRecoStandard">
+   <property name="text">
+    <string>Standard</string>
+   </property>
+  </action>
+  <action name="menuCreateRecoPaganin">
+   <property name="text">
+    <string>With Paganin phase retrieval</string>
+   </property>
+  </action>
+  <action name="menuCreateCpr">
+   <property name="text">
+    <string>Correct projections (flat+dark)</string>
+   </property>
+  </action>
+  <action name="menuCreateCprLog">
+   <property name="text">
+    <string>Correct projections with log (standard CT)</string>
+   </property>
+  </action>
+  <action name="menuCreateFltp">
+   <property name="text">
+    <string>Paganin phase retrieval</string>
+   </property>
+  </action>
+  <action name="menuCreateFltpCpr">
+   <property name="text">
+    <string>Paganin phase retrieval (+keep corrected projs)</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosQuick">
+   <property name="text">
+    <string>Quick sinograms for preview</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosFromTif">
+   <property name="text">
+    <string>Sinograms from TIF</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosFromFltp">
+   <property name="text">
+    <string>Sinograms from FLTP</string>
+   </property>
+  </action>
+  <action name="menuRingRemoval1">
+   <property name="text">
+    <string>Weak thin rings</string>
+   </property>
+  </action>
+  <action name="menuRingRemoval2">
+   <property name="text">
+    <string>Strong thick rings</string>
    </property>
   </action>
  </widget>

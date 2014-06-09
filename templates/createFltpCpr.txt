@@ -1,0 +1,24 @@
+[GRecoMan Config]
+cprdirectory = 
+darks = 
+prefix = 
+pag_delta = 
+fltpdirectory = 
+cpron = true
+pag_distance = 
+raws = 
+paganinon = true
+fltp_fromtif = false
+fltp_fromcpr = true
+flatfreq = 
+inputdirectory = 
+jobname = 
+sinon = false
+pag_energy = 
+pag_beta = 
+reconstructon = false
+withlog = false
+pag_pxsize = 
+interflats = 
+flats = 
+

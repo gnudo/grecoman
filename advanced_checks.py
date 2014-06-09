@@ -17,6 +17,7 @@ class AdvancedChecks(object):
         self.cprdir = []
         self.recodir = []
         self.homedir = os.path.expanduser('~')
+        self.runningdir = os.path.dirname(os.path.realpath(__file__))
         self.parent = parent
         
         
@@ -167,6 +168,16 @@ class AdvancedChecks(object):
             path = path_tmp
         parts.reverse()
         return parts
+    
+    
+    def glueOsPath(self, pathlist):
+        '''
+        join list to an OS path
+        '''
+        newpath = pathlist[0]
+        for item in pathlist[1:]:
+            newpath = os.path.join(newpath,item)
+        return newpath
     
     
     def getParentDir(self,directory):
