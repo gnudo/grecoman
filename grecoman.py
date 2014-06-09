@@ -55,8 +55,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
             SIGNAL("released()"),self.clearAllFields)  # BUTTON clear all fields method
-        QObject.connect(self.testbutton,
-            SIGNAL("released()"),self.test_button)  # BUTTON test button
         QObject.connect(self.singleslice,
             SIGNAL("released()"),self.calcSingleSlice)  # BUTTON Single Slice calculation
         
@@ -872,12 +870,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return True
         else:
             return False
-    
-    
-    def test_button(self):
-        '''
-        playground for testing of new code
-        '''
         
 
 class DebugCommand(QDialog):

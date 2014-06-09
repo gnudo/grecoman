@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created: Mon Jun  9 14:45:55 2014
+# Created: Mon Jun  9 15:34:56 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -599,17 +599,14 @@ class Ui_reco_mainwin(object):
         self.jobname.setObjectName(_fromUtf8("jobname"))
         self.horizontalLayout_2.addWidget(self.jobname)
         self.gridLayoutWidget_8 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(20, 860, 881, 32))
+        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(10, 860, 801, 32))
         self.gridLayoutWidget_8.setObjectName(_fromUtf8("gridLayoutWidget_8"))
         self.gridLayout_9 = QtGui.QGridLayout(self.gridLayoutWidget_8)
         self.gridLayout_9.setMargin(0)
         self.gridLayout_9.setObjectName(_fromUtf8("gridLayout_9"))
         self.singleslice = QtGui.QPushButton(self.gridLayoutWidget_8)
         self.singleslice.setObjectName(_fromUtf8("singleslice"))
-        self.gridLayout_9.addWidget(self.singleslice, 0, 3, 1, 1)
-        self.testbutton = QtGui.QPushButton(self.gridLayoutWidget_8)
-        self.testbutton.setObjectName(_fromUtf8("testbutton"))
-        self.gridLayout_9.addWidget(self.testbutton, 0, 2, 1, 1)
+        self.gridLayout_9.addWidget(self.singleslice, 0, 2, 1, 1)
         self.submit = QtGui.QPushButton(self.gridLayoutWidget_8)
         self.submit.setObjectName(_fromUtf8("submit"))
         self.gridLayout_9.addWidget(self.submit, 0, 0, 1, 1)
@@ -618,10 +615,10 @@ class Ui_reco_mainwin(object):
         self.gridLayout_9.addWidget(self.clearfields, 0, 1, 1, 1)
         self.print_cmd = QtGui.QCheckBox(self.gridLayoutWidget_8)
         self.print_cmd.setObjectName(_fromUtf8("print_cmd"))
-        self.gridLayout_9.addWidget(self.print_cmd, 0, 4, 1, 1)
+        self.gridLayout_9.addWidget(self.print_cmd, 0, 3, 1, 1)
         self.develbranchon = QtGui.QCheckBox(self.gridLayoutWidget_8)
         self.develbranchon.setObjectName(_fromUtf8("develbranchon"))
-        self.gridLayout_9.addWidget(self.develbranchon, 0, 5, 1, 1)
+        self.gridLayout_9.addWidget(self.develbranchon, 0, 4, 1, 1)
         self.openinfiji = QtGui.QCheckBox(self.centralwidget)
         self.openinfiji.setGeometry(QtCore.QRect(320, 830, 281, 23))
         self.openinfiji.setObjectName(_fromUtf8("openinfiji"))
@@ -822,7 +819,6 @@ class Ui_reco_mainwin(object):
         self.rec_fromsino.setText(_translate("reco_mainwin", "from sino", None))
         self.label_30.setText(_translate("reco_mainwin", "Job name:", None))
         self.singleslice.setText(_translate("reco_mainwin", "Single slice", None))
-        self.testbutton.setText(_translate("reco_mainwin", "Test", None))
         self.submit.setText(_translate("reco_mainwin", "Submit", None))
         self.clearfields.setText(_translate("reco_mainwin", "Clear", None))
         self.print_cmd.setText(_translate("reco_mainwin", "Print command line string (debug)", None))
