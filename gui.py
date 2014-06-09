@@ -699,7 +699,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(_translate("reco_mainwin", "GRecoMan 1.1-beta-33-gdb6b8d9", None))
+        reco_mainwin.setWindowTitle(_translate("reco_mainwin", "GRecoMan 1.0.0", None))
         self.groupBox_3.setTitle(_translate("reco_mainwin", "Input Data", None))
         self.label_10.setText(_translate("reco_mainwin", "Input directory (TIF folder)", None))
         self.setinputdirectory.setText(_translate("reco_mainwin", "...", None))
