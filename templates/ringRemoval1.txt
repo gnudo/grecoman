@@ -1,0 +1,7 @@
+[GRecoMan Config]
+waveletpaddingmode = 2
+runringremoval = true 
+waveletdecompositionlevel = 1:4
+sigmaingaussfilter = 2.5 
+wavelettype = 11
+

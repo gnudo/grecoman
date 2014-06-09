@@ -394,6 +394,12 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QLabel" name="label_18">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>21</height>
+        </size>
+       </property>
        <property name="text">
         <string>Application is running on:</string>
        </property>
@@ -684,7 +690,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>480</height>
+       <height>544</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -1541,7 +1547,7 @@
      <x>0</x>
      <y>0</y>
      <width>1256</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
@@ -1552,7 +1558,49 @@
     <addaction name="menusavesettings"/>
     <addaction name="exitapp"/>
    </widget>
+   <widget class="QMenu" name="menuRun">
+    <property name="title">
+     <string>Run</string>
+    </property>
+    <widget class="QMenu" name="menuReconstruction">
+     <property name="title">
+      <string>Reconstruction</string>
+     </property>
+     <addaction name="menuCreateRecoStandard"/>
+     <addaction name="menuCreateRecoPaganin"/>
+    </widget>
+    <widget class="QMenu" name="menuProjections">
+     <property name="title">
+      <string>Projections</string>
+     </property>
+     <addaction name="menuCreateCpr"/>
+     <addaction name="menuCreateCprLog"/>
+     <addaction name="menuCreateFltp"/>
+     <addaction name="menuCreateFltpCpr"/>
+    </widget>
+    <widget class="QMenu" name="menuSinograms">
+     <property name="title">
+      <string>Sinograms</string>
+     </property>
+     <addaction name="menuCreateSinosQuick"/>
+     <addaction name="menuCreateSinosFromTif"/>
+     <addaction name="menuCreateSinosFromFltp"/>
+    </widget>
+    <widget class="QMenu" name="menuRing_removal">
+     <property name="title">
+      <string>Ring removal</string>
+     </property>
+     <addaction name="menuRingRemoval1"/>
+     <addaction name="menuRingRemoval2"/>
+    </widget>
+    <addaction name="menuProjections"/>
+    <addaction name="menuSinograms"/>
+    <addaction name="menuReconstruction"/>
+    <addaction name="separator"/>
+    <addaction name="menuRing_removal"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuRun"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuloadsettings">
@@ -1568,6 +1616,61 @@
   <action name="exitapp">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="menuCreateRecoStandard">
+   <property name="text">
+    <string>Standard</string>
+   </property>
+  </action>
+  <action name="menuCreateRecoPaganin">
+   <property name="text">
+    <string>With Paganin phase retrieval</string>
+   </property>
+  </action>
+  <action name="menuCreateCpr">
+   <property name="text">
+    <string>Correct projections (flat+dark)</string>
+   </property>
+  </action>
+  <action name="menuCreateCprLog">
+   <property name="text">
+    <string>Correct projections with log (standard CT)</string>
+   </property>
+  </action>
+  <action name="menuCreateFltp">
+   <property name="text">
+    <string>Paganin phase retrieval</string>
+   </property>
+  </action>
+  <action name="menuCreateFltpCpr">
+   <property name="text">
+    <string>Paganin phase retrieval (+keep corrected projs)</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosQuick">
+   <property name="text">
+    <string>Quick sinograms for preview</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosFromTif">
+   <property name="text">
+    <string>Sinograms from TIF</string>
+   </property>
+  </action>
+  <action name="menuCreateSinosFromFltp">
+   <property name="text">
+    <string>Sinograms from FLTP</string>
+   </property>
+  </action>
+  <action name="menuRingRemoval1">
+   <property name="text">
+    <string>Weak thin rings</string>
+   </property>
+  </action>
+  <action name="menuRingRemoval2">
+   <property name="text">
+    <string>Strong thick rings</string>
    </property>
   </action>
  </widget>

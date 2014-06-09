@@ -1,0 +1,19 @@
+[GRecoMan Config]
+darks = 
+prefix =  
+cpron = false 
+raws = 
+flatfreq = 
+inputdirectory = 
+jobname = 
+sinon = false
+reconstructon = true
+withlog = false 
+outputtype = 0 
+interflats = 
+flats = 
+rec_fromtif = true
+recodirectory = 
+tifmin =
+tifmax = 
+

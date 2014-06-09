@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## TODO: just for GUI testin
         self.afsaccount.setChecked(1)
         
+        ## GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
         QObject.connect(self.inputdirectory,
@@ -51,6 +52,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.setUnsetRecoCheckBox)  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji previw image checkbox ("toggled" not working)
+        
+        ## GUI buttons connections
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
@@ -59,10 +62,35 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("released()"),self.test_button)  # BUTTON test button
         QObject.connect(self.singleslice,
             SIGNAL("released()"),self.calcSingleSlice)  # BUTTON Single Slice calculation
+        
+        ## MENU connections
         QObject.connect(self.menuloadsettings,
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+        QObject.connect(self.menuCreateCpr,
+            SIGNAL("triggered()"),lambda param='createCpr': self.loadTemplate(param))  # MENU create CPR
+        QObject.connect(self.menuCreateCprLog,
+            SIGNAL("triggered()"),lambda param='createCprLog': self.loadTemplate(param))  # MENU create CPR with log correction
+        QObject.connect(self.menuCreateFltp,
+            SIGNAL("triggered()"),lambda param='createFltp': self.loadTemplate(param))  # MENU create Fltp
+        QObject.connect(self.menuCreateFltpCpr,
+            SIGNAL("triggered()"),lambda param='createFltpCpr': self.loadTemplate(param))  # MENU create Fltp+CPR
+        QObject.connect(self.menuCreateSinosQuick,
+            SIGNAL("triggered()"),lambda param='createSinosQuick': self.loadTemplate(param))  # MENU create Sinos quick
+        QObject.connect(self.menuCreateSinosFromTif,
+            SIGNAL("triggered()"),lambda param='createSinosFromTif': self.loadTemplate(param))  # MENU create Sinos from TIF
+        QObject.connect(self.menuCreateSinosFromFltp,
+            SIGNAL("triggered()"),lambda param='createSinosFromFltp': self.loadTemplate(param))  # MENU create Sinos from FLTP
+        QObject.connect(self.menuCreateRecoStandard,
+            SIGNAL("triggered()"),lambda param='createRecoStandard': self.loadTemplate(param))  # MENU create Recos from TIF
+        QObject.connect(self.menuCreateRecoPaganin,
+            SIGNAL("triggered()"),lambda param='createRecoPaganin': self.loadTemplate(param))  # MENU create Recos from FLTP
+        QObject.connect(self.menuRingRemoval1,
+            SIGNAL("triggered()"),lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
+        QObject.connect(self.menuRingRemoval2,
+            SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
+        
         
     def registerAllParameters(self):
         '''
@@ -643,20 +671,39 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.lastdir = self.dirs.getParentDir(str(savefile))
         
         
-    def loadConfigFile(self):
+    def loadConfigFile(self, loadfile = '', returnvalue = False):
         '''
-        method for loading config-file (from Menu item)
+        method for loading config-file (from Menu item) or by giving absolute config-file path name
+        (loadfile). if returnvalue is set True then the method returns the config-file object.
         '''
-        loadfile = QFileDialog.getOpenFileName(self,
+        if not loadfile:
+            loadfile = QFileDialog.getOpenFileName(self,
                         'Select where the config file is located',self.lastdir)
         if not loadfile:
             return
+        self.lastdir = self.dirs.getParentDir(str(loadfile))
         file_obj = FileIO(loadfile)
         file_obj.loadFile(self,ParameterWrap)
         
+        if returnvalue:
+            return file_obj
+        
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
-        self.lastdir = self.dirs.getParentDir(str(loadfile))
+        
+        
+    def loadTemplate(self, templatename):
+        '''
+        method for loading menu template for SGE-script. it's basically the same as loading a
+        config file, only with additional color-highlighting
+        '''
+        template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
+        template_obj = self.loadConfigFile(template_file, True)
+        
+        self.resetAllStyleSheets()
+        for param in template_obj.config.options(template_obj.heading):
+            name_handle = getattr(self,param)
+            name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
         
         
     def getComboBoxContent(self,box):
