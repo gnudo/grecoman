@@ -690,7 +690,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>544</height>
+       <height>481</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -1540,7 +1540,7 @@
      <x>0</x>
      <y>0</y>
      <width>1256</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

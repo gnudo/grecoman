@@ -7,6 +7,10 @@ flatfreq =
 inputdirectory = 
 jobname = 
 sinon = false
+fltp_fromtif = false
+fltp_fromcpr = false
+paganinon = false
+sin_fromfltp = false
 reconstructon = true
 withlog = false 
 outputtype = 0 
@@ -16,4 +20,3 @@ rec_fromtif = true
 recodirectory = 
 tifmin =
 tifmax = 
-

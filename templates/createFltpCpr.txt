@@ -21,4 +21,3 @@ withlog = false
 pag_pxsize = 
 interflats = 
 flats = 
-

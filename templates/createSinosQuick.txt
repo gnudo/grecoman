@@ -15,4 +15,4 @@ withlog = false
 interflats = 
 flats = 
 sin_fromtif = true
-
+rec_fromtif = false
