@@ -147,13 +147,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ParameterWrap()(self,'filter','-F',[],False)
         ParameterWrap()(self,'outputtype','-t',[],False)
         ParameterWrap()(self,'geometry','-G',[],False)
+        ParameterWrap()(self,'stitchingtype','-S',[],False)
         
         # we add radio box as well which depend on input directories
         ParameterWrap()(self,'sin_fromtif','',['inputdirectory'],False)
         ParameterWrap()(self,'sin_fromcpr','',['cprdirectory'],False)
         ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
         ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
-        ParameterWrap()(self,'fltp_fromtif','',['cprdirectory'],False)
+        ParameterWrap()(self,'fltp_fromtif','',['inputdirectory'],False)
         ParameterWrap()(self,'rec_fromtif','',['inputdirectory'],False)
         ParameterWrap()(self,'rec_fromsino','',['sinogramdirectory'],False)
         
@@ -455,6 +456,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         if ParameterWrap.par_dict['steplines'].performCheck():
             cmd1 += ParameterWrap.par_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
+            
+        if ParameterWrap.par_dict['stitchingtype'].performCheck():
+            cmd1 += ParameterWrap.par_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
         
         if self.sin_fromcpr.isChecked():
             inputdir = str(self.cprdirectory.text())
@@ -496,6 +500,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             standard += ','+self.flats.text()
             standard += ','+self.interflats.text()
             standard += ','+self.flatfreq.text()+' '
+            if ParameterWrap.par_dict['stitchingtype'].performCheck():
+                standard += ParameterWrap.par_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
             if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
                 standard += self.setWavletParameters()
             standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
@@ -666,10 +672,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.lastdir = self.dirs.getParentDir(str(savefile))
         
         
-    def loadConfigFile(self, loadfile = '', returnvalue = False):
+    def loadConfigFile(self, loadfile = '', returnvalue = False, overwrite = True):
         '''
         method for loading config-file (from Menu item) or by giving absolute config-file path name
-        (loadfile). if returnvalue is set True then the method returns the config-file object.
+        (loadfile). if returnvalue is set True then the method returns the config-file object. If overwrite is
+        False then empty fields from config-file are not overwriting GUI-fields
         '''
         if not loadfile:
             loadfile = QFileDialog.getOpenFileName(self,
@@ -678,7 +685,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         self.lastdir = self.dirs.getParentDir(str(loadfile))
         file_obj = FileIO(loadfile)
-        file_obj.loadFile(self,ParameterWrap)
+        file_obj.loadFile(self,ParameterWrap,overwrite)
         
         if returnvalue:
             return file_obj
@@ -693,7 +700,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         config file, only with additional color-highlighting
         '''
         template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
-        template_obj = self.loadConfigFile(template_file, True)
+        template_obj = self.loadConfigFile(template_file, True, False)
         
         self.resetAllStyleSheets()
         for param in template_obj.config.options(template_obj.heading):
@@ -716,6 +723,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             types_dict = {"0":"zpd", "1":"cpd", "2":"sym","3":"ppd", "4":"sp1"}
         elif box is 'inputtype':
             types_dict = {"0":"0", "1":"2", "2":"1", "3":"3"}
+        elif box is 'stitchingtype':
+            types_dict = {"0":"0", "1":"L", "2":"R"}
          
         corr_str = str(getattr(self,box).currentIndex())
         return types_dict[corr_str]

@@ -38,7 +38,7 @@ class FileIO(object):
             self.config.write(configfile)
         
         
-    def loadFile(self,parent,ParameterWrap):
+    def loadFile(self,parent,ParameterWrap,overwrite):
         '''
         load config file and write "registered" parameters to GUI fields/attributes
         '''
@@ -49,7 +49,8 @@ class FileIO(object):
             
             if type(name_handle).__name__ == 'QLineEdit':
                 txt = self.config.get(self.heading, param)
-                name_handle.setText(txt)
+                if overwrite:
+                    name_handle.setText(txt)
             if type(name_handle).__name__ == 'QCheckBox' or type(name_handle).__name__ == 'QRadioButton':
                 checkstatus = self.config.getboolean(self.heading, param)
                 name_handle.setChecked(checkstatus)
