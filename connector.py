@@ -55,7 +55,8 @@ class Connector(object):
         '''
         method to run a job locally and wait until finished
         '''
-        subprocess.check_call(cmd, shell=True)
+        proc = subprocess.Popen(cmd, shell=True)
+        proc.communicate()
         
         
     def submitJobViaGateway(self,cmd_str,gw,target):

@@ -211,7 +211,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             single_sino = str(self.sinogramdirectory.text())
 
         ## (3) create the command line string for single slice reconstruction
-        self.cmd = 'python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
+        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
         combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
@@ -254,7 +254,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
         
         if os.path.isfile(img):
-            self.job.submitJobLocally('rm '+img)  
+            self.job.submitJobLocallyAndWait('rm '+img)  
         
         ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
         if self.afsaccount.isChecked():

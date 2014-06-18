@@ -251,9 +251,9 @@ class AdvancedChecks(object):
                 self.parent.inputtype.setCurrentIndex(1)
                 self.filetype = 'hd5'
                 return True
-            else:
-                self.parent.displayErrorMessage('No images found', 'There are no tif, dmp, nor hd5 files in the input folder!')
-                return False
+        else:
+            self.parent.displayErrorMessage('No images found', 'There are no tif, dmp, nor hd5 files in the input folder!')
+            return False
 
             
     def determinePrefix(self):

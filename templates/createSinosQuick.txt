@@ -15,4 +15,6 @@ withlog = false
 interflats = 
 flats = 
 sin_fromtif = true
+sin_fromfltp = false
+sin_fromcpr = false
 rec_fromtif = false
