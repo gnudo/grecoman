@@ -359,6 +359,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 cmd1 += ParameterWrap.par_dict['roion'].flag+' '
                 for child in ParameterWrap.par_dict['roion'].child_list:
                     cmd1 += getattr(self,child).text()+','
+                cmd1 = cmd1[:-1]+' '
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             cmd1 += '-f '+self.raws.text()
