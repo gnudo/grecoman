@@ -25,7 +25,7 @@ class AdvancedChecks(object):
         '''
         method that is called when a new inputdirectory is set
         '''
-        self.inputdir = self.parent.inputdirectory.text()
+        self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),'')
         
         ## Clear old sino dirs
         self.parent.sinogramdirectory.setText('')
@@ -135,6 +135,7 @@ class AdvancedChecks(object):
         such as cons2
         '''
         splitted_dir = self.splitOsPath(str(path))
+        splitted_dir.append('')
         sls_base_dir = self.splitOsPath('/sls/X02DA/data/')
         tmp_list = sls_base_dir+splitted_dir[8:]
         return os.path.join(*tmp_list)
@@ -184,8 +185,9 @@ class AdvancedChecks(object):
         '''
         method that returns the parent directory of a directory
         '''
-        tmp_dir = os.path.split(directory)
-        return tmp_dir[0]
+        directory = os.path.join(directory,'')
+        tmp_dir = os.path.split(directory[:-1])
+        return os.path.join(tmp_dir[0],'')
         
         
     def loadAndParseLogFile(self):

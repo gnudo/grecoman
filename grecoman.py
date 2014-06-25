@@ -393,27 +393,27 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## define input and output dirs
         if mode == 'cpr':
-            inputdir = str(self.inputdirectory.text())
-            outputdir = str(self.cprdirectory.text())
+            inputdir = os.path.join(str(self.inputdirectory.text()),'')
+            outputdir = os.path.join(str(self.cprdirectory.text()),'')
         elif mode == 'fltp':# and not self.cpron.isChecked():
             if self.fltp_fromcpr.isChecked():
-                inputdir = str(self.cprdirectory.text())
+                inputdir = os.path.join(str(self.cprdirectory.text()),'')
             else:
-                inputdir = str(self.inputdirectory.text())
-            outputdir = str(self.fltpdirectory.text())
+                inputdir = os.path.join(str(self.inputdirectory.text()),'')
+            outputdir = os.path.join(str(self.fltpdirectory.text()),'')
         else:
-            inputdir = str(self.cprdirectory.text())
-            outputdir = str(self.fltpdirectory.text())
+            inputdir = os.path.join(str(self.cprdirectory.text()),'')
+            outputdir = os.path.join(str(self.fltpdirectory.text()),'')
         
         ## TODO: probably outsource whole snippet
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
-            cmd1 += '-o '+outputdir_mod+'/ '
-            cmd1 += inputdir_mod+'/'
+            cmd1 += '-o '+outputdir_mod+' '
+            cmd1 += inputdir_mod
         elif self.cons2.isChecked():
-            cmd1 += '-o '+outputdir+'/ '
-            cmd1 += inputdir+'/'
+            cmd1 += '-o '+outputdir+' '
+            cmd1 += inputdir
 
 #         return cmd1
         self.cmds.append(cmd1)
@@ -462,13 +462,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ParameterWrap.par_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
         
         if self.sin_fromcpr.isChecked():
-            inputdir = str(self.cprdirectory.text())
+            inputdir = os.path.join(str(self.cprdirectory.text()),'')
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         elif self.sin_fromfltp.isChecked():
-            inputdir = str(self.fltpdirectory.text())
+            inputdir = os.path.join(str(self.fltpdirectory.text()),'')
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
         elif self.sin_fromtif.isChecked():
-            inputdir = str(self.inputdirectory.text())
+            inputdir = os.path.join(str(self.inputdirectory.text()),'')
             cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
@@ -478,11 +478,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
-            cmd1 += '-o '+outputdir_mod+'/ '
-            cmd1 += inputdir_mod+'/'
+            cmd1 += '-o '+outputdir_mod+' '
+            cmd1 += inputdir_mod
         elif self.cons2.isChecked():
-            cmd1 += '-o '+str(self.sinogramdirectory.text())+'/ '
-            cmd1 += inputdir+'/'
+            cmd1 += '-o '+os.path.join(str(self.sinogramdirectory.text()),'')+' '
+            cmd1 += inputdir
             
         self.cmds.append(cmd1)
         return True
@@ -494,7 +494,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         ## Compose all mandatory
         if self.rec_fromtif.isChecked():
-            inputdir = str(self.inputdirectory.text())
+            inputdir = os.path.join(str(self.inputdirectory.text()),'')
             standard = '-d -R 0 -k 0 -I 1 -g 7 '
             standard += '-f '+self.raws.text()
             standard += ','+self.darks.text()
@@ -507,7 +507,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 standard += self.setWavletParameters()
             standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
-            inputdir = str(self.sinogramdirectory.text())
+            inputdir = os.path.join(str(self.sinogramdirectory.text()),'')
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
         else:
             self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
@@ -532,21 +532,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 += '--jobname='+jobname+'_reco '
         
-        outputdir = str(self.recodirectory.text())
-        sinodir_tmp = self.dirs.getParentDir(inputdir)+'/sino_tmp'
+        outputdir = os.path.join(str(self.recodirectory.text()),'')
+        sinodir_tmp = self.dirs.getParentDir(inputdir)+'sino_tmp/'
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
             outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
             if self.rec_fromtif.isChecked():
                 sinodir_tmp_mod = self.dirs.afsPath2Cons2(sinodir_tmp)
-                cmd1 += '-o '+sinodir_tmp_mod+'/ '
-            cmd1 += '-O '+outputdir_mod+'/ '
-            cmd1 += inputdir_mod+'/'
+                cmd1 += '-o '+sinodir_tmp_mod+' '
+            cmd1 += '-O '+outputdir_mod+' '
+            cmd1 += inputdir_mod
         elif self.cons2.isChecked():
             if self.rec_fromtif.isChecked():
-                cmd1 += '-o '+sinodir_tmp+'/ '
-            cmd1 += '-O '+outputdir+'/ '
-            cmd1 += inputdir+'/'
+                cmd1 += '-o '+sinodir_tmp+' '
+            cmd1 += '-O '+outputdir+' '
+            cmd1 += inputdir
         
         self.cmds.append(cmd1)
         return True
