@@ -262,7 +262,7 @@ class AdvancedChecks(object):
         '''
         the prefix is determined from the parent directory name of the tif-folder
         '''
-        prefix = self.splitOsPath(str(self.inputdir))[-2]
+        prefix = self.splitOsPath(str(self.inputdir))[-3]
         self.parent.prefix.setText(prefix)
         self.parent.jobname.setText(prefix)
 

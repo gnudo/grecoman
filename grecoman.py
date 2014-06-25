@@ -48,7 +48,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.reconstructon,
             SIGNAL("clicked()"),self.setUnsetRecoCheckBox)  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
-            SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji previw image checkbox ("toggled" not working)
+            SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
+        QObject.connect(self.outputtype,
+            SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -717,7 +719,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
                           "5":"lanczos", "6":"dpc", "7":"none"}     
         elif box is 'outputtype':
-            types_dict = {"0":"8", "1":"0", "2":"1", "3":"16"}
+            types_dict = {"0":"8", "1":"0", "2":"1", "3":"16", "4":"8"}
         elif box is 'geometry':
             types_dict = {"0":"1", "1":"1", "2":"0", "3":"2"}
         elif box is 'waveletpaddingmode':
@@ -880,6 +882,31 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return True
         else:
             return False
+        
+        
+    def changeOutputType(self):
+        '''
+        method for appending correct reco-output directory name when changing
+        output type
+        '''
+        ind = str(self.outputtype.currentIndex())
+        if ind == '0':
+            newname = 'rec_8bit'
+        elif ind == '1':
+            newname = 'rec_DMP'
+        elif ind ==  '2':
+            newname = 'rec_DMP_HF5'
+        elif ind ==  '3':
+            newname = 'rec_16bit'
+        elif ind ==  '4':
+            newname = 'rec_8bit'
+        else:
+            newname = 'unknown_output'
+        
+        outputpaths = self.dirs.splitOsPath(str(self.recodirectory.text()))
+        newpathlist = outputpaths[:-1]+[newname]
+        pathstr = self.dirs.glueOsPath(newpathlist)
+        self.recodirectory.setText(pathstr)
         
 
 class DebugCommand(QDialog):
