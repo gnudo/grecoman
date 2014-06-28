@@ -21,7 +21,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
  
-        self.registerAllParameters()  # we register all command line arguments
+        ParameterWrap.registerAllParameters(self)  # we register all command line arguments
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
@@ -87,78 +87,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
         QObject.connect(self.menuRingRemoval2,
             SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
-        
-        
-    def registerAllParameters(self):
-        '''
-        here we register all command line parameters (arguments) by creating <Parameter> objects
-        and setting appropriate properties. Objects are created each time ParameterWrap() is called
-        and they are stored in the class property "ParameterWrap.par_dict" (python dictionary). see
-        "arguments.py" for more info
-        '''
-        ParameterWrap()(self,'inputdirectory','',[],True)
-        ParameterWrap()(self,'prefix','-p',[],True)
-        ParameterWrap()(self,'raws','',[],True)
-        ParameterWrap()(self,'darks','',[],True)
-        ParameterWrap()(self,'flats','',[],True)
-        ParameterWrap()(self,'interflats','',[],True)
-        ParameterWrap()(self,'flatfreq','',[],True)
-        ParameterWrap()(self,'preflatsonly','-u',[],False)
-        ParameterWrap()(self,'roion','-r',['roi_left','roi_right','roi_upper','roi_lower'],False)
-        ParameterWrap()(self,'roi_left','',[],False)
-        ParameterWrap()(self,'roi_right','',[],False)
-        ParameterWrap()(self,'roi_upper','',[],False)
-        ParameterWrap()(self,'roi_lower','',[],False)
-        ParameterWrap()(self,'binsize','-b',[],False)
-        ParameterWrap()(self,'scaleimagefactor','-s',[],False)
-        ParameterWrap()(self,'steplines','-j',[],False)
-        ParameterWrap()(self,'sinogramdirectory','-o',[],True)
-        ParameterWrap()(self,'paganinon','-Y',['pag_energy','pag_pxsize','pag_delta','pag_beta','pag_distance','fltpdirectory'],False)
-        ParameterWrap()(self,'pag_energy','',[],False)
-        ParameterWrap()(self,'pag_delta','',[],False)
-        ParameterWrap()(self,'pag_beta','',[],False)
-        ParameterWrap()(self,'pag_pxsize','',[],False)
-        ParameterWrap()(self,'pag_distance','',[],False)
-        ParameterWrap()(self,'runringremoval','',['waveletdecompositionlevel', 'sigmaingaussfilter'],False)
-        ParameterWrap()(self,'waveletdecompositionlevel','-V',[],False)
-        ParameterWrap()(self,'sigmaingaussfilter','-E',[],False)
-        ParameterWrap()(self,'cutofffrequency','-U',[],False)
-        ParameterWrap()(self,'edgepadding','-Z',[],False)
-        ParameterWrap()(self,'centerofrotation','-c',[],False)
-        ParameterWrap()(self,'shiftcorrection','-q',[],False)
-        ParameterWrap()(self,'rotationangle','-a',[],False)
-        ParameterWrap()(self,'zingeron','-z',['zinger_thresh','zinger_width'],False)
-        ParameterWrap()(self,'zinger_thresh','-H',[],False)
-        ParameterWrap()(self,'zinger_width','-w',[],False)
-        ParameterWrap()(self,'cpron','',['cprdirectory'],False)
-        ParameterWrap()(self,'cprdirectory','',[],False)
-        ParameterWrap()(self,'fltpdirectory','',[],False)
-        ParameterWrap()(self,'sinon','',['sinogramdirectory'],False)
-        ParameterWrap()(self,'sinogramdirectory','',[],False)
-        ParameterWrap()(self,'reconstructon','',['recodirectory'],False)
-        ParameterWrap()(self,'recodirectory','',[],False)
-        ParameterWrap()(self,'withlog','',[],False)
-        ParameterWrap()(self,'tifmin','-n',[],False)
-        ParameterWrap()(self,'tifmax','-x',[],False)
-        ParameterWrap()(self,'jobname','',[],False) 
-        
-        # we also register Comboboxes in order to use them in fileIO etc.
-        ParameterWrap()(self,'inputtype','-I',[],False)
-        ParameterWrap()(self,'wavelettype','-y',[],False)
-        ParameterWrap()(self,'waveletpaddingmode','-M',[],False)
-        ParameterWrap()(self,'filter','-F',[],False)
-        ParameterWrap()(self,'outputtype','-t',[],False)
-        ParameterWrap()(self,'geometry','-G',[],False)
-        ParameterWrap()(self,'stitchingtype','-S',[],False)
-        
-        # we add radio box as well which depend on input directories
-        ParameterWrap()(self,'sin_fromtif','',['inputdirectory'],False)
-        ParameterWrap()(self,'sin_fromcpr','',['cprdirectory'],False)
-        ParameterWrap()(self,'sin_fromfltp','',['fltpdirectory'],False)
-        ParameterWrap()(self,'fltp_fromcpr','',['cprdirectory'],False)
-        ParameterWrap()(self,'fltp_fromtif','',['inputdirectory'],False)
-        ParameterWrap()(self,'rec_fromtif','',['inputdirectory'],False)
-        ParameterWrap()(self,'rec_fromsino','',['sinogramdirectory'],False)
         
  
     def submitToCluster(self):
