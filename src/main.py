@@ -1,4 +1,4 @@
-from gui import Ui_reco_mainwin
+from ui_main import Ui_reco_mainwin
 from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector

@@ -21,7 +21,7 @@ label, stderr = subprocess.Popen(["git", "describe","--tags"],stdin=subprocess.P
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.split(currentdir)[0]
 
-filename = os.path.join(parentdir,'gui.py')
+filename = os.path.join(parentdir,'ui_main.py')
 
 f = open(filename,'r')
 content = f.read()

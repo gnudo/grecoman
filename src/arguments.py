@@ -6,12 +6,12 @@ class ParameterWrap(object):
     of the reconstruction pipeline. Each CLA (parameter) object is an
     instance of the "Parameter" class, however we never call these
     objects directly. Instead, they are all stored in the class
-    attribute "par_dict" and called from therein. By doing so,
+    attribute "CLA_dict" and called from therein. By doing so,
     we are able to count all "Parameter" instances and iterate
     through all CLA-s. The other class variable "parent" stores the
     main application object.
     '''
-    par_dict = {}
+    CLA_dict = {}
     parent = []
     
     @classmethod
@@ -93,11 +93,11 @@ class ParameterWrap(object):
     def addParameter(cls,*args):
         '''
         This method registers a new CLA by creating a "Parameter"
-        object and storing it to the class attribute "par_dict" (python
+        object and storing it to the class attribute "CLA_dict" (python
         dictionary) under its name.
         '''
         par = Parameter( *args)
-        cls.par_dict[par.name] = par
+        cls.CLA_dict[par.name] = par
 
      
 class Parameter(object):
@@ -105,7 +105,7 @@ class Parameter(object):
     The "Parameter" class represents a standard command line argument
     (CLA) from the GUI and/or pipeline with its respective properties.
     Every instance of the "Parameter" class is saved in the class
-    attribute "par_dict" of the "ParameterWrap" class.
+    attribute "CLA_dict" of the "ParameterWrap" class.
     The main application object is hard-coded as "ParameterWrap.parent".
     '''
     def __init__(self,name,flag,child_list,ismandatory):

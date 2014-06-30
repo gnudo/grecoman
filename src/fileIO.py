@@ -21,7 +21,7 @@ class FileIO(object):
         '''
         self.config.add_section(self.heading)
         
-        for key,param in ParameterWrap.par_dict.iteritems():
+        for key,param in ParameterWrap.CLA_dict.iteritems():
             name_handle = getattr(parent,param.name)
             
             if type(name_handle).__name__ == 'QLineEdit':
@@ -62,5 +62,5 @@ class FileIO(object):
 if __name__ == "__main__":
     # TESTING ground
     file_obj = FileIO('/Users/goranlovric/Desktop/test.txt')
-    par_dict = {"test":"1", "test":"2", "test3":"3"}
-    file_obj.writeFile([], par_dict)
+    CLA_dict = {"test":"1", "test":"2", "test3":"3"}
+    file_obj.writeFile([], CLA_dict)
