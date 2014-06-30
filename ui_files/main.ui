@@ -1578,8 +1578,16 @@
     <property name="title">
      <string>Menu</string>
     </property>
+    <widget class="QMenu" name="menuLoad_specific">
+     <property name="title">
+      <string>Load specific</string>
+     </property>
+     <addaction name="loadOnlyPaganin"/>
+     <addaction name="loadOnlyRingRemoval"/>
+    </widget>
     <addaction name="menuloadsettings"/>
     <addaction name="menusavesettings"/>
+    <addaction name="menuLoad_specific"/>
     <addaction name="exitapp"/>
    </widget>
    <widget class="QMenu" name="menuRun">
@@ -1695,6 +1703,16 @@
   <action name="menuRingRemoval2">
    <property name="text">
     <string>Strong thick rings</string>
+   </property>
+  </action>
+  <action name="loadOnlyPaganin">
+   <property name="text">
+    <string>Paganin parameters</string>
+   </property>
+  </action>
+  <action name="loadOnlyRingRemoval">
+   <property name="text">
+    <string>Ring removal parameters</string>
    </property>
   </action>
  </widget>

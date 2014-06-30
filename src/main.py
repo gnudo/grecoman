@@ -20,7 +20,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     def __init__(self):        
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
- 
+
         ParameterWrap.registerAllParameters(self)  # we register all command line arguments
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
