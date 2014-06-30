@@ -3,13 +3,14 @@ class ParameterWrap(object):
     The "ParameterWrap" class serves the purpose of registering all
     CLA-s (command line arguments) that are used in the GUI (either for
     loading/saving settings or color-highlighting) and that are part
-    of the reconstruction pipeline. Each CLA (parameter) object is an
-    instance of the "Parameter" class, however we never call these
-    objects directly. Instead, they are all stored in the class
-    attribute "CLA_dict" and called from therein. By doing so,
-    we are able to count all "Parameter" instances and iterate
-    through all CLA-s. The other class variable "parent" stores the
-    main application object.
+    of the reconstruction pipeline. Furthermore it provides methods
+    that are utilized on all GUI-fields (CLA-s).
+    Each CLA (parameter) object is an instance of the "Parameter"
+    class, however we never call these objects directly. Instead, they
+    are all stored in the class attribute "CLA_dict" and called from
+    therein. By doing so, we are able to count all "Parameter"
+    instances and iterate through all CLA-s. The other class variable
+    "parent" stores the main application object.
     '''
     CLA_dict = {}
     parent = []
@@ -223,4 +224,4 @@ class Parameter(object):
             gui_field.setAutoExclusive(False)
             gui_field.setChecked(False)
             gui_field.setAutoExclusive(True)
-            return        
+            return

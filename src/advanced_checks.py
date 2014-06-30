@@ -17,7 +17,7 @@ class AdvancedChecks(object):
         self.cprdir = []
         self.recodir = []
         self.homedir = os.path.expanduser('~')
-        self.runningdir = os.path.dirname(os.path.realpath(__file__))
+        self.runningdir = self.getParentDir(os.path.dirname(os.path.realpath(__file__)))
         self.parent = parent
         
         

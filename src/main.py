@@ -43,11 +43,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.setrecodirectory,
             SIGNAL("clicked()"),self.getRecoDirectory)  # reconstructions output
         QObject.connect(self.sinon,
-            SIGNAL("clicked()"),self.setUnsetSinoCheckBox)  # sinogram checkbox ("toggled" not working)
+            SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
-            SIGNAL("clicked()"),self.setUnsetPaganinCheckBox)  # Paganin checkbox ("toggled" not working)
+            SIGNAL("clicked()"),lambda param='paganinon': self.setUnsetActionCheckBox(param))  # Paganin checkbox ("toggled" not working)
         QObject.connect(self.reconstructon,
-            SIGNAL("clicked()"),self.setUnsetRecoCheckBox)  # Reco checkbox ("toggled" not working)
+            SIGNAL("clicked()"),lambda param='reconstructon': self.setUnsetActionCheckBox(param))  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
         QObject.connect(self.outputtype,
@@ -504,32 +504,22 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         return True
     
     
-    def setUnsetSinoCheckBox(self):
+    def setUnsetActionCheckBox(self,mode):
         '''
-        method that is challed when checking/unchecking the sinobox
+        When unchecking "action" checkboxes, this method makes sure
+        that the depended radio-boxes are unset as well. Since we have
+        3 different types of radio-boxes we treat 3 modes.
         '''
-        if not self.sinon.isChecked():
-            ParameterWrap.CLA_dict['sin_fromcpr'].resetField()
-            ParameterWrap.CLA_dict['sin_fromfltp'].resetField()
-            ParameterWrap.CLA_dict['sin_fromtif'].resetField()
+        if mode == 'sinon':
+            dependencies = ['sin_fromcpr','sin_fromfltp','sin_fromtif']
+        elif mode == 'paganinon':
+            dependencies = ['fltp_fromcpr','fltp_fromtif']
+        elif mode == 'reconstructon':
+            dependencies = ['rec_fromtif','rec_fromsino']
             
-            
-    def setUnsetPaganinCheckBox(self):
-        '''
-        method that is challed when checking/unchecking the Paganin-box
-        '''
-        if not self.paganinon.isChecked():
-            ParameterWrap.CLA_dict['fltp_fromcpr'].resetField()
-            ParameterWrap.CLA_dict['fltp_fromtif'].resetField()
-            
-            
-    def setUnsetRecoCheckBox(self):
-        '''
-        method that is challed when checking/unchecking the Reconstruction-box
-        '''
-        if not self.reconstructon.isChecked():
-            ParameterWrap.CLA_dict['rec_fromtif'].resetField()
-            ParameterWrap.CLA_dict['rec_fromsino'].resetField()
+        if not getattr(self,mode).isChecked():
+            for param in dependencies:
+                ParameterWrap.CLA_dict[param].resetField()
             
             
     def setUnsetFijiOn(self):
