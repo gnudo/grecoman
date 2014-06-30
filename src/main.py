@@ -66,6 +66,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+        QObject.connect(self.loadOnlyPaganin,
+            SIGNAL("triggered()"),lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
+            self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
+        QObject.connect(self.loadOnlyRingRemoval,
+            SIGNAL("triggered()"),lambda param=['waveletdecompositionlevel','sigmaingaussfilter','wavelettype','waveletpaddingmode']: \
+            self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
         QObject.connect(self.menuCreateCpr,
             SIGNAL("triggered()"),lambda param='createCpr': self.loadTemplate(param))  # MENU create CPR
         QObject.connect(self.menuCreateCprLog,
@@ -544,8 +550,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         'Select where the config file should be saved',self.lastdir)
         if not savefile:
             return
-        file_obj = FileIO(savefile)
-        file_obj.writeFile(self, ParameterWrap)
+        file_obj = FileIO(self,savefile)
+        file_obj.writeFile(ParameterWrap)
         self.lastdir = self.dirs.getParentDir(str(savefile))
         
         
@@ -561,14 +567,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not loadfile:
             return
         self.lastdir = self.dirs.getParentDir(str(loadfile))
-        file_obj = FileIO(loadfile)
-        file_obj.loadFile(self,ParameterWrap,overwrite)
+        file_obj = FileIO(self,loadfile)
         
         if returnvalue:
             return file_obj
         
+        file_obj.loadFile(ParameterWrap,overwrite)
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
+        
+        
+    def loadSpecificFromConfigFile(self,param_list):
+        '''
+        loads only children from a parent parameter
+        '''
+        file_obj = self.loadConfigFile([], True, False)  # We open the configfile
+        file_obj.config.read(file_obj.cfgfile)  # We load here the parameters from configfile
+        for param in param_list:
+            file_obj.loadSingleParamter(param,True)
         
         
     def loadTemplate(self, templatename):
@@ -577,7 +593,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         config file, only with additional color-highlighting
         '''
         template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
-        template_obj = self.loadConfigFile(template_file, True, False)
+        template_obj = self.loadConfigFile(template_file, True)
+        template_obj.loadFile(ParameterWrap,False)
         
         ParameterWrap.resetAllStyleSheets()
         for param in template_obj.config.options(template_obj.heading):
