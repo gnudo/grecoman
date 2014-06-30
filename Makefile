@@ -1,3 +1,3 @@
-gui.py : gui.ui
-	pyuic4 gui.ui -o gui.py
+src/gui.py : ui_files/gui.ui
+	pyuic4 ui_files/gui.ui -o src/gui.py
 	externals/versionIncluder.py
