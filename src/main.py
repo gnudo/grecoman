@@ -57,7 +57,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.submit,
             SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
-            SIGNAL("released()"),self.clearAllFields)  # BUTTON clear all fields method
+            SIGNAL("released()"),ParameterWrap.clearAllFields)  # BUTTON clear all fields method
         QObject.connect(self.singleslice,
             SIGNAL("released()"),self.calcSingleSlice)  # BUTTON Single Slice calculation
         
@@ -103,7 +103,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method that launches all the checks and if successful submits the
         command to cons-2 for starting the job
         '''
-        if not self.checkAllParamters():
+        if not self.checkComputingLocation():
+            return
+        
+        if not ParameterWrap.checkAllParamters():
             return
         
         # (1) Create command line string
@@ -491,44 +494,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         return True
         
         
-    def checkAllParamters(self):
-        '''
-        method for checking whether all parameters are set in the GUI. only if it returns
-        <True>, the command can be created to be submitted to the cluster
-        '''
-        color_list = []
-        self.resetAllStyleSheets()
-        
-        if not self.checkComputingLocation():
-            return
-        
-        # (0) Make sure that at least one action is checked
-        if not self.cpron.isChecked() and not self.paganinon.isChecked() and not self.sinon.isChecked() and not self.reconstructon.isChecked():
-            self.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
-            return
-    
-        # (1) all parameters that are mandatory (they cannot have any child parameters)
-        for key,param in ParameterWrap.CLA_dict.iteritems():
-            if param.ismandatory and not param.performCheck():
-                color_list.append(param.name)
-                
-        # (2) all parameters that are NOT mandatory, but are set anyways --> then we need to
-        # perform a check of their children because in that case those must be set as well
-        for key,param in ParameterWrap.CLA_dict.iteritems():
-                if not param.ismandatory and param.performCheck():
-                    for child_param in param.child_list:
-                        if not ParameterWrap.CLA_dict[child_param].performCheck():
-                            color_list.append(child_param)
-                            
-        # (3) color the boxes
-        for param in color_list:
-            missing_param = getattr(self,param)
-            missing_param.setStyleSheet("QLineEdit { border : 2px solid red;}")
-        
-        if not color_list:
-            return True
-        
-        
     def checkComputingLocation(self):
         '''
         make sure the radiobox from where the computing takes place has been set
@@ -579,25 +544,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 self.displayErrorMessage('Fiji not found', 'fiji must be in PATH, e.g. installed in /urs/bin')
                 return
             
-    
-    def resetAllStyleSheets(self):
-        '''
-        delete all custom stylesheet settings for all class properties
-        '''
-        for key,param in ParameterWrap.CLA_dict.iteritems():
-            handle = getattr(self,param.name)
-            handle.setStyleSheet("")
-            
-            
-    def clearAllFields(self):
-        '''
-        method for clearing all fields in the GUI
-        '''
-        for key,param in ParameterWrap.CLA_dict.iteritems():
-            param.resetField()
-        self.sinograms.clear()
-        self.resetAllStyleSheets()
-            
             
     def saveConfigFile(self):
         '''
@@ -642,7 +588,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
         template_obj = self.loadConfigFile(template_file, True, False)
         
-        self.resetAllStyleSheets()
+        ParameterWrap.resetAllStyleSheets()
         for param in template_obj.config.options(template_obj.heading):
             name_handle = getattr(self,param)
             name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
@@ -716,7 +662,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         dialog for setting the fltp output directory
         '''
         self.dirs.fltpdir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.lastdir)
+                            'Select direcory for fltp-s',self.lastdir)
         
         if not self.dirs.fltpdir:
             return

@@ -98,6 +98,71 @@ class ParameterWrap(object):
         '''
         par = Parameter( *args)
         cls.CLA_dict[par.name] = par
+            
+    
+    @classmethod        
+    def clearAllFields(cls):
+        '''
+        This method clears all fields in the GUI.
+        '''
+        for key,param in cls.CLA_dict.iteritems():
+            param.resetField()
+        cls.parent.sinograms.clear()
+        cls.resetAllStyleSheets()
+            
+    
+    @classmethod
+    def resetAllStyleSheets(cls):
+        '''
+        This one deletes all custom stylesheet settings for all
+        GUI-fields.
+        '''
+        for key,param in cls.CLA_dict.iteritems():
+            gui_field = getattr(cls.parent,param.name)
+            gui_field.setStyleSheet("")
+            
+    
+    @classmethod      
+    def checkAllParamters(cls):
+        '''
+        This method is for checking whether all parameters are set
+        correctly in the GUI. Only if it returns "True", the command
+        line string can be created and submitted to the x02da or
+        Merlin. If some fields are not set correctly, this method also
+        colors the borders of the respective fields for easy
+        identification.
+        '''
+        color_list = []
+        cls.resetAllStyleSheets()
+        
+        # (0) Make sure that at least one action is checked
+        if not cls.parent.cpron.isChecked() \
+            and not cls.parent.paganinon.isChecked() \
+            and not cls.parent.sinon.isChecked() \
+            and not cls.parent.reconstructon.isChecked():
+            cls.parent.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
+            return
+    
+        # (1) all parameters that are mandatory (they cannot have any child parameters)
+        for key,param in cls.CLA_dict.iteritems():
+            if param.ismandatory and not param.performCheck():
+                color_list.append(param.name)
+                
+        # (2) all parameters that are NOT mandatory, but are set anyways --> then we need to
+        # perform a check of their children because in that case those must be set as well
+        for key,param in cls.CLA_dict.iteritems():
+                if not param.ismandatory and param.performCheck():
+                    for child_param in param.child_list:
+                        if not cls.CLA_dict[child_param].performCheck():
+                            color_list.append(child_param)
+                            
+        # (3) color the boxes
+        for param in color_list:
+            missing_param = getattr(cls.parent,param)
+            missing_param.setStyleSheet("QLineEdit { border : 2px solid red;}")
+        
+        if not color_list:
+            return True
 
      
 class Parameter(object):
