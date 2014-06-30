@@ -29,19 +29,19 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## GUI fields connections
         QObject.connect(self.setinputdirectory,
-            SIGNAL("clicked()"),self.getInputDirectory)  # data input directory
+            SIGNAL("clicked()"),lambda param='input_dir': self.getDirectory(param))  # data input directory
         QObject.connect(self.inputdirectory,
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sinogramdirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
-            SIGNAL("clicked()"),self.getSinogramDirectory)  # sinogram output
+            SIGNAL("clicked()"),lambda param='sinodir': self.getDirectory(param))  # sinogram output
         QObject.connect(self.setcprdirectory,
-            SIGNAL("clicked()"),self.getCprDirectory)  # cpr output
+            SIGNAL("clicked()"),lambda param='cprdirectory': self.getDirectory(param))  # cpr output
         QObject.connect(self.setfltpdirectory,
-            SIGNAL("clicked()"),self.getFltpDirectory)  # fltp output
+            SIGNAL("clicked()"),lambda param='fltpdir': self.getDirectory(param))  # fltp output
         QObject.connect(self.setrecodirectory,
-            SIGNAL("clicked()"),self.getRecoDirectory)  # reconstructions output
+            SIGNAL("clicked()"),lambda param='recodir': self.getDirectory(param))  # reconstructions output
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
@@ -524,9 +524,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
     def setUnsetFijiOn(self):
         '''
-        method that is called when checking/unchecking whether to open
-        preview image in Fiji. in that case we check whether the fiji
-        command is available in the path
+        This method is called when setting to have the preview image in
+        Fiji. In that case we check whether the fiji command is
+        available in the path and if not we display an error message
+        and unset the checkbox again.
         '''
         if self.openinfiji.isChecked():
             if not self.job.isInstalled('fiji'):
@@ -604,84 +605,42 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
          
         corr_str = str(getattr(self,box).currentIndex())
         return types_dict[corr_str]
-        
-    
-    def getInputDirectory(self):
-        '''
-        dialog for setting the input directory
-        '''
-        input_dir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for the projection data',self.lastdir)
-        if not input_dir:
-            return
-        self.inputdirectory.setText(input_dir)
-        self.dirs.initInputDirectory()
-        self.lastdir = self.dirs.getParentDir(str(input_dir))
     
     
-    def getSinogramDirectory(self):
+    def getDirectory(self,mode):
         '''
-        dialog for setting the sinogram output directory 
+        Dialog for setting a directory source with QFileDialog. First,
+        we update "lastdir" property. After that, depending on the
+        directory, the textfield are updated and initialized.
         '''
-        self.dirs.sinodir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for sinograms',self.lastdir)
-        
-        if not self.dirs.sinodir:
+        dir_temp = QFileDialog.getExistingDirectory(self,
+                            'Select direcory',self.lastdir)
+        if not dir_temp:
             return
+
+        self.lastdir = self.dirs.getParentDir(str(dir_temp))
         
-        self.sinogramdirectory.setText(self.dirs.sinodir)
-        self.dirs.initSinDirectory()
-        self.lastdir = self.dirs.getParentDir(str(self.dirs.sinodir))
-        
-    def getCprDirectory(self):
-        '''
-        dialog for setting the cpr output directory
-        '''
-        self.dirs.cprdir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.lastdir)
-        
-        if not self.dirs.cprdir:
+        if mode == 'input_dir':
+            self.inputdirectory.setText(dir_temp)
+            self.dirs.initInputDirectory()
             return
-        
-        self.cprdirectory.setText(self.dirs.cprdir)
-        self.lastdir = self.dirs.getParentDir(str(self.dirs.cprdir))
-        
-        
-    def getFltpDirectory(self):
-        '''
-        dialog for setting the fltp output directory
-        '''
-        self.dirs.fltpdir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for fltp-s',self.lastdir)
-        
-        if not self.dirs.fltpdir:
+        elif mode =='sinodir':
+            self.sinogramdirectory.setText(dir_temp)
+            self.dirs.sinodir = dir_temp
+            self.dirs.initSinDirectory()
             return
-        
-        self.fltpdirectory.setText(self.dirs.fltpdir)
-        self.lastdir = self.dirs.getParentDir(str(self.dirs.fltpdir))
-        
-        
-    def getRecoDirectory(self):
-        '''
-        dialog for setting the fltp output directory
-        '''
-        self.dirs.recodir = QFileDialog.getExistingDirectory(self,
-                            'Select direcory for cpr-s',self.lastdir)
-        
-        if not self.dirs.recodir:
+        elif mode =='cprdirectory':
+            self.dirs.cprdir = dir_temp
+            self.cprdirectory.setText(self.dirs.cprdir)
             return
-        
-        self.recodirectory.setText(self.dirs.recodir)
-        self.lastdir = self.dirs.getParentDir(str(self.dirs.recodir))
-        
-        
-    def setRecOutputDir(self):
-        '''
-        sets the output directory if this option is checked in the GUI
-        '''
-        recoutput = QFileDialog.getExistingDirectory(self,
-                        'Select direcory for the projection data',self.lastdir)
-        self.recoutputdir.setText(recoutput)
+        elif mode =='fltpdir':
+            self.dirs.fltpdir = dir_temp
+            self.fltpdirectory.setText(self.dirs.fltpdir)
+            return
+        elif mode =='recodir':
+            self.dirs.recodir = dir_temp
+            self.recodirectory.setText(self.dirs.recodir)
+            return
             
         
     def setWavletParameters(self):

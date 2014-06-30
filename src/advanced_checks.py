@@ -85,6 +85,7 @@ class AdvancedChecks(object):
         check whether cpr folder exists etc.
         '''
         tmp_dir = os.path.split(str(self.inputdir))
+        tmp_dir = os.path.split(tmp_dir[0])
         self.cprdir = os.path.join(tmp_dir[0],'cpr')
         if os.path.exists(self.cprdir):
             self.parent.displayErrorMessage('Existing cpr-directory','Rename the destination')
@@ -98,6 +99,7 @@ class AdvancedChecks(object):
         TODO: all 3 methods: checkFltpFolder,checkCprFolder,checkSinFolder > too similar!
         '''
         tmp_dir = os.path.split(str(self.inputdir))
+        tmp_dir = os.path.split(tmp_dir[0])
         self.fltpdir = os.path.join(tmp_dir[0],'fltp')
         if os.path.exists(self.fltpdir):
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
@@ -110,6 +112,7 @@ class AdvancedChecks(object):
         check whether reco folder exists etc.
         '''
         tmp_dir = os.path.split(str(self.inputdir))
+        tmp_dir = os.path.split(tmp_dir[0])
         self.recodir = os.path.join(tmp_dir[0],'rec_8bit')
         if os.path.exists(self.recodir):
             self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
@@ -123,6 +126,7 @@ class AdvancedChecks(object):
         '''
         if not self.sinodir:
             tmp_dir = os.path.split(str(self.inputdir))
+            tmp_dir = os.path.split(tmp_dir[0])
             sinfolder = os.path.join(tmp_dir[0],'sin')
             self.parent.sinogramdirectory.setText(sinfolder)
             
