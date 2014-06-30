@@ -158,7 +158,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
             if ParameterWrap.CLA_dict[combo].performCheck():
-                self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+                self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
         
         if self.zingeron.isChecked():
             self.setZingerParameters()
@@ -329,7 +329,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## TODO: include maybe above
         if mode == 'cpr' or self.fltp_fromtif.isChecked(): # or not self.cpron.isChecked():
-            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
+            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
         else:
             cmd1 += '-I 0 '
         
@@ -401,7 +401,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
             
         if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
+            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
         
         if self.sin_fromcpr.isChecked():
             inputdir = os.path.join(str(self.cprdirectory.text()),'')
@@ -444,7 +444,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             standard += ','+self.interflats.text()
             standard += ','+self.flatfreq.text()+' '
             if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-                standard += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
+                standard += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
             if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
                 standard += self.setWavletParameters()
             standard += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
@@ -466,7 +466,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         comboboxes = ['filter', 'outputtype', 'geometry']
         for combo in comboboxes:
             if ParameterWrap.CLA_dict[combo].performCheck():
-                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
                 
         # TODO: use jobname in IO so that we don't need to hardcode
         if self.sinon.isChecked() and self.rec_fromsino.isChecked():
@@ -583,28 +583,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         for param in template_obj.config.options(template_obj.heading):
             name_handle = getattr(self,param)
             name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
-        
-        
-    def getComboBoxContent(self,box):
-        '''
-        method for getting content from ComboBox and containing custom dictionaries
-        '''
-        if box is 'filter':
-            types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
-                          "5":"lanczos", "6":"dpc", "7":"none"}     
-        elif box is 'outputtype':
-            types_dict = {"0":"8", "1":"0", "2":"1", "3":"16", "4":"8"}
-        elif box is 'geometry':
-            types_dict = {"0":"1", "1":"1", "2":"0", "3":"2"}
-        elif box is 'waveletpaddingmode':
-            types_dict = {"0":"zpd", "1":"cpd", "2":"sym","3":"ppd", "4":"sp1"}
-        elif box is 'inputtype':
-            types_dict = {"0":"0", "1":"2", "2":"1", "3":"3"}
-        elif box is 'stitchingtype':
-            types_dict = {"0":"0", "1":"L", "2":"R"}
-         
-        corr_str = str(getattr(self,box).currentIndex())
-        return types_dict[corr_str]
     
     
     def getDirectory(self,mode):
@@ -653,7 +631,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         cmd += ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
         cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
         cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
-        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+self.getComboBoxContent(combos[1])+' '
+        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
         return cmd
         
         

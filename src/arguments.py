@@ -88,6 +88,32 @@ class ParameterWrap(object):
         cls.addParameter('fltp_fromtif','',['inputdirectory'],False)
         cls.addParameter('rec_fromtif','',['inputdirectory'],False)
         cls.addParameter('rec_fromsino','',['sinogramdirectory'],False)
+        
+    
+    @classmethod
+    def getComboBoxContent(cls,combobox):
+        '''
+        This method is supposed to be the only place for adjusting the
+        comboboxes (i.e. defining the dictionary how a certain setting
+        is added to the CLA. When called, it returns the content from
+        a particular "combobox".
+        '''
+        if combobox is 'filter':
+            types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
+                          "5":"lanczos", "6":"dpc", "7":"none"}     
+        elif combobox is 'outputtype':
+            types_dict = {"0":"8", "1":"0", "2":"1", "3":"16", "4":"8"}
+        elif combobox is 'geometry':
+            types_dict = {"0":"1", "1":"1", "2":"0", "3":"2"}
+        elif combobox is 'waveletpaddingmode':
+            types_dict = {"0":"zpd", "1":"cpd", "2":"sym","3":"ppd", "4":"sp1"}
+        elif combobox is 'inputtype':
+            types_dict = {"0":"0", "1":"2", "2":"1", "3":"3"}
+        elif combobox is 'stitchingtype':
+            types_dict = {"0":"0", "1":"L", "2":"R"}
+         
+        corr_str = str(getattr(cls.parent,combobox).currentIndex())
+        return types_dict[corr_str]
     
     
     @classmethod
