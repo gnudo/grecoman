@@ -25,6 +25,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
+        self.changeSubmissionTarget('x02da')  # set the submission target standardly to x02da
         
         ## GUI fields connections
         QObject.connect(self.setinputdirectory,
@@ -88,6 +89,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.menuRingRemoval2,
             SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
         
+        ## Context menus
+        self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
+        self.singleslice.setContextMenuPolicy(Qt.CustomContextMenu);  # Single slice button
+        QObject.connect(self.submit,SIGNAL("customContextMenuRequested(const QPoint)"),
+                    self.submitAndSingleSliceContextMenu)  # Submit button
+        QObject.connect(self.singleslice,SIGNAL("customContextMenuRequested(const QPoint)"),
+                    self.submitAndSingleSliceContextMenu)  # Single slice button
+        
  
     def submitToCluster(self):
         '''
@@ -145,8 +154,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
-            if ParameterWrap.par_dict[combo].performCheck():
-                self.cmd += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+            if ParameterWrap.CLA_dict[combo].performCheck():
+                self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
         
         if self.zingeron.isChecked():
             self.setZingerParameters()
@@ -154,7 +163,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
         for param in optional_single:
             if not getattr(self,param).text() == '':
-                self.cmd += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+                self.cmd += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             self.cmd += self.setWavletParameters()
@@ -282,28 +291,28 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ','+self.flatfreq.text()+' '
             for param in optional:
                 if not getattr(self,param).text() == '':
-                    cmd1 += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
             
             # Region of interest optional
             if getattr(self,'roion').isChecked():
-                cmd1 += ParameterWrap.par_dict['roion'].flag+' '
-                for child in ParameterWrap.par_dict['roion'].child_list:
+                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
+                for child in ParameterWrap.CLA_dict['roion'].child_list:
                     cmd1 += getattr(self,child).text()+','
                 cmd1 = cmd1[:-1]+' '
-            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
             if self.cpron.isChecked():
                 cmd1 += '--hold='+jobname+'_cpr '
-            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+jobname+'_'+mode+' '
   
         ## only for Paganin phase retrieval
         if mode == 'fltp':
-            cmd1 += ParameterWrap.par_dict['paganinon'].flag+' '
-            for child in ParameterWrap.par_dict['paganinon'].child_list:
+            cmd1 += ParameterWrap.CLA_dict['paganinon'].flag+' '
+            for child in ParameterWrap.CLA_dict['paganinon'].child_list:
                 cmd1 += getattr(self,child).text()+','
             cmd1 = cmd1[:-2]
             cmd1 = cmd1[:-len(str(getattr(self,child).text()))]+' '  # hack: delete last child
@@ -311,13 +320,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## only in CPR if cpr is set , else only in FLTP
         if mode == 'cpr' or not self.cpron.isChecked():
             if getattr(self,'preflatsonly').isChecked():
-                cmd1 += ParameterWrap.par_dict['preflatsonly'].flag+' '
+                cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
         
         cmd1 += '-g '+str(g_param)+' '
         
         ## TODO: include maybe above
         if mode == 'cpr' or self.fltp_fromtif.isChecked(): # or not self.cpron.isChecked():
-            cmd1 += ParameterWrap.par_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
+            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+self.getComboBoxContent('inputtype')+' '
         else:
             cmd1 += '-I 0 '
         
@@ -369,7 +378,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ',0,0,0,0 '
             
         if getattr(self,'preflatsonly').isChecked():
-                cmd1 += ParameterWrap.par_dict['preflatsonly'].flag+' '
+                cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             cmd1 += '-k 2 '
@@ -385,21 +394,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 += '--jobname='+jobname+'_sin '
         
-        if ParameterWrap.par_dict['steplines'].performCheck():
-            cmd1 += ParameterWrap.par_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
+        if ParameterWrap.CLA_dict['steplines'].performCheck():
+            cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
             
-        if ParameterWrap.par_dict['stitchingtype'].performCheck():
-            cmd1 += ParameterWrap.par_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
+        if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
+            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
         
         if self.sin_fromcpr.isChecked():
             inputdir = os.path.join(str(self.cprdirectory.text()),'')
-            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         elif self.sin_fromfltp.isChecked():
             inputdir = os.path.join(str(self.fltpdirectory.text()),'')
-            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
         elif self.sin_fromtif.isChecked():
             inputdir = os.path.join(str(self.inputdirectory.text()),'')
-            cmd1 += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
             return
@@ -431,11 +440,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             standard += ','+self.flats.text()
             standard += ','+self.interflats.text()
             standard += ','+self.flatfreq.text()+' '
-            if ParameterWrap.par_dict['stitchingtype'].performCheck():
-                standard += ParameterWrap.par_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
+            if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
+                standard += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+self.getComboBoxContent('stitchingtype')+' '
             if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
                 standard += self.setWavletParameters()
-            standard += ParameterWrap.par_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
             inputdir = os.path.join(str(self.sinogramdirectory.text()),'')
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
@@ -448,13 +457,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
         for param in optional:
             if not getattr(self,param).text() == '':
-                cmd1 += ParameterWrap.par_dict[param].flag+' '+getattr(self,param).text()+' '
+                cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
         
         ## (4) Comboboxes with respective dictionaries (except wavelet comboboxes)
         comboboxes = ['filter', 'outputtype', 'geometry']
         for combo in comboboxes:
-            if ParameterWrap.par_dict[combo].performCheck():
-                cmd1 += ParameterWrap.par_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
+            if ParameterWrap.CLA_dict[combo].performCheck():
+                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+self.getComboBoxContent(combo)+' ' 
                 
         # TODO: use jobname in IO so that we don't need to hardcode
         if self.sinon.isChecked() and self.rec_fromsino.isChecked():
@@ -499,16 +508,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
     
         # (1) all parameters that are mandatory (they cannot have any child parameters)
-        for key,param in ParameterWrap.par_dict.iteritems():
+        for key,param in ParameterWrap.CLA_dict.iteritems():
             if param.ismandatory and not param.performCheck():
                 color_list.append(param.name)
                 
         # (2) all parameters that are NOT mandatory, but are set anyways --> then we need to
         # perform a check of their children because in that case those must be set as well
-        for key,param in ParameterWrap.par_dict.iteritems():
+        for key,param in ParameterWrap.CLA_dict.iteritems():
                 if not param.ismandatory and param.performCheck():
                     for child_param in param.child_list:
-                        if not ParameterWrap.par_dict[child_param].performCheck():
+                        if not ParameterWrap.CLA_dict[child_param].performCheck():
                             color_list.append(child_param)
                             
         # (3) color the boxes
@@ -535,9 +544,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method that is challed when checking/unchecking the sinobox
         '''
         if not self.sinon.isChecked():
-            ParameterWrap.par_dict['sin_fromcpr'].resetField()
-            ParameterWrap.par_dict['sin_fromfltp'].resetField()
-            ParameterWrap.par_dict['sin_fromtif'].resetField()
+            ParameterWrap.CLA_dict['sin_fromcpr'].resetField()
+            ParameterWrap.CLA_dict['sin_fromfltp'].resetField()
+            ParameterWrap.CLA_dict['sin_fromtif'].resetField()
             
             
     def setUnsetPaganinCheckBox(self):
@@ -545,8 +554,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method that is challed when checking/unchecking the Paganin-box
         '''
         if not self.paganinon.isChecked():
-            ParameterWrap.par_dict['fltp_fromcpr'].resetField()
-            ParameterWrap.par_dict['fltp_fromtif'].resetField()
+            ParameterWrap.CLA_dict['fltp_fromcpr'].resetField()
+            ParameterWrap.CLA_dict['fltp_fromtif'].resetField()
             
             
     def setUnsetRecoCheckBox(self):
@@ -554,8 +563,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method that is challed when checking/unchecking the Reconstruction-box
         '''
         if not self.reconstructon.isChecked():
-            ParameterWrap.par_dict['rec_fromtif'].resetField()
-            ParameterWrap.par_dict['rec_fromsino'].resetField()
+            ParameterWrap.CLA_dict['rec_fromtif'].resetField()
+            ParameterWrap.CLA_dict['rec_fromsino'].resetField()
             
             
     def setUnsetFijiOn(self):
@@ -575,7 +584,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         delete all custom stylesheet settings for all class properties
         '''
-        for key,param in ParameterWrap.par_dict.iteritems():
+        for key,param in ParameterWrap.CLA_dict.iteritems():
             handle = getattr(self,param.name)
             handle.setStyleSheet("")
             
@@ -584,7 +593,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         method for clearing all fields in the GUI
         '''
-        for key,param in ParameterWrap.par_dict.iteritems():
+        for key,param in ParameterWrap.CLA_dict.iteritems():
             param.resetField()
         self.sinograms.clear()
         self.resetAllStyleSheets()
@@ -746,10 +755,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
         cmd = ''
-        cmd += ParameterWrap.par_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
-        cmd += ParameterWrap.par_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
-        cmd += ParameterWrap.par_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
-        cmd += ParameterWrap.par_dict[combos[1]].flag+' '+self.getComboBoxContent(combos[1])+' '
+        cmd += ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
+        cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
+        cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
+        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+self.getComboBoxContent(combos[1])+' '
         return cmd
         
         
@@ -758,9 +767,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method for adding zinger removal parameters
         '''
         self.cmd += '-z 1 '
-        self.cmd += ParameterWrap.par_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-        self.cmd += ParameterWrap.par_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
-                
+        self.cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
+        self.cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
+
         
     def displayErrorMessage(self,head,msg):
         '''
@@ -836,6 +845,35 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         pathstr = self.dirs.glueOsPath(newpathlist)
         self.recodirectory.setText(pathstr)
         
+        
+    def submitAndSingleSliceContextMenu(self,point):
+        '''
+        Context menu for submit and SingleSlice buttons. When right-
+        clicking on one of these and "setting a target" the
+        "changeSubmissionTarget" method gets executed.
+        '''
+        menu     = QMenu()
+        button_handle = self.sender()
+        
+        submit1 = menu.addAction("Set to x02da")
+        submit2 = menu.addAction("Set to Merlin")
+    
+        self.connect(submit1,SIGNAL("triggered()"),
+                    lambda param='x02da': self.changeSubmissionTarget(param))
+        self.connect(submit2,SIGNAL("triggered()"),
+                    lambda param='Merlin': self.changeSubmissionTarget(param))
+        menu.exec_(button_handle.mapToGlobal(point))
+        
+        
+    def changeSubmissionTarget(self,target):
+        '''
+        Sets the "target" property according "target" input and labels
+        the GUI buttons accordingly.
+        '''
+        self.target = target
+        self.submit.setText("Submit "+"("+target+")")
+        self.singleslice.setText("Single slice "+"("+target+")")
+            
 
 class DebugCommand(QDialog):
     '''

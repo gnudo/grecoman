@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Mon Jun 30 10:03:00 2014
+# Created: Mon Jun 30 11:12:03 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -143,7 +143,7 @@ class Ui_reco_mainwin(object):
         self.scaleimagefactor.setObjectName("scaleimagefactor")
         self.gridLayout_3.addWidget(self.scaleimagefactor, 8, 3, 1, 1)
         self.gridLayoutWidget_9 = QtGui.QWidget(self.groupBox_3)
-        self.gridLayoutWidget_9.setGeometry(QtCore.QRect(10, 110, 271, 61))
+        self.gridLayoutWidget_9.setGeometry(QtCore.QRect(10, 110, 271, 67))
         self.gridLayoutWidget_9.setObjectName("gridLayoutWidget_9")
         self.gridLayout_8 = QtGui.QGridLayout(self.gridLayoutWidget_9)
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -583,14 +583,16 @@ class Ui_reco_mainwin(object):
         self.jobname.setObjectName("jobname")
         self.horizontalLayout_2.addWidget(self.jobname)
         self.gridLayoutWidget_8 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(10, 860, 801, 32))
+        self.gridLayoutWidget_8.setGeometry(QtCore.QRect(10, 860, 921, 32))
         self.gridLayoutWidget_8.setObjectName("gridLayoutWidget_8")
         self.gridLayout_9 = QtGui.QGridLayout(self.gridLayoutWidget_8)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.singleslice = QtGui.QPushButton(self.gridLayoutWidget_8)
+        self.singleslice.setMinimumSize(QtCore.QSize(200, 0))
         self.singleslice.setObjectName("singleslice")
         self.gridLayout_9.addWidget(self.singleslice, 0, 2, 1, 1)
         self.submit = QtGui.QPushButton(self.gridLayoutWidget_8)
+        self.submit.setMinimumSize(QtCore.QSize(200, 0))
         self.submit.setObjectName("submit")
         self.gridLayout_9.addWidget(self.submit, 0, 0, 1, 1)
         self.clearfields = QtGui.QPushButton(self.gridLayoutWidget_8)
@@ -607,7 +609,7 @@ class Ui_reco_mainwin(object):
         self.openinfiji.setObjectName("openinfiji")
         reco_mainwin.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(reco_mainwin)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1256, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1256, 23))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")
@@ -679,7 +681,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.0.0-12-g9a5aa15", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
