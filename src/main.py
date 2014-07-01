@@ -763,7 +763,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.target = target
         self.submit.setText("Submit "+"("+target+")")
         self.singleslice.setText("Single slice "+"("+target+")")
-            
+        if target == 'Merlin':
+            self.afsaccount.setChecked(1)
+        
 
 class DebugCommand(QDialog):
     '''

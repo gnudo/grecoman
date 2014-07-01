@@ -7,13 +7,11 @@ class FileIO(object):
     GUI-fields (CLA-s) in order to quickly start reproducible
     pipeline operations. Every "FileIO" instance takes both the main
     application object and the OS path to the config file as arguments.
-    In the current version no special characters are supported.
+    In the current version no special characters (in the GUI-fields)
+    are supported.
     '''
     def __init__(self, parent, cfgfile):
-        '''
-        Constructor
-        '''
-        self.parent = parent
+        self.parent = parent  # main app object
         self.cfgfile = str(cfgfile)
         self.heading = 'GRecoMan Config'
         self.config = ConfigParser.RawConfigParser()
