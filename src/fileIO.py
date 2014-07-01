@@ -3,7 +3,11 @@ import ConfigParser
 
 class FileIO(object):
     '''
-    class for handling loading and saving of config-files
+    The "FileIO" class is used for loading/saving config files from
+    GUI-fields (CLA-s) in order to quickly start reproducible
+    pipeline operations. Every "FileIO" instance takes both the main
+    application object and the OS path to the config file as arguments.
+    In the current version no special characters are supported.
     '''
     def __init__(self, parent, cfgfile):
         '''
@@ -18,7 +22,10 @@ class FileIO(object):
         
     def writeFile(self,ParameterWrap):
         '''
-        read all "registered" parameters from main GUI and write to config file
+        This method writes a full configuration file by iterating
+        through all parameters (CLA-s) from the GUI that are saved in
+        the class variable (dictionary) "ParameterWrap.CLA_dict" (see
+        arguments.py) and calling "writeSingleParameter" method.
         '''
         self.config.add_section(self.heading)
         
@@ -31,7 +38,11 @@ class FileIO(object):
         
     def loadFile(self,ParameterWrap,overwrite):
         '''
-        load config file and write "registered" parameters to GUI fields/attributes
+        This method loads all parameters from a configuration file into
+        the available GUI-fields. Here we iterate through config-file
+        options rather than "ParameterWrap.CLA_dict". In doing so we
+        make sure that if we add new GUI-fields in the future, old
+        config files will still be compatible.
         '''
         self.config.read(self.cfgfile)
         
@@ -40,9 +51,7 @@ class FileIO(object):
                 
                 
     def writeSingleParameter(self,key,param):
-        '''
-        Method for writing a single Parameter to a config file.
-        '''
+        '''Method for writing a single Parameter to a config file.'''
         name_handle = getattr(self.parent,param.name)
         
         if type(name_handle).__name__ == 'QLineEdit':
@@ -57,25 +66,17 @@ class FileIO(object):
         
         
     def loadSingleParamter(self,param,overwrite):
-        '''
-        Method for loading a single parameter from a config file.
-        '''
+        '''Method for loading a single parameter from a config file.'''
         name_handle = getattr(self.parent,param)
         
         if type(name_handle).__name__ == 'QLineEdit':
             txt = self.config.get(self.heading, param)
             if overwrite or txt:
                 name_handle.setText(txt)
-        if type(name_handle).__name__ == 'QCheckBox' or type(name_handle).__name__ == 'QRadioButton':
+        if type(name_handle).__name__ == 'QCheckBox' or \
+            type(name_handle).__name__ == 'QRadioButton':
             checkstatus = self.config.getboolean(self.heading, param)
             name_handle.setChecked(checkstatus)
         if type(name_handle).__name__ == 'QComboBox':
             val = self.config.get(self.heading, param)
             name_handle.setCurrentIndex(int(val))
-        
-
-if __name__ == "__main__":
-    # TESTING ground
-    file_obj = FileIO('/Users/goranlovric/Desktop/test.txt')
-    CLA_dict = {"test":"1", "test":"2", "test3":"3"}
-    file_obj.writeFile([], CLA_dict)

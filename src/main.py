@@ -566,12 +566,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         'Select where the config file is located',self.lastdir)
         if not loadfile:
             return
-        self.lastdir = self.dirs.getParentDir(str(loadfile))
         file_obj = FileIO(self,loadfile)
         
         if returnvalue:
             return file_obj
         
+        self.lastdir = self.dirs.getParentDir(str(loadfile))
         file_obj.loadFile(ParameterWrap,overwrite)
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
