@@ -198,6 +198,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.cmd += self.setWavletParameters()
         
         self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
+        self.cmd += '-x '+self.target
         
         if self.print_cmd.isChecked():
             if not self.debugTextField():
