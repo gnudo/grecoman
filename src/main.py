@@ -120,7 +120,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                        'rec_fromsino','openinfiji','submit','clearfields','singleslice','print_cmd',\
                        'develbranchon']
         for key in range(len(field_order)-1):
-            self.setTabOrder(getattr(self,fields_list[key]), getattr(self,fields_list[key+1]))
+            self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
         
  
     def submitToCluster(self):

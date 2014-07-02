@@ -65,7 +65,10 @@ class FileIO(object):
         
     def loadSingleParamter(self,param,overwrite):
         '''Method for loading a single parameter from a config file.'''
-        name_handle = getattr(self.parent,param)
+        try:
+            name_handle = getattr(self.parent,param)
+        except AttributeError:
+            return
         
         if type(name_handle).__name__ == 'QLineEdit':
             txt = self.config.get(self.heading, param)
