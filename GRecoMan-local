@@ -2,4 +2,5 @@
 # Description: small caller script for GRecoMan
 # Author: Goran Lovric
 
-python src/grecoman.py
+cd $(dirname $0);
+python src/main.py;

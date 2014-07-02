@@ -103,6 +103,25 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.singleslice,SIGNAL("customContextMenuRequested(const QPoint)"),
                     self.submitAndSingleSliceContextMenu)  # Single slice button
         
+        ## Set tab order for all fields in GUI
+        field_order = ['afsaccount','cons2','inputdirectory','setinputdirectory','inputtype',\
+                       'prefix','stitchingtype','raws','darks','flats','interflats','flatfreq',\
+                       'preflatsonly','roion','roi_left','roi_right','roi_upper','roi_lower',\
+                       'binsize','scaleimagefactor','cprdirectory','setcprdirectory',\
+                       'fltpdirectory','setfltpdirectory','sinogramdirectory','setsinogramdirectory',\
+                       'sinograms','recodirectory','setrecodirectory','jobname','pag_energy',\
+                       'pag_pxsize','pag_delta','pag_beta','pag_distance','runringremoval',\
+                       'wavelettype','waveletpaddingmode','waveletdecompositionlevel',
+                       'sigmaingaussfilter','filter','cutofffrequency','edgepadding',\
+                       'centerofrotation','outputtype','tifmin','tifmax','shiftcorrection',\
+                       'rotationangle','geometry','zingeron','zinger_thresh','zinger_width','cpron',\
+                       'withlog','paganinon','fltp_fromtif','fltp_fromcpr','sinon','sin_fromtif',\
+                       'sin_fromcpr','sin_fromfltp','steplines','reconstructon','rec_fromtif',\
+                       'rec_fromsino','openinfiji','submit','clearfields','singleslice','print_cmd',\
+                       'develbranchon']
+        for key in range(len(field_order)-1):
+            self.setTabOrder(getattr(self,fields_list[key]), getattr(self,fields_list[key+1]))
+        
  
     def submitToCluster(self):
         '''
@@ -210,13 +229,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif self.cons2.isChecked():
             self.job.submitJobLocally(self.cmd)
             
-        for kk in range(10):
+        for kk in range(30):
             if os.path.isfile(img):
                 break
             else:
                 sleep(0.5)
         else:
-            self.displayErrorMessage('No reconstructed slice found', 'After waiting 5 sec the reconstructed slice was not found')
+            self.displayErrorMessage('No reconstructed slice found', 'After waiting 15 sec the reconstructed slice was not found')
             return
                                     
         ## (7) we display the image

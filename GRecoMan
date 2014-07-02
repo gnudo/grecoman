@@ -2,4 +2,4 @@
 # Description: small caller script for GRecoMan
 # Author: Goran Lovric
 
-python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/src/grecoman.py
+python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/src/main.py
