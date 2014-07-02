@@ -67,7 +67,7 @@ class FileIO(object):
         '''Method for loading a single parameter from a config file.'''
         try:
             name_handle = getattr(self.parent,param)
-        except AttributeError:
+        except AttributeError: # if GUI-field doesn't exist, don't load
             return
         
         if type(name_handle).__name__ == 'QLineEdit':

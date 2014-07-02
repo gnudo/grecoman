@@ -25,6 +25,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.job = Connector(self)  # connector object for submitting the command
         self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
+        self.lastdir_config = self.lastdir  # set the starting open directory for config-files
         self.changeSubmissionTarget('x02da')  # set the submission target standardly to x02da
         
         ## GUI fields connections
@@ -566,12 +567,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         method when pressing Menu item for loading config file
         '''
         savefile = QFileDialog.getSaveFileName(self,
-                        'Select where the config file should be saved',self.lastdir)
+                        'Select where the config file should be saved',self.lastdir_config)
         if not savefile:
             return
         file_obj = FileIO(self,savefile)
         file_obj.writeFile(ParameterWrap)
-        self.lastdir = self.dirs.getParentDir(str(savefile))
+        self.lastdir_config = self.dirs.getParentDir(str(savefile))
         
         
     def loadConfigFile(self, loadfile = '', returnvalue = False, overwrite = True):
@@ -582,7 +583,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if not loadfile:
             loadfile = QFileDialog.getOpenFileName(self,
-                        'Select where the config file is located',self.lastdir)
+                        'Select where the config file is located',self.lastdir_config)
         if not loadfile:
             return
         file_obj = FileIO(self,loadfile)
@@ -590,7 +591,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if returnvalue:
             return file_obj
         
-        self.lastdir = self.dirs.getParentDir(str(loadfile))
+        self.lastdir_config = self.dirs.getParentDir(str(loadfile))
         file_obj.loadFile(ParameterWrap,overwrite)
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
