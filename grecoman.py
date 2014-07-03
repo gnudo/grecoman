@@ -264,7 +264,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif self.cons2.isChecked():
             self.job.submitJobLocally(self.cmd)
             
-        for kk in range(10):
+        for kk in range(30):
             if os.path.isfile(img):
                 break
             else:
