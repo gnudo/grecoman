@@ -67,10 +67,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
-        QObject.connect(self.loadOnlyPaganin,
+        QObject.connect(self.menuLoadOnlyPaganin,
             SIGNAL("triggered()"),lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
-        QObject.connect(self.loadOnlyRingRemoval,
+        QObject.connect(self.menuLoadOnlyRingRemoval,
             SIGNAL("triggered()"),lambda param=['waveletdecompositionlevel','sigmaingaussfilter','wavelettype','waveletpaddingmode']: \
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
         QObject.connect(self.menuCreateCpr,
@@ -95,6 +95,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
         QObject.connect(self.menuRingRemoval2,
             SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
+        QObject.connect(self.menuChangeMerlinMountPoint,
+            SIGNAL("triggered()"),lambda param='merlindir': self.getDirectory(param))  # MENU change Merlin mount point
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
@@ -173,13 +175,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
-        if self.afsaccount.isChecked():
-            single_sino = self.dirs.afsPath2Cons2(self.sinogramdirectory.text())
-        elif self.cons2.isChecked():
-            single_sino = str(self.sinogramdirectory.text())
+        single_sino = self.dirs.rewriteDirectoryPath(self.sinogramdirectory.text(),'forward')
 
         ## (3) create the command line string for single slice reconstruction
-        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
+        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc-devel.py '
         
         combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
         for combo in combos_single:
@@ -197,8 +196,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             self.cmd += self.setWavletParameters()
         
+        self.cmd += '-x '+self.target+' '
         self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
-        self.cmd += '-x '+self.target
         
         if self.print_cmd.isChecked():
             if not self.debugTextField():
@@ -209,15 +208,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         ## (5) we look for the image and delete it if it exists
-        # TODO: just preliminary as the whole PATH-modification things should be
-        #       outsourced (we want to avoid spaghetti-code!)
-        if self.afsaccount.isChecked():
-            basedir = self.dirs.cons2Path2afs(self.dirs.getParentDir(single_sino))
-        elif self.cons2.isChecked():
-            basedir = self.dirs.getParentDir(single_sino)
-            
+        basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
+        
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = basedir+'/viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+        img = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
         
         if self.openinfiji.isChecked():
             self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
@@ -227,10 +221,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
+            if self.target == 'x02da':
+                self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
+            elif self.target == 'Merlin':
+                self.job.submitJobViaSshPublicKey(self.cmd+'\n','merlinc60')
         elif self.cons2.isChecked():
             self.job.submitJobLocally(self.cmd)
-            
+        
         for kk in range(30):
             if os.path.isfile(img):
                 break
@@ -623,14 +620,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
     
     
-    def getDirectory(self,mode):
+    def getDirectory(self,mode,infostring = ''):
         '''
         Dialog for setting a directory source with QFileDialog. First,
         we update "lastdir" property. After that, depending on the
         directory, the textfield are updated and initialized.
         '''
+        if not infostring:
+            infostring = 'Select direcory'
+        
         dir_temp = QFileDialog.getExistingDirectory(self,
-                            'Select direcory',self.lastdir)
+                            infostring,self.lastdir)
+        dir_temp = str(os.path.join(str(dir_temp),''))
         if not dir_temp:
             return
 
@@ -657,6 +658,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.dirs.recodir = dir_temp
             self.recodirectory.setText(self.dirs.recodir)
             return
+        elif mode == 'merlindir':
+            self.dirs.merlin_mount_dir = dir_temp ######ADDDD last slash
             
         
     def setWavletParameters(self):
@@ -786,6 +789,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.singleslice.setText("Single slice "+"("+target+")")
         if target == 'Merlin':
             self.afsaccount.setChecked(1)
+            self.job.performInitalCheck()
+            if not self.dirs.merlin_mount_dir:
+                self.getDirectory('merlindir','Select where the Merlin directory is mounted')
+            # If Merlin is the target we need the merlin username
+            # immediately (otherwise we cannot create the correct
+            # directory paths)
         
 
 class DebugCommand(QDialog):

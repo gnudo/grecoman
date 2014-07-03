@@ -15,6 +15,7 @@ class Connector(object):
         self.parent = parent
         self.afsuser = []
         self.eaccountuser = []
+        self.merlinuser = []
         self.afspw = []
         self.eaccountpw = []
         
@@ -24,8 +25,10 @@ class Connector(object):
         method for checking both AFS and EACCOUNT credentials
         '''
         # (0) if we are on cons-2 we don't need any credentials (at least for now)
-        if self.parent.cons2.isChecked():
-            return True 
+        if self.parent.cons2.isChecked() or self.parent.target == 'Merlin':
+            if not self.merlinuser:
+                self.inputCredentials('Merlin')
+            return True
         
         # (1) first we check whether we have AFS-credentials AND whether we actually get them
         if not self.afsuser or not self.afspw:
@@ -57,6 +60,20 @@ class Connector(object):
         '''
         proc = subprocess.Popen(cmd, shell=True)
         proc.communicate()
+        
+        
+    def submitJobViaSshPublicKey(self,cmd_str,target):
+        '''
+        method for submitting job via SSH when public key auth has
+        already been set up
+        '''
+        sshProcess = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE,shell=True)
+        sshProcess.stdin.write('ssh '+self.merlinuser+'@'+target+'\n')
+        sshProcess.stdin.write('whoami\n')
+        sshProcess.stdout.readline()
+        sshProcess.stdin.write(cmd_str)
+        sshProcess.stdout.readline()
         
         
     def submitJobViaGateway(self,cmd_str,gw,target):
@@ -140,6 +157,8 @@ class Connector(object):
                     self.eaccountuser = []
                     self.afspw = []
                     return False
+            elif mode == 'Merlin':
+                self.merlinuser = str(logwin.username.text())
             return True
         return False
         
@@ -232,12 +251,16 @@ class Login(QDialog):
         self.label = QLabel()
         self.label.setObjectName("label")
         self.label.setText(QApplication.translate("Dialog", "Login:", None, QApplication.UnicodeUTF8))
-        self.label2 = QLabel()
-        self.label2.setObjectName("label2")
-        self.label2.setText(QApplication.translate("Dialog", "Password:", None, QApplication.UnicodeUTF8))
+        if not mode == 'Merlin':
+            self.label2 = QLabel()
+            self.label2.setObjectName("label2")
+            self.label2.setText(QApplication.translate("Dialog", "Password:", None, QApplication.UnicodeUTF8))
         self.username = QLineEdit(self)
         self.password = QLineEdit(self)
         self.password.setEchoMode(QLineEdit.Password)
+        if mode == 'Merlin':  # for Merlin we don't need a PW,
+            self.password.hide()
+            self.password.setText('test')
         self.parent = parent
         self.buttonlogin = QPushButton('Login', self)
         self.buttonlogin.clicked.connect(self.execLoginButton)
@@ -245,8 +268,9 @@ class Login(QDialog):
         layout.addWidget(self.heading)
         layout.addWidget(self.label)
         layout.addWidget(self.username)
-        layout.addWidget(self.label2)
-        layout.addWidget(self.password)
+        if not mode == 'Merlin':
+            layout.addWidget(self.label2)
+            layout.addWidget(self.password)
         layout.addWidget(self.buttonlogin)
    
    

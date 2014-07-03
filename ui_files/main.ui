@@ -1582,8 +1582,8 @@
      <property name="title">
       <string>Load specific</string>
      </property>
-     <addaction name="loadOnlyPaganin"/>
-     <addaction name="loadOnlyRingRemoval"/>
+     <addaction name="menuLoadOnlyPaganin"/>
+     <addaction name="menuLoadOnlyRingRemoval"/>
     </widget>
     <addaction name="menuloadsettings"/>
     <addaction name="menusavesettings"/>
@@ -1631,8 +1631,15 @@
     <addaction name="separator"/>
     <addaction name="menuRing_removal"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="menuChangeMerlinMountPoint"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuRun"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuloadsettings">
@@ -1705,14 +1712,19 @@
     <string>Strong thick rings</string>
    </property>
   </action>
-  <action name="loadOnlyPaganin">
+  <action name="menuLoadOnlyPaganin">
    <property name="text">
     <string>Paganin parameters</string>
    </property>
   </action>
-  <action name="loadOnlyRingRemoval">
+  <action name="menuLoadOnlyRingRemoval">
    <property name="text">
     <string>Ring removal parameters</string>
+   </property>
+  </action>
+  <action name="menuChangeMerlinMountPoint">
+   <property name="text">
+    <string>Change Merlin mount point</string>
    </property>
   </action>
  </widget>

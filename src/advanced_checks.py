@@ -19,6 +19,8 @@ class AdvancedChecks(object):
         self.homedir = os.path.expanduser('~')
         self.runningdir = self.getParentDir(os.path.dirname(os.path.realpath(__file__)))
         self.parent = parent
+        self.merlin_mount_dir = []
+        self.merlin_base = '/gpfs/home/'
         
         
     def initInputDirectory(self):
@@ -63,7 +65,7 @@ class AdvancedChecks(object):
         error message
         '''
         self.parent.sinograms.clear()  # clear sin combo box
-        self.sinodir = self.parent.sinogramdirectory.text()
+        self.sinodir = os.path.join(str(self.parent.sinogramdirectory.text()),'')
         
         if not os.path.exists(self.sinodir):
             self.parent.displayErrorMessage('"sin" folder missing','No sinograms found in standard sin folder')
@@ -155,6 +157,24 @@ class AdvancedChecks(object):
         tmp_list = afs_base+[splitted_dir[4]]+splitted_dir[5:]
         return os.path.join(*tmp_list)
     
+    
+    def sshfsPath2Merlin(self,path):
+        '''
+        transforms a mounted Merlin path to the original Merlin path 
+        '''        
+        split_merlin_mount = self.splitOsPath(str(self.merlin_mount_dir))
+        splitted_dir = self.splitOsPath(str(path))
+        tmp_list = [self.merlin_base+self.parent.job.merlinuser]+splitted_dir[len(split_merlin_mount)-1:]
+        return os.path.join(*tmp_list)
+    
+    def merlin2SshfsPath(self,path):
+        '''
+        transforms original Merlin path to a mounted Merlin path 
+        '''
+        split_merlin_base = self.splitOsPath(str(self.merlin_base))
+        splitted_dir = self.splitOsPath(str(path))
+        tmp_list = [self.merlin_mount_dir]+splitted_dir[len(split_merlin_base):]
+        return os.path.join(*tmp_list)
         
         
     def splitOsPath(self, path):
@@ -231,13 +251,6 @@ class AdvancedChecks(object):
                 # Magnification and pixel size
                 elif (line.split()[0] == 'Actual' and line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(str(line.split(':')[1]).strip()+'E-6')
-                
-    
-    def checkNumberOfProjs(self):
-        '''
-        for consecutive scans check whether all raw data is present (according to log-file).
-        otherwise throw an error or
-        '''
     
     
     def determineInputType(self):
@@ -269,6 +282,36 @@ class AdvancedChecks(object):
         prefix = self.splitOsPath(str(self.inputdir))[-3]
         self.parent.prefix.setText(prefix)
         self.parent.jobname.setText(prefix)
+        
+        
+    def rewriteDirectoryPath(self,path,mode):
+        '''
+        This method should rewrite any absolute directory path to a
+        correct path for the target machine. We distinguish two modes:
+        (i) forward means that the paths are given on the local machine
+        and are transformed to work on the remote machine.
+        (ii) backward means the paths from the remote machine are
+        transformed to be used on the local machine
+        '''
+        path = os.path.join(str(path),'')
+        if mode == 'forward':
+            if self.parent.afsaccount.isChecked():
+                if self.parent.target == 'x02da':
+                    path = self.afsPath2Cons2(path)
+                elif self.parent.target == 'Merlin':
+                    path = self.sshfsPath2Merlin(path)
+            elif self.parent.cons2.isChecked():
+                pass
+            return path
+        elif mode == 'backward':
+            if self.parent.afsaccount.isChecked():
+                if self.parent.target == 'x02da':
+                    path = self.cons2Path2afs(path)
+                elif self.parent.target == 'Merlin':
+                    path = self.merlin2SshfsPath(path)
+            elif self.cons2.isChecked():
+                pass
+            return path
 
 
 if __name__ == "__main__":
@@ -276,3 +319,5 @@ if __name__ == "__main__":
     print os.path.exists('/Users/goranlovric/Desktop/asdf')
     print os.path.exists('/Users/goranlovric/Desktop/')
     print os.path.split('/Users/goranlovric/Desktop')
+    test = AdvancedChecks('asdf')
+    print test.sshfsPath2Merlin('/afs/psi.ch/user/l/lovric_g/Desktop/merlin2/Data10/disk1/mouseB_03_01_/sin-3/mouseB_03_01_1065.sin.DMP')
