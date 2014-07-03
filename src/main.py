@@ -157,7 +157,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         # (3) run SSh-connector to launch the job
         if self.afsaccount.isChecked():
-            self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
+            if self.target == 'x02da':
+                self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
+            elif self.target == 'Merlin':
+                self.job.submitJobViaSshPublicKey(self.cmd+'\n','merlinc60')
         elif self.cons2.isChecked():
             self.job.submitJobLocally(self.cmd)
             
@@ -397,7 +400,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ','+self.darks.text()
             cmd1 += ','+self.flats.text()
             cmd1 += ','+self.interflats.text()
-            cmd1 += ','+self.flatfreq.text()+' '            
+            cmd1 += ','+self.flatfreq.text()+' '
+            if getattr(self,'roion').isChecked():
+                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
+                for child in ParameterWrap.CLA_dict['roion'].child_list:
+                    cmd1 += getattr(self,child).text()+','
+                cmd1 = cmd1[:-1]+' '
         else:
             standard = '-d -k 2 -g 0 -I 0 '
             cmd1 = self.cmd0+standard
