@@ -1002,271 +1002,6 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>30</y>
-      <width>301</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>Ring Removal</string>
-    </property>
-    <widget class="QComboBox" name="wavelettype">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>60</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>db1</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db2</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db3</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db4</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db5</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db6</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db7</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db8</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db9</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db11</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db12</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db13</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db14</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db15</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db16</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db17</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db18</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db19</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db20</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>131</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wavelettype (-y)</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>161</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Decomposition level (-V)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="waveletdecompositionlevel">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>130</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>160</y>
-       <width>171</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Sigma in Gauss-filter (-E)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="sigmaingaussfilter">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>160</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="waveletpaddingmode">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>90</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>zero</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>constant</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>symmetric</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>periodic</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>smooth</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>181</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wavelet padding mode (-M)</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>20</y>
-       <width>251</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Activate wavelet ring removal</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="runringremoval">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>21</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="groupBox_6">
     <property name="geometry">
      <rect>
@@ -1563,6 +1298,230 @@
     <property name="text">
      <string>Open preview image in Fiji (externally)</string>
     </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>30</y>
+      <width>301</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string/>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Ring Removal I</string>
+     </attribute>
+     <widget class="QWidget" name="gridLayoutWidget_10">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>291</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="1" column="2">
+        <widget class="QComboBox" name="wavelettype">
+         <item>
+          <property name="text">
+           <string>db1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db4</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db5</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db6</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db7</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db8</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db9</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db10</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db11</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db12</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db13</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db14</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db15</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db17</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db18</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db19</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db20</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QComboBox" name="waveletpaddingmode">
+         <item>
+          <property name="text">
+           <string>zero</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>constant</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>symmetric</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>periodic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>smooth</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="waveletdecompositionlevel"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="sigmaingaussfilter"/>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QCheckBox" name="runringremoval">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Activate wavelet ring removal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Wavelettype (-y)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Wavelet padding mode (-M)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Decomposition level (-V)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Sigma in Gauss-filter (-E)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Ring removal II</string>
+     </attribute>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -346,10 +346,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## only for Paganin phase retrieval
         if mode == 'fltp':
             cmd1 += ParameterWrap.CLA_dict['paganinon'].flag+' '
-            for child in ParameterWrap.CLA_dict['paganinon'].child_list:
+            for child in ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
                 cmd1 += getattr(self,child).text()+','
-            cmd1 = cmd1[:-2]
-            cmd1 = cmd1[:-len(str(getattr(self,child).text()))]+' '  # hack: delete last child
+            cmd1 = cmd1[:-1]+' '
                 
         ## only in CPR if cpr is set , else only in FLTP
         if mode == 'cpr' or not self.cpron.isChecked():
@@ -415,9 +414,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 = self.cmd0+standard
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
-            
-        if getattr(self,'preflatsonly').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
+        
+        for param in ['preflatsonly','shiftcorrection']:
+            if getattr(self,param).isChecked():
+                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             cmd1 += '-k 2 '
