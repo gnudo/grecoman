@@ -141,7 +141,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not str(self.jobname.text()):
             self.jobname_str = 'GRecoM'
         else:
-            self.jobname_str = str(self.jobname.text())
+            if str(self.jobname.text())[0].isdigit():
+                # jobname cannot start with a digit!!
+                self.jobname_str = 'z'+str(self.jobname.text())
+            else:
+                self.jobname_str = str(self.jobname.text())
             
         self.cmd = ''
         if not self.createCommand():
