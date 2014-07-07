@@ -2,7 +2,7 @@ from ui_main import Ui_reco_mainwin
 from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
-from advanced_checks import AdvancedChecks
+from datasets import DatasetFolder
 from fileIO import FileIO
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -23,7 +23,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
 
         ParameterWrap.registerAllParameters(self)  # we register all command line arguments
         self.job = Connector(self)  # connector object for submitting the command
-        self.dirs = AdvancedChecks(self)  # Object for performing all operations on dirs
+        self.dirs = DatasetFolder(self)  # Object for performing all operations on dirs
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
         self.lastdir_config = self.lastdir  # set the starting open directory for config-files
         self.changeSubmissionTarget('x02da')  # set the submission target standardly to x02da

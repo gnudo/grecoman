@@ -2,7 +2,7 @@ from os import listdir
 import os.path
 
 
-class AdvancedChecks(object):
+class DatasetFolder(object):
     '''
     class for implementing all methods that can be used for further advanced checking,
     once the INPUT directory has been set.
@@ -295,5 +295,5 @@ if __name__ == "__main__":
     print os.path.exists('/Users/goranlovric/Desktop/asdf')
     print os.path.exists('/Users/goranlovric/Desktop/')
     print os.path.split('/Users/goranlovric/Desktop')
-    test = AdvancedChecks('asdf')
+    test = DatasetFolder('asdf')
     print test.sshfsPath2Merlin('/afs/psi.ch/user/l/lovric_g/Desktop/merlin2/Data10/disk1/mouseB_03_01_/sin-3/mouseB_03_01_1065.sin.DMP')
