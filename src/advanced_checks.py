@@ -30,10 +30,10 @@ class AdvancedChecks(object):
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),'')
         
         ## Clear old sino dirs
-        self.parent.sinogramdirectory.setText('')
+        self.parent.sindirectory.setText('')
         self.sinodir = ''
         
-        if not self.inputdir:
+        if not self.inputdir or not os.path.isdir(self.inputdir):
             return
         
         self.parent.lastdir = self.getParentDir(str(self.inputdir))
@@ -41,17 +41,10 @@ class AdvancedChecks(object):
         if self.determineInputType():
             self.determinePrefix()
         
-        ## TODO: check SIN folder (and set if necessary to standard)
-        self.checkSinFolder()
-        
-        ## TODO: check CPR folder (and set if necessary to standard)
-        self.checkCprFolder()  
-
-        ## TODO: check FLTP folder (and set if necessary to standard)
-        self.checkFltpFolder()
-        
-        ## TODO: check rec8bit folder (and set if necessary to standard)
-        self.checkRecoFolder()     
+        # We set all I/O folders
+        dirs = ['sin','cpr','fltp','reco']
+        for item in dirs:
+            self.checkFolder(idem)
         
         ## TODO: check scan parameters from log file etc. etc.
         self.loadAndParseLogFile()
@@ -65,7 +58,7 @@ class AdvancedChecks(object):
         error message
         '''
         self.parent.sinograms.clear()  # clear sin combo box
-        self.sinodir = os.path.join(str(self.parent.sinogramdirectory.text()),'')
+        self.sinodir = os.path.join(str(self.parent.sindirectory.text()),'')
         
         if not os.path.exists(self.sinodir):
             self.parent.displayErrorMessage('"sin" folder missing','No sinograms found in standard sin folder')
@@ -82,57 +75,40 @@ class AdvancedChecks(object):
             self.parent.sinograms.addItem(item)
             
             
-    def checkCprFolder(self):
+    def checkFolder(self,mode):
         '''
-        check whether cpr folder exists etc.
+        This method sets the respective I/O directory ("mode"),
+        checks whether it exists and issues a warning. In case of the
+        reco-output dir, the correct suffix is appended according to
+        the combo-box (outputtype) and in case of the sin-directory,
+        the "initSinDirectory" is launched.
         '''
-        tmp_dir = os.path.split(str(self.inputdir))
-        tmp_dir = os.path.split(tmp_dir[0])
-        self.cprdir = os.path.join(tmp_dir[0],'cpr')
-        if os.path.exists(self.cprdir):
-            self.parent.displayErrorMessage('Existing cpr-directory','Rename the destination')
-            
-        self.parent.cprdirectory.setText(self.cprdir)
-                
+        inputdir = os.path.join(str(self.inputdir),'')
+        dir = os.path.join(self.getParentDir(inputdir),mode)
+        setattr( self, mode+'dir', os.path.join(dir,'') )
+        dir_handle = getattr(self,mode+'dir')
+        if os.path.exists(dir_handle):
+            self.parent.displayErrorMessage('Existing directory',\
+                    'You should probably rename the '+mode+'-directory!')
         
-    def checkFltpFolder(self):
-        '''
-        check whether fltp folder exists etc.
-        TODO: all 3 methods: checkFltpFolder,checkCprFolder,checkSinFolder > too similar!
-        '''
-        tmp_dir = os.path.split(str(self.inputdir))
-        tmp_dir = os.path.split(tmp_dir[0])
-        self.fltpdir = os.path.join(tmp_dir[0],'fltp')
-        if os.path.exists(self.fltpdir):
-            self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
-            
-        self.parent.fltpdirectory.setText(self.fltpdir)
-                
+        getattr(self.parent,mode+'directory').setText(dir_handle)
         
-    def checkRecoFolder(self):
-        '''
-        check whether reco folder exists etc.
-        '''
-        tmp_dir = os.path.split(str(self.inputdir))
-        tmp_dir = os.path.split(tmp_dir[0])
-        self.recodir = os.path.join(tmp_dir[0],'rec_8bit')
-        if os.path.exists(self.recodir):
-            self.parent.displayErrorMessage('Existing fltp-directory','Rename the destination')
-            
-        self.parent.recodirectory.setText(self.recodir)
+        if mode == 'reco':
+            self.setOutputDirectory('rec_8bit')
+        elif mode == 'sin':
+            self.initSinDirectory()
         
         
-    def checkSinFolder(self):
+    def setOutputDirectory(self,newname):
         '''
-        check whether sinograms exist and if yes populate the respective combobox
+        Methods sets the correct output directory for reconstructions
+        according to the respective combo-box.
         '''
-        if not self.sinodir:
-            tmp_dir = os.path.split(str(self.inputdir))
-            tmp_dir = os.path.split(tmp_dir[0])
-            sinfolder = os.path.join(tmp_dir[0],'sin')
-            self.parent.sinogramdirectory.setText(sinfolder)
-            
-        self.initSinDirectory()
+        outputpaths = os.path.join(str(self.parent.recodirectory.text()),'')
+        outputpaths = self.splitOsPath(outputpaths)
+        newpathlist = outputpaths[:-2]+[newname]
+        pathstr = self.glueOsPath(newpathlist)
+        self.parent.recodirectory.setText(pathstr)
             
             
     def afsPath2Cons2(self,path):

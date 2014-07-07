@@ -49,7 +49,7 @@ def getArgs():
                         help = 'Select filename of the ouput reconstruction' ) 
     parser.add_option( '-F' , dest='filter' , default='shepp-logan' ,
                         help = 'Select filter for the reconstruction with gridrec [default: %default]' )
-    parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.5 ,
+    parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.0 ,
                         help = 'Select edge padding for reconstruction with gridrec [default: %default]' )
     parser.add_option( '-G' , dest='geometry' , default='1',
                         help = 'Specify projection geometry for gridrec:'

@@ -41,7 +41,7 @@ class ParameterWrap(object):
         cls.addParameter('binsize','-b',[],False)
         cls.addParameter('scaleimagefactor','-s',[],False)
         cls.addParameter('steplines','-j',[],False)
-        cls.addParameter('sinogramdirectory','-o',[],True)
+        cls.addParameter('sindirectory','-o',[],True)
         cls.addParameter('paganinon','-Y',['pag_energy','pag_pxsize','pag_delta','pag_beta','pag_distance','fltpdirectory'],False)
         cls.addParameter('pag_energy','',[],False)
         cls.addParameter('pag_delta','',[],False)
@@ -62,8 +62,8 @@ class ParameterWrap(object):
         cls.addParameter('cpron','',['cprdirectory'],False)
         cls.addParameter('cprdirectory','',[],False)
         cls.addParameter('fltpdirectory','',[],False)
-        cls.addParameter('sinon','',['sinogramdirectory'],False)
-        cls.addParameter('sinogramdirectory','',[],False)
+        cls.addParameter('sinon','',['sindirectory'],False)
+        cls.addParameter('sindirectory','',[],False)
         cls.addParameter('reconstructon','',['recodirectory'],False)
         cls.addParameter('recodirectory','',[],False)
         cls.addParameter('withlog','',[],False)
@@ -87,7 +87,7 @@ class ParameterWrap(object):
         cls.addParameter('fltp_fromcpr','',['cprdirectory'],False)
         cls.addParameter('fltp_fromtif','',['inputdirectory'],False)
         cls.addParameter('rec_fromtif','',['inputdirectory'],False)
-        cls.addParameter('rec_fromsino','',['sinogramdirectory'],False)
+        cls.addParameter('rec_fromsino','',['sindirectory'],False)
         
     
     @classmethod

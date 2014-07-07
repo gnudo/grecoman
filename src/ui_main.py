@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Fri Jul  4 15:13:13 2014
+# Created: Mon Jul  7 10:52:39 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -216,10 +216,10 @@ class Ui_reco_mainwin(object):
         self.setcprdirectory.setMinimumSize(QtCore.QSize(0, 22))
         self.setcprdirectory.setObjectName("setcprdirectory")
         self.gridLayout_6.addWidget(self.setcprdirectory, 1, 1, 1, 1)
-        self.sinogramdirectory = QtGui.QLineEdit(self.gridLayoutWidget_6)
-        self.sinogramdirectory.setMinimumSize(QtCore.QSize(0, 22))
-        self.sinogramdirectory.setObjectName("sinogramdirectory")
-        self.gridLayout_6.addWidget(self.sinogramdirectory, 5, 0, 1, 1)
+        self.sindirectory = QtGui.QLineEdit(self.gridLayoutWidget_6)
+        self.sindirectory.setMinimumSize(QtCore.QSize(0, 22))
+        self.sindirectory.setObjectName("sindirectory")
+        self.gridLayout_6.addWidget(self.sindirectory, 5, 0, 1, 1)
         self.label_2 = QtGui.QLabel(self.gridLayoutWidget_6)
         self.label_2.setObjectName("label_2")
         self.gridLayout_6.addWidget(self.label_2, 4, 0, 1, 1)
@@ -706,7 +706,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.0.1-22-ga61e05f", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.0.1-23-g528bf03", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -737,7 +737,7 @@ class Ui_reco_mainwin(object):
         self.label_18.setText(QtGui.QApplication.translate("reco_mainwin", "Application is running on:", None, QtGui.QApplication.UnicodeUTF8))
         self.afsaccount.setText(QtGui.QApplication.translate("reco_mainwin", "AFS-account", None, QtGui.QApplication.UnicodeUTF8))
         self.cons2.setText(QtGui.QApplication.translate("reco_mainwin", "x02da-cons-2", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("reco_mainwin", "Output directories", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input/Output directories", None, QtGui.QApplication.UnicodeUTF8))
         self.setfltpdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("reco_mainwin", "Corrected projections (CPR-s)", None, QtGui.QApplication.UnicodeUTF8))
         self.setcprdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -789,7 +789,7 @@ class Ui_reco_mainwin(object):
         self.groupBox_6.setTitle(QtGui.QApplication.translate("reco_mainwin", "Actions", None, QtGui.QApplication.UnicodeUTF8))
         self.paganinon.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin phase retrieval (fltp)", None, QtGui.QApplication.UnicodeUTF8))
         self.cpron.setText(QtGui.QApplication.translate("reco_mainwin", "Create CPR-s", None, QtGui.QApplication.UnicodeUTF8))
-        self.reconstructon.setText(QtGui.QApplication.translate("reco_mainwin", "Do reconstruction (-R)", None, QtGui.QApplication.UnicodeUTF8))
+        self.reconstructon.setText(QtGui.QApplication.translate("reco_mainwin", "Do reconstruction", None, QtGui.QApplication.UnicodeUTF8))
         self.sinon.setText(QtGui.QApplication.translate("reco_mainwin", "Create sinograms (sin)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_36.setText(QtGui.QApplication.translate("reco_mainwin", "Interleave sino creation (-j)", None, QtGui.QApplication.UnicodeUTF8))
         self.sin_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))

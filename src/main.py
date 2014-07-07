@@ -33,7 +33,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),lambda param='input_dir': self.getDirectory(param))  # data input directory
         QObject.connect(self.inputdirectory,
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
-        QObject.connect(self.sinogramdirectory,
+        QObject.connect(self.sindirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.setsinogramdirectory,
             SIGNAL("clicked()"),lambda param='sinodir': self.getDirectory(param))  # sinogram output
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                        'prefix','stitchingtype','raws','darks','flats','interflats','flatfreq',\
                        'preflatsonly','roion','roi_left','roi_right','roi_upper','roi_lower',\
                        'binsize','scaleimagefactor','cprdirectory','setcprdirectory',\
-                       'fltpdirectory','setfltpdirectory','sinogramdirectory','setsinogramdirectory',\
+                       'fltpdirectory','setfltpdirectory','sindirectory','setsinogramdirectory',\
                        'sinograms','recodirectory','setrecodirectory','jobname','pag_energy',\
                        'pag_pxsize','pag_delta','pag_beta','pag_distance','runringremoval',\
                        'wavelettype','waveletpaddingmode','waveletdecompositionlevel',
@@ -182,7 +182,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
-        single_sino = self.dirs.rewriteDirectoryPath(self.sinogramdirectory.text(),'forward')
+        single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
 
         ## (3) create the command line string for single slice reconstruction
         self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc-devel.py '
@@ -455,11 +455,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # TODO: probably outsource like before
         if self.afsaccount.isChecked():
             inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
-            outputdir_mod= self.dirs.afsPath2Cons2(str(self.sinogramdirectory.text()))
+            outputdir_mod= self.dirs.afsPath2Cons2(str(self.sindirectory.text()))
             cmd1 += '-o '+outputdir_mod+' '
             cmd1 += inputdir_mod
         elif self.cons2.isChecked():
-            cmd1 += '-o '+os.path.join(str(self.sinogramdirectory.text()),'')+' '
+            cmd1 += '-o '+os.path.join(str(self.sindirectory.text()),'')+' '
             cmd1 += inputdir
             
         self.cmds.append(cmd1)
@@ -485,7 +485,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 standard += self.setWavletParameters()
             standard += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
-            inputdir = os.path.join(str(self.sinogramdirectory.text()),'')
+            inputdir = os.path.join(str(self.sindirectory.text()),'')
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
         else:
             self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
@@ -654,7 +654,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.dirs.initInputDirectory()
             return
         elif mode =='sinodir':
-            self.sinogramdirectory.setText(dir_temp)
+            self.sindirectory.setText(dir_temp)
             self.dirs.sinodir = dir_temp
             self.dirs.initSinDirectory()
             return
@@ -765,11 +765,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             newname = 'rec_8bit'
         else:
             newname = 'unknown_output'
-        
-        outputpaths = self.dirs.splitOsPath(str(self.recodirectory.text()))
-        newpathlist = outputpaths[:-1]+[newname]
-        pathstr = self.dirs.glueOsPath(newpathlist)
-        self.recodirectory.setText(pathstr)
+            
+        self.dirs.setOutputDirectory(newname)
         
         
     def submitAndSingleSliceContextMenu(self,point):
