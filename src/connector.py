@@ -1,7 +1,6 @@
 import subprocess
 from multiprocessing import Process, Queue
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from ui_dialogs import Login
 import os.path
 
 
@@ -142,7 +141,7 @@ class Connector(object):
         in memory. if the passwords are incorrect they are deleted again
         '''
         logwin = Login(self.parent,mode)
-        if logwin.exec_() == QDialog.Accepted:
+        if logwin.exec_() == Login.Accepted:
             if mode == 'AFS':
                 self.afsuser = str(logwin.username.text())
                 self.afspw = str(logwin.password.text())    
@@ -237,51 +236,6 @@ class Connector(object):
             return True
         else:
             return False
-            
-
-class Login(QDialog):
-    '''
-    minimalistic class for Login dialog 
-    '''
-    def __init__(self,parent,mode):
-        QDialog.__init__(self)
-        self.heading = QLabel()
-        self.heading.setObjectName("head")
-        self.heading.setText(QApplication.translate("Dialog", "Input "+mode+"-Credentials", None, QApplication.UnicodeUTF8))
-        self.label = QLabel()
-        self.label.setObjectName("label")
-        self.label.setText(QApplication.translate("Dialog", "Login:", None, QApplication.UnicodeUTF8))
-        if not mode == 'Merlin':
-            self.label2 = QLabel()
-            self.label2.setObjectName("label2")
-            self.label2.setText(QApplication.translate("Dialog", "Password:", None, QApplication.UnicodeUTF8))
-        self.username = QLineEdit(self)
-        self.password = QLineEdit(self)
-        self.password.setEchoMode(QLineEdit.Password)
-        if mode == 'Merlin':  # for Merlin we don't need a PW,
-            self.password.hide()
-            self.password.setText('test')
-        self.parent = parent
-        self.buttonlogin = QPushButton('Login', self)
-        self.buttonlogin.clicked.connect(self.execLoginButton)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.heading)
-        layout.addWidget(self.label)
-        layout.addWidget(self.username)
-        if not mode == 'Merlin':
-            layout.addWidget(self.label2)
-            layout.addWidget(self.password)
-        layout.addWidget(self.buttonlogin)
-   
-   
-    def execLoginButton(self):
-        '''
-        method that is run when login button is pressed
-        '''
-        if not self.username.text() or not self.password.text():
-            self.parent.displayErrorMessage('Empty fields','The password and/or user name cannot be left blank')
-        else:
-            self.accept()
             
         
 if __name__ == "__main__":

@@ -4,18 +4,17 @@ import os.path
 
 class DatasetFolder(object):
     '''
-    class for implementing all methods that can be used for further advanced checking,
-    once the INPUT directory has been set.
+    The "DatasetFolder" class represents the central frame for one
+    complete tomographic dataset (including its directory paths and the
+    log-file from the measurement). Thus it serves the purpose of
+    performing all kinds of operations on input/output directories,
+    mainly in terms of directory path operations.
     '''
     def __init__(self,parent):
         '''
         constructor
         '''
-        self.inputdir = []
-        self.sinodir = []
-        self.fltpdir = []
-        self.cprdir = []
-        self.recodir = []
+        self.inputdir = []  ## probably also obsolete
         self.homedir = os.path.expanduser('~')
         self.runningdir = self.getParentDir(os.path.dirname(os.path.realpath(__file__)))
         self.parent = parent
@@ -29,10 +28,6 @@ class DatasetFolder(object):
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),'')
         
-        ## Clear old sino dirs
-        self.parent.sindirectory.setText('')
-        self.sinodir = ''
-        
         if not self.inputdir or not os.path.isdir(self.inputdir):
             return
         
@@ -41,10 +36,10 @@ class DatasetFolder(object):
         if self.determineInputType():
             self.determinePrefix()
         
-        # We set all I/O folders
-        dirs = ['sin','cpr','fltp','reco']
-        for item in dirs:
-            self.checkFolder(idem)
+        # We set all I/O folders (and initialize sin-dir)
+        subdirs = ['sin','cpr','fltp','reco']
+        for item in subdirs:
+            self.checkFolder(item)
         
         ## TODO: check scan parameters from log file etc. etc.
         self.loadAndParseLogFile()
@@ -75,27 +70,26 @@ class DatasetFolder(object):
             self.parent.sinograms.addItem(item)
             
             
-    def checkFolder(self,mode):
+    def checkFolder(self,subdir):
         '''
-        This method sets the respective I/O directory ("mode"),
+        This method sets the respective I/O directory ("subdir"),
         checks whether it exists and issues a warning. In case of the
         reco-output dir, the correct suffix is appended according to
         the combo-box (outputtype) and in case of the sin-directory,
         the "initSinDirectory" is launched.
         '''
         inputdir = os.path.join(str(self.inputdir),'')
-        dir = os.path.join(self.getParentDir(inputdir),mode)
-        setattr( self, mode+'dir', os.path.join(dir,'') )
-        dir_handle = getattr(self,mode+'dir')
+        dir = os.path.join(self.getParentDir(inputdir),subdir)
+        dir_handle = os.path.join(dir,'')
         if os.path.exists(dir_handle):
             self.parent.displayErrorMessage('Existing directory',\
-                    'You should probably rename the '+mode+'-directory!')
+                    'You should probably rename the '+subdir+'-directory!')
         
-        getattr(self.parent,mode+'directory').setText(dir_handle)
+        getattr(self.parent,subdir+'directory').setText(dir_handle)
         
-        if mode == 'reco':
+        if subdir == 'reco':
             self.setOutputDirectory('rec_8bit')
-        elif mode == 'sin':
+        elif subdir == 'sin':
             self.initSinDirectory()
         
         
@@ -128,8 +122,7 @@ class DatasetFolder(object):
         transforms a cons2 file path to a filepath that can be opened from an AFS account
         '''
         splitted_dir = self.splitOsPath(str(path))
-        home = os.path.expanduser("~")
-        afs_base = self.splitOsPath(home+'/slsbl/x02da/')
+        afs_base = self.splitOsPath(self.homedir+'/slsbl/x02da/')
         tmp_list = afs_base+[splitted_dir[4]]+splitted_dir[5:]
         return os.path.join(*tmp_list)
     
@@ -142,6 +135,7 @@ class DatasetFolder(object):
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_base+self.parent.job.merlinuser]+splitted_dir[len(split_merlin_mount)-1:]
         return os.path.join(*tmp_list)
+    
     
     def merlin2SshfsPath(self,path):
         '''

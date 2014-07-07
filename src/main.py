@@ -1,4 +1,5 @@
 from ui_main import Ui_reco_mainwin
+from ui_dialogs import DebugCommand
 from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
@@ -609,7 +610,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def loadSpecificFromConfigFile(self,param_list):
         '''
-        loads only children from a parent parameter
+        Loads specific parameters (GUI-fields) written in a list
+        ("param_list").
         '''
         file_obj = self.loadConfigFile([], True, False)  # We open the configfile
         file_obj.config.read(file_obj.cfgfile)  # We load here the parameters from configfile
@@ -655,20 +657,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         elif mode =='sinodir':
             self.sindirectory.setText(dir_temp)
-            self.dirs.sinodir = dir_temp
             self.dirs.initSinDirectory()
             return
         elif mode =='cprdirectory':
-            self.dirs.cprdir = dir_temp
-            self.cprdirectory.setText(self.dirs.cprdir)
+            self.cprdirectory.setText(dir_temp)
             return
         elif mode =='fltpdir':
-            self.dirs.fltpdir = dir_temp
-            self.fltpdirectory.setText(self.dirs.fltpdir)
+            self.fltpdirectory.setText(dir_temp)
             return
         elif mode =='recodir':
-            self.dirs.recodir = dir_temp
-            self.recodirectory.setText(self.dirs.recodir)
+            self.recodirectory.setText(dir_temp)
             return
         elif mode == 'merlindir':
             self.dirs.merlin_mount_dir = dir_temp ######ADDDD last slash
@@ -805,27 +803,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             # immediately (otherwise we cannot create the correct
             # directory paths)
         
-
-class DebugCommand(QDialog):
-    '''
-    window for displaying and changing debug command
-    '''
-    def __init__(self,parent):
-        QDialog.__init__(self)
-        self.heading = QLabel()
-        self.heading.setObjectName("head")
-        self.heading.setText(QApplication.translate("Debug command", "Command to be submitted to", None, QApplication.UnicodeUTF8))
-        self.buttonsubmit = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
-        self.textfield = QTextEdit(self)
-        self.buttonsubmit.accepted.connect(self.accept)
-        self.buttonsubmit.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.heading)
-        layout.addWidget(self.textfield)
-        layout.addWidget(self.buttonsubmit)
-        self.resize(600, 300)
-        
-
 
 if __name__ == "__main__":
     mainapp = QApplication(sys.argv,True)  # create Qt application
