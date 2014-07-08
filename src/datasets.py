@@ -76,7 +76,7 @@ class DatasetFolder(object):
         checks whether it exists and issues a warning. In case of the
         reco-output dir, the correct suffix is appended according to
         the combo-box (outputtype) and in case of the sin-directory,
-        the "initSinDirectory" is launched.
+        the "initSinDirectory" method is launched.
         '''
         inputdir = os.path.join(str(self.inputdir),'')
         dir = os.path.join(self.getParentDir(inputdir),subdir)

@@ -287,7 +287,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 return False
         
         for cmd_tmp in self.cmds:
-#             print '++ '+cmd_tmp
             self.cmd = self.cmd+cmd_tmp+';' 
         
         return True
@@ -377,16 +376,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             inputdir = os.path.join(str(self.cprdirectory.text()),'')
             outputdir = os.path.join(str(self.fltpdirectory.text()),'')
-        
-        ## TODO: probably outsource whole snippet
-        if self.afsaccount.isChecked():
-            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
-            outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
-            cmd1 += '-o '+outputdir_mod+' '
-            cmd1 += inputdir_mod
-        elif self.cons2.isChecked():
-            cmd1 += '-o '+outputdir+' '
-            cmd1 += inputdir
+
+        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
+        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
 
 #         return cmd1
         self.cmds.append(cmd1)
@@ -453,15 +445,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
             return
         
-        # TODO: probably outsource like before
-        if self.afsaccount.isChecked():
-            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
-            outputdir_mod= self.dirs.afsPath2Cons2(str(self.sindirectory.text()))
-            cmd1 += '-o '+outputdir_mod+' '
-            cmd1 += inputdir_mod
-        elif self.cons2.isChecked():
-            cmd1 += '-o '+os.path.join(str(self.sindirectory.text()),'')+' '
-            cmd1 += inputdir
+        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')+' '
+        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
             
         self.cmds.append(cmd1)
         return True
@@ -512,20 +497,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         cmd1 += '--jobname='+jobname+'_reco '
         
         outputdir = os.path.join(str(self.recodirectory.text()),'')
-        sinodir_tmp = self.dirs.getParentDir(inputdir)+'sino_tmp/'
-        if self.afsaccount.isChecked():
-            inputdir_mod = self.dirs.afsPath2Cons2(inputdir)
-            outputdir_mod= self.dirs.afsPath2Cons2(outputdir)
-            if self.rec_fromtif.isChecked():
-                sinodir_tmp_mod = self.dirs.afsPath2Cons2(sinodir_tmp)
-                cmd1 += '-o '+sinodir_tmp_mod+' '
-            cmd1 += '-O '+outputdir_mod+' '
-            cmd1 += inputdir_mod
-        elif self.cons2.isChecked():
-            if self.rec_fromtif.isChecked():
-                cmd1 += '-o '+sinodir_tmp+' '
-            cmd1 += '-O '+outputdir+' '
-            cmd1 += inputdir
+        sinodir_tmp = self.dirs.getParentDir(inputdir)
+        sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
+        
+        if self.rec_fromtif.isChecked():
+            cmd1 += '-o '+self.dirs.rewriteDirectoryPath(sinodir_tmp,'forward')+' '
+        cmd1 += '-O '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
+        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
         
         self.cmds.append(cmd1)
         return True
