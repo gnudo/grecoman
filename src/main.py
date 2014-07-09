@@ -31,19 +31,19 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## GUI fields connections
         QObject.connect(self.setinputdirectory,
-            SIGNAL("clicked()"),lambda param='input_dir': self.getDirectory(param))  # data input directory
+            SIGNAL("clicked()"),lambda param='inputdirectory': self.getDirectory(param))  # data input directory
+        QObject.connect(self.setsinogramdirectory,
+            SIGNAL("clicked()"),lambda param='sindirectory': self.getDirectory(param))  # sinogram output
+        QObject.connect(self.setcprdirectory,
+            SIGNAL("clicked()"),lambda param='cprdirectory': self.getDirectory(param))  # cpr output
+        QObject.connect(self.setfltpdirectory,
+            SIGNAL("clicked()"),lambda param='fltpdirectory': self.getDirectory(param))  # fltp output
+        QObject.connect(self.setrecodirectory,
+            SIGNAL("clicked()"),lambda param='recodirectory': self.getDirectory(param))  # reconstructions output
         QObject.connect(self.inputdirectory,
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
-        QObject.connect(self.setsinogramdirectory,
-            SIGNAL("clicked()"),lambda param='sinodir': self.getDirectory(param))  # sinogram output
-        QObject.connect(self.setcprdirectory,
-            SIGNAL("clicked()"),lambda param='cprdirectory': self.getDirectory(param))  # cpr output
-        QObject.connect(self.setfltpdirectory,
-            SIGNAL("clicked()"),lambda param='fltpdir': self.getDirectory(param))  # fltp output
-        QObject.connect(self.setrecodirectory,
-            SIGNAL("clicked()"),lambda param='recodir': self.getDirectory(param))  # reconstructions output
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.menuRingRemoval2,
             SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
         QObject.connect(self.menuChangeMerlinMountPoint,
-            SIGNAL("triggered()"),lambda param='merlindir': self.getDirectory(param))  # MENU change Merlin mount point
+            SIGNAL("triggered()"),lambda param='merlin_mount_dir': self.getDirectory(param))  # MENU change Merlin mount point
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
@@ -161,13 +161,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         # (3) run SSh-connector to launch the job
-        if self.afsaccount.isChecked():
-            if self.target == 'x02da':
-                self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
-            elif self.target == 'Merlin':
-                self.job.submitJobViaSshPublicKey(self.cmd+'\n','merlinc60')
-        elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd)
+        self.job.submitJob(self.cmd)
             
             
     def calcSingleSlice(self):
@@ -228,13 +222,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.submitJobLocallyAndWait('rm '+img)  
         
         ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
-        if self.afsaccount.isChecked():
-            if self.target == 'x02da':
-                self.job.submitJobViaGateway(self.cmd+'\n','x02da-gw','x02da-cons-2')
-            elif self.target == 'Merlin':
-                self.job.submitJobViaSshPublicKey(self.cmd+'\n','merlinc60')
-        elif self.cons2.isChecked():
-            self.job.submitJobLocally(self.cmd)
+        self.job.submitJob(self.cmd)
         
         for kk in range(30):
             if os.path.isfile(img):
@@ -365,22 +353,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         ## define input and output dirs
         if mode == 'cpr':
-            inputdir = os.path.join(str(self.inputdirectory.text()),'')
-            outputdir = os.path.join(str(self.cprdirectory.text()),'')
+            inputdir = self.inputdirectory.text()
+            outputdir = self.cprdirectory.text()
         elif mode == 'fltp':# and not self.cpron.isChecked():
             if self.fltp_fromcpr.isChecked():
-                inputdir = os.path.join(str(self.cprdirectory.text()),'')
+                inputdir = self.cprdirectory.text()
             else:
-                inputdir = os.path.join(str(self.inputdirectory.text()),'')
-            outputdir = os.path.join(str(self.fltpdirectory.text()),'')
+                inputdir = self.inputdirectory.text()
+            outputdir = self.fltpdirectory.text()
         else:
-            inputdir = os.path.join(str(self.cprdirectory.text()),'')
-            outputdir = os.path.join(str(self.fltpdirectory.text()),'')
+            inputdir = self.cprdirectory.text()
+            outputdir = self.fltpdirectory.text()
 
         cmd1 += '-o '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
         cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
 
-#         return cmd1
         self.cmds.append(cmd1)
         return True
     
@@ -433,13 +420,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
         
         if self.sin_fromcpr.isChecked():
-            inputdir = os.path.join(str(self.cprdirectory.text()),'')
+            inputdir = self.cprdirectory.text()
             cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         elif self.sin_fromfltp.isChecked():
-            inputdir = os.path.join(str(self.fltpdirectory.text()),'')
+            inputdir = self.fltpdirectory.text()
             cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
         elif self.sin_fromtif.isChecked():
-            inputdir = os.path.join(str(self.inputdirectory.text()),'')
+            inputdir = self.inputdirectory.text()
             cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         else:
             self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
@@ -458,7 +445,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         ## Compose all mandatory
         if self.rec_fromtif.isChecked():
-            inputdir = os.path.join(str(self.inputdirectory.text()),'')
+            inputdir = self.inputdirectory.text()
             standard = '-d -R 0 -k 0 -I 1 -g 7 '
             standard += '-f '+self.raws.text()
             standard += ','+self.darks.text()
@@ -471,7 +458,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 standard += self.setWavletParameters()
             standard += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
-            inputdir = os.path.join(str(self.sindirectory.text()),'')
+            inputdir = self.sindirectory.text()
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
         else:
             self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
@@ -496,7 +483,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 += '--jobname='+jobname+'_reco '
         
-        outputdir = os.path.join(str(self.recodirectory.text()),'')
+        outputdir = self.recodirectory.text()
         sinodir_tmp = self.dirs.getParentDir(inputdir)
         sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
         
@@ -553,7 +540,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
     def saveConfigFile(self):
         '''
-        method when pressing Menu item for loading config file
+        method when pressing Menu item for saving config file
         '''
         savefile = QFileDialog.getSaveFileName(self,
                         'Select where the config file should be saved',self.lastdir_config)
@@ -623,31 +610,23 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         dir_temp = QFileDialog.getExistingDirectory(self,
                             infostring,self.lastdir)
-        dir_temp = str(os.path.join(str(dir_temp),''))
         if not dir_temp:
             return
 
         self.lastdir = self.dirs.getParentDir(str(dir_temp))
         
-        if mode == 'input_dir':
-            self.inputdirectory.setText(dir_temp)
+        if mode == 'merlin_mount_dir':
+            self.dirs.merlin_mount_dir = dir_temp
+            return
+        else:
+            getattr(self,mode).setText(dir_temp)
+        
+        if mode == 'inputdirectory':
             self.dirs.initInputDirectory()
             return
-        elif mode =='sinodir':
-            self.sindirectory.setText(dir_temp)
+        elif mode =='sindirectory':
             self.dirs.initSinDirectory()
             return
-        elif mode =='cprdirectory':
-            self.cprdirectory.setText(dir_temp)
-            return
-        elif mode =='fltpdir':
-            self.fltpdirectory.setText(dir_temp)
-            return
-        elif mode =='recodir':
-            self.recodirectory.setText(dir_temp)
-            return
-        elif mode == 'merlindir':
-            self.dirs.merlin_mount_dir = dir_temp ######ADDDD last slash
             
         
     def setWavletParameters(self):
@@ -656,8 +635,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
-        cmd = ''
-        cmd += ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
+        cmd = ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
         cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
         cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
         cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
@@ -717,7 +695,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if debugwin.exec_() == QDialog.Accepted:
             tmp_string = str(QTextEdit.toPlainText(debugwin.textfield)).strip()
             self.cmd = ' '.join(tmp_string.split())
-            print self.cmd
             return True
         else:
             return False
@@ -776,7 +753,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.afsaccount.setChecked(1)
             self.job.performInitalCheck()
             if not self.dirs.merlin_mount_dir:
-                self.getDirectory('merlindir','Select where the Merlin directory is mounted')
+                self.getDirectory('merlin_mount_dir','Select where the Merlin directory is mounted')
             # If Merlin is the target we need the merlin username
             # immediately (otherwise we cannot create the correct
             # directory paths)

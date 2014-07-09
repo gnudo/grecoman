@@ -130,8 +130,9 @@ class DatasetFolder(object):
     def sshfsPath2Merlin(self,path):
         '''
         transforms a mounted Merlin path to the original Merlin path 
-        '''        
-        split_merlin_mount = self.splitOsPath(str(self.merlin_mount_dir))
+        '''
+        self.merlin_mount_dir = os.path.join(str(self.merlin_mount_dir),'')
+        split_merlin_mount = self.splitOsPath(self.merlin_mount_dir)
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_base+self.parent.job.merlinuser]+splitted_dir[len(split_merlin_mount)-1:]
         return os.path.join(*tmp_list)
@@ -141,6 +142,7 @@ class DatasetFolder(object):
         '''
         transforms original Merlin path to a mounted Merlin path 
         '''
+        self.merlin_mount_dir = os.path.join(str(self.merlin_mount_dir),'')
         split_merlin_base = self.splitOsPath(str(self.merlin_base))
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_mount_dir]+splitted_dir[len(split_merlin_base):]
@@ -179,7 +181,7 @@ class DatasetFolder(object):
         '''
         method that returns the parent directory of a directory
         '''
-        directory = os.path.join(directory,'')
+        directory = os.path.join(str(directory),'')
         tmp_dir = os.path.split(directory[:-1])
         return os.path.join(tmp_dir[0],'')
         

@@ -41,6 +41,20 @@ class Connector(object):
         return True
     
     
+    def submitJob(self,cmd):
+        '''
+        This method determines where (on which machine) to submit the
+        reconstruction job and calls the appropriate method.
+        '''
+        if self.parent.afsaccount.isChecked():
+            if self.parent.target == 'x02da':
+                self.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2')
+            elif self.parent.target == 'Merlin':
+                self.submitJobViaSshPublicKey(cmd+'\n','merlinc60')
+        elif self.parent.cons2.isChecked():
+            self.submitJobLocally(cmd)
+    
+    
     def submitJobLocally(self,cmd):
         '''
         method to run a job locally on cons-2
