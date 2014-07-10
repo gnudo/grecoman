@@ -1,14 +1,14 @@
 import ConfigParser
 
 
-class FileIO(object):
+class ConfigFile(object):
     '''
-    The "FileIO" class is used for loading/saving config files from
+    The "ConfigFile" class is used for loading/saving config files from
     GUI-fields (CLA-s) in order to quickly start reproducible
-    pipeline operations. Every "FileIO" instance takes both the main
-    application object and the OS path to the config file as arguments.
-    In the current version no special characters (in the GUI-fields)
-    are supported.
+    pipeline operations. Every "ConfigFile" instance takes both the
+    main application object and the OS path to the config file as
+    arguments. In the current version no special characters (in the
+    GUI-fields) are supported.
     '''
     def __init__(self, parent, cfgfile):
         self.parent = parent  # main app object

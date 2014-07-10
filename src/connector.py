@@ -21,7 +21,9 @@ class Connector(object):
     
     def performInitalCheck(self):
         '''
-        method for checking both AFS and EACCOUNT credentials
+        This method makes sure that the correct account credentials are
+        saved in the respective properties and if not, it launches the
+        "inputCredentials" method to get them via GUI-dialogs.
         '''
         # (0) if we are on cons-2 we don't need any credentials (at least for now)
         if self.parent.cons2.isChecked() or self.parent.target == 'Merlin':
@@ -250,11 +252,3 @@ class Connector(object):
             return True
         else:
             return False
-            
-        
-if __name__ == "__main__":
-    # test playground
-    asdf = "echo "+'asdf'
-    p1 = subprocess.call(['echo "#!/bin/bash\n" > ~/test.sh'],shell=True)
-    p2 = subprocess.call(['echo '+asdf+' >> ~/test.sh'],shell=True)
-    p3 = subprocess.call(['chmod a+x ~/test.sh'],shell=True)

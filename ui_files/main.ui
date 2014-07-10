@@ -1323,7 +1323,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>291</width>
+        <width>409</width>
         <height>151</height>
        </rect>
       </property>
@@ -1551,7 +1551,7 @@
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
-     <string>Run</string>
+     <string>Templates</string>
     </property>
     <widget class="QMenu" name="menuReconstruction">
      <property name="title">
@@ -1594,7 +1594,15 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <widget class="QMenu" name="menuChange_Target">
+     <property name="title">
+      <string>Change Target to</string>
+     </property>
+     <addaction name="menuChangeTargetoX02da"/>
+     <addaction name="menuChangeTargetoMerlin"/>
+    </widget>
     <addaction name="menuChangeMerlinMountPoint"/>
+    <addaction name="menuChange_Target"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuRun"/>
@@ -1648,7 +1656,7 @@
   </action>
   <action name="menuCreateSinosQuick">
    <property name="text">
-    <string>Quick sinograms for preview</string>
+    <string>Quick sinograms (old prj2sin)</string>
    </property>
   </action>
   <action name="menuCreateSinosFromTif">
@@ -1684,6 +1692,16 @@
   <action name="menuChangeMerlinMountPoint">
    <property name="text">
     <string>Change Merlin mount point</string>
+   </property>
+  </action>
+  <action name="menuChangeTargetoX02da">
+   <property name="text">
+    <string>x02da</string>
+   </property>
+  </action>
+  <action name="menuChangeTargetoMerlin">
+   <property name="text">
+    <string>Merlin</string>
    </property>
   </action>
  </widget>

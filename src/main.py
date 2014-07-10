@@ -4,7 +4,7 @@ from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
 from datasets import DatasetFolder
-from fileIO import FileIO
+from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from time import sleep # TODO: preliminary
@@ -98,6 +98,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
         QObject.connect(self.menuChangeMerlinMountPoint,
             SIGNAL("triggered()"),lambda param='merlin_mount_dir': self.getDirectory(param))  # MENU change Merlin mount point
+        QObject.connect(self.menuChangeTargetoX02da,
+            SIGNAL("triggered()"),lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
+        QObject.connect(self.menuChangeTargetoMerlin,
+            SIGNAL("triggered()"),lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
@@ -129,66 +133,63 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
  
     def submitToCluster(self):
         '''
-        method that launches all the checks and if successful submits the
-        command to cons-2 for starting the job
+        This method is launched when pressing the "Submit" button in
+        the GUI. First, it performs several checks, creates the command
+        line string (CLS) and finally runs the "submitJob" method from
+        the job object (see "connector.py").
         '''
-        if not self.checkComputingLocation():
+        if not self.checkComputingLocation():  # self-explaining
             return
         
-        if not ParameterWrap.checkAllParamters():
+        if not ParameterWrap.checkAllParamters():  # missing GUI-fields etc.
             return
         
-        # (1) Create command line string
-        if not str(self.jobname.text()):
-            self.jobname_str = 'GRecoM'
+        if not str(self.jobname.text()):  # we need a job-name and it cannot
+            self.jobname_str = 'GRecoM'   # start with a digit
         else:
             if str(self.jobname.text())[0].isdigit():
-                # jobname cannot start with a digit!!
                 self.jobname_str = 'z'+str(self.jobname.text())
             else:
                 self.jobname_str = str(self.jobname.text())
             
-        self.cmd = ''
-        if not self.createCommand():
+        if not self.createCommand():  # returns True if further checks succeed
             return
         
-        if self.print_cmd.isChecked():
+        if self.print_cmd.isChecked():  # prints full CLS if checked 
             if not self.debugTextField():
                  return
         
-        # (2) run SSH-connector and check all account credentials
-        if not self.job.performInitalCheck():
+        if not self.job.performInitalCheck():  # check account credentials
             return
         
-        # (3) run SSh-connector to launch the job
         self.job.submitJob(self.cmd)
             
             
     def calcSingleSlice(self):
         '''
-        method for renconstructing a single slice for a given sinogram.
+        This method is launched when pressing "Single Slice" button
+        from the GUI. It's similar to "submitToCluster", however, it
+        doesn't utilize the "createCommand" method. Instead, it creates
+        the command line string (CLS) itself and in the end displays
+        the image.
         '''
         if not str(self.sinograms.currentText()):
             self.displayErrorMessage('No sinogram selected', 'Select the Sinogram directory and press Enter. Then select one to be reconstructed.')
             return
         
-        ## (1) check whether we have defined the location from where we run the reconstruction
-        if not self.checkComputingLocation():
+        if not self.checkComputingLocation():  # self-explaining
             return
-        
-        ## (2) before calculating on x02da-cons-2, we need to rewrite the path of the sino dir
-        single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
 
-        ## (3) create the command line string for single slice reconstruction
-        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc-devel.py '
+        # create the command line string for single slice reconstruction
+        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
-        combos_single = ['filter','geometry']  # removed: 'outputtype' (let's always have DMP!)
+        combos_single = ['filter','geometry']
         for combo in combos_single:
             if ParameterWrap.CLA_dict[combo].performCheck():
                 self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
         
-        if self.zingeron.isChecked():
-            self.setZingerParameters()
+#         if self.zingeron.isChecked():  >>> no zingers supported at the moment
+#             self.setZingerParameters()
         
         optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
         for param in optional_single:
@@ -198,18 +199,22 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             self.cmd += self.setWavletParameters()
         
+        # rewrite the sinogram-directory for use at the appropriate machine
+        single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
+        
         self.cmd += '-x '+self.target+' '
         self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
         if self.print_cmd.isChecked():
             if not self.debugTextField():
                  return
-        
-        ## (4) now we check credentials
-        if not self.job.performInitalCheck():
+
+        if not self.job.performInitalCheck():  # check account credentials
             return
         
-        ## (5) we look for the image and delete it if it exists
+        # TODO: probably whole part below should be rewritten and
+        # outsourced to "imageOpen class" or similar...
+        # we look for the image and delete it if it exists
         basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
         
         new_filename = self.sinograms.currentText()[:-7]+'rec.'
@@ -221,7 +226,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if os.path.isfile(img):
             self.job.submitJobLocallyAndWait('rm '+img)  
         
-        ## (6) after all checks completed, singleSliceFunc is called and we wait until image is done
+        # after all checks completed, singleSliceFunc is called and we wait until image is done
         self.job.submitJob(self.cmd)
         
         for kk in range(30):
@@ -233,7 +238,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.displayErrorMessage('No reconstructed slice found', 'After waiting 15 sec the reconstructed slice was not found')
             return
                                     
-        ## (7) we display the image
+        # we display the image
         if self.openinfiji.isChecked():
             self.job.submitJobLocally('fiji -eval \"open(\\"'+img+'\\")\"')
         else:
@@ -242,21 +247,28 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
 
     def createCommand(self):
         '''
-        main method for creating the command line string. for consistency reasons the flags are
-        defined in the registerAllParameters() method only (and only there!)
+        This is the main method for creating the command line stirng
+        (CLS) which dependent on the checked "actions" in the GUI calls
+        other methods like "createCprAndFltpCmd", "createSinCmd" etc.
+        We have three different properties in use: (i) self.cmd is full
+        CLS to be submitted to the cluster (ii) self.cmds is a list of
+        separate cluster commands and (ii) self.cmd0 is the cluster
+        command for executing a single action.
         '''
+        self.cmd = ''
+        self.cmds = []
+        
         if self.develbranchon.isChecked():
             self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/src/prj2sinSGE.sh "
         else:
             self.cmd0 = "prj2sinSGE "
-        self.cmds = []
         
-        ## (1) First check whether we need to create CPR-s
+        # (1) We check whether we need to create CPR-s.
         if self.cpron.isChecked():
             if not self.createCprAndFltpCmd('cpr',self.jobname_str):
                 return False
         
-        ## (2) Then we check whether we need FLTP-s
+        # (2) Then we check whether we need FLTP-s.
         if self.paganinon.isChecked():
             if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
                 self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
@@ -264,17 +276,17 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if not self.createCprAndFltpCmd('fltp',self.jobname_str):
                 return False
             
-        ## (3) Whether we need sinograms
+        # (3) After that we check whether we need sinograms.
         if self.sinon.isChecked():
             if not self.createSinCmd(self.jobname_str):
                 return False
             
-        ## (4) Whether we want reconstructions
+        ## (4) Finally we check whether reconstructions will be created.
         if self.reconstructon.isChecked():
             if not self.createRecoCmd(self.jobname_str):
                 return False
         
-        for cmd_tmp in self.cmds:
+        for cmd_tmp in self.cmds:  # compose the full CLS
             self.cmd = self.cmd+cmd_tmp+';' 
         
         return True
@@ -282,10 +294,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     
     def createCprAndFltpCmd(self,mode,jobname):
         '''
-        method for creating the cmd for creating cprs and/or fltps.
-        it is basically very similar. only for the fltp command the Paganin
-        parameters are added and a few flags changed
-        TODO: rewrite IF-statements here because now it's really a mess
+        This method is used to compose both, the command line string
+        (CLS) for creating cprs and/or for creating fltps (since they
+        are both very similar). Understanding the following code is not
+        expected, as it requires also the understanding of the
+        reconstruction pipeline.
         '''
         ## Compose all mandatory
         standard = '-d -C '
@@ -303,7 +316,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else: # case for mode == 'cpr'
             g_param = 3
         
-        ## only in CPR if set, else only in FLTP
+        # only if CPR if set, else only in FLTP
         if mode == 'cpr' or self.fltp_fromtif.isChecked():
             optional = ['binsize', 'scaleimagefactor']
             cmd1 += '-f '+self.raws.text()
@@ -311,6 +324,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ','+self.flats.text()
             cmd1 += ','+self.interflats.text()
             cmd1 += ','+self.flatfreq.text()+' '
+            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
             for param in optional:
                 if not getattr(self,param).text() == '':
                     cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
@@ -325,37 +339,36 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
+            cmd1 += '-I 0 '
             if self.cpron.isChecked():
                 cmd1 += '--hold='+jobname+'_cpr '
             cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+jobname+'_'+mode+' '
   
-        ## only for Paganin phase retrieval
+        # probably increases job priority on Merlin (?!)
+        if self.target == 'Merlin':
+            cmd1 += '--queue=prime_ti.q --ncores=16 ' 
+  
+        # only for Paganin phase retrieval
         if mode == 'fltp':
             cmd1 += ParameterWrap.CLA_dict['paganinon'].flag+' '
             for child in ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
                 cmd1 += getattr(self,child).text()+','
             cmd1 = cmd1[:-1]+' '
                 
-        ## only in CPR if cpr is set , else only in FLTP
+        # only in CPR if cpr is set , else only in FLTP
         if mode == 'cpr' or not self.cpron.isChecked():
             if getattr(self,'preflatsonly').isChecked():
                 cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
         
         cmd1 += '-g '+str(g_param)+' '
         
-        ## TODO: include maybe above
-        if mode == 'cpr' or self.fltp_fromtif.isChecked(): # or not self.cpron.isChecked():
-            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
-        else:
-            cmd1 += '-I 0 '
-        
         ## define input and output dirs
         if mode == 'cpr':
             inputdir = self.inputdirectory.text()
             outputdir = self.cprdirectory.text()
-        elif mode == 'fltp':# and not self.cpron.isChecked():
+        elif mode == 'fltp':
             if self.fltp_fromcpr.isChecked():
                 inputdir = self.cprdirectory.text()
             else:
@@ -374,7 +387,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     
     def createSinCmd(self,jobname):
         '''
-        method for creating command line for sinograms
+        This method is used to compose the command line string (CLS)
+        for creating sinograms. Again, understanding the following code
+        is not expected, as it requires also the understanding of the
+        reconstruction pipeline.
         '''
         if self.sin_fromtif.isChecked():
             standard = '-d -g 7 -I 1 '
@@ -399,19 +415,23 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if getattr(self,param).isChecked():
                     cmd1 += ParameterWrap.CLA_dict[param].flag+' '
         
-        if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+        if self.runringremoval.isChecked():  # wavelet parameters
             cmd1 += '-k 2 '
             cmd1 += self.setWavletParameters()
         else:
             cmd1 += '-k 1 '
         
-        # TODO: use jobname in IO so that we don't need to hardcode
+        # set correct jobname in order to wait for other jobs to finish
         if self.cpron.isChecked() and not self.paganinon.isChecked():
             cmd1 += '--hold='+jobname+'_cpr '
         elif self.paganinon.isChecked():
             cmd1 += '--hold='+jobname+'_fltp '
             
         cmd1 += '--jobname='+jobname+'_sin '
+        
+        # probably increases job priority on Merlin (?!)
+        if self.target == 'Merlin':
+            cmd1 += '--queue=prime_ti.q --ncores=16 '
         
         if ParameterWrap.CLA_dict['steplines'].performCheck():
             cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
@@ -441,7 +461,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     
     def createRecoCmd(self,jobname):
         '''
-        method for creating command line string for reconstruction job
+        This method is used to compose the command line string (CLS)
+        for creating tomographic reconstructions. Again, understanding
+        the following code is not expected, as it requires also the
+        understanding of the reconstruction pipeline.
         '''
         ## Compose all mandatory
         if self.rec_fromtif.isChecked():
@@ -453,10 +476,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             standard += ','+self.interflats.text()
             standard += ','+self.flatfreq.text()+' '
             if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-                standard += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-            if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
+                standard += ParameterWrap.CLA_dict['stitchingtype'].flag + \
+                        ' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
+            if self.runringremoval.isChecked():  # wavelet parameters
                 standard += self.setWavletParameters()
-            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
+            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                        getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
             inputdir = self.sindirectory.text()
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
@@ -471,17 +496,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if not getattr(self,param).text() == '':
                 cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
         
-        ## (4) Comboboxes with respective dictionaries (except wavelet comboboxes)
+        ## (4) Comboboxes with respective dictionaries (except wavelet)
         comboboxes = ['filter', 'outputtype', 'geometry']
         for combo in comboboxes:
             if ParameterWrap.CLA_dict[combo].performCheck():
                 cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
                 
-        # TODO: use jobname in IO so that we don't need to hardcode
+        # set correct jobname in order to wait for other jobs to finish
         if self.sinon.isChecked() and self.rec_fromsino.isChecked():
             cmd1 += '--hold='+jobname+'_sin '
             
         cmd1 += '--jobname='+jobname+'_reco '
+        
+        # probably increases job priority on Merlin (?!)
+        if self.target == 'Merlin':
+            cmd1 += '--queue=prime_ti.q --ncores=16 '
         
         outputdir = self.recodirectory.text()
         sinodir_tmp = self.dirs.getParentDir(inputdir)
@@ -498,7 +527,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def checkComputingLocation(self):
         '''
-        make sure the radiobox from where the computing takes place has been set
+        This method makes sure that the radiobox from where GRecoMan is
+        run, is checked and will also determine this in future releases
+        automatically.
         '''
         if not self.afsaccount.isChecked() and not self.cons2.isChecked():
             self.displayErrorMessage('Missing radio box', 'From where are you running the application?')
@@ -534,35 +565,39 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             if not self.job.isInstalled('fiji'):
                 self.openinfiji.setCheckState(0)
-                self.displayErrorMessage('Fiji not found', 'fiji must be in PATH, e.g. installed in /urs/bin')
+                self.displayErrorMessage('Fiji not found', \
+                    'fiji must be in PATH, e.g. installed in /urs/bin')
                 return
             
             
     def saveConfigFile(self):
         '''
-        method when pressing Menu item for saving config file
+        This method is run when pressing Menu->Save settings.
         '''
         savefile = QFileDialog.getSaveFileName(self,
                         'Select where the config file should be saved',self.lastdir_config)
         if not savefile:
             return
-        file_obj = FileIO(self,savefile)
+        file_obj = ConfigFile(self,savefile)
         file_obj.writeFile(ParameterWrap)
         self.lastdir_config = self.dirs.getParentDir(str(savefile))
         
         
     def loadConfigFile(self, loadfile = '', returnvalue = False, overwrite = True):
         '''
-        method for loading config-file (from Menu item) or by giving absolute config-file path name
-        (loadfile). if returnvalue is set True then the method returns the config-file object. If overwrite is
-        False then empty fields from config-file are not overwriting GUI-fields
+        This method is used for loading both, config-files (from Menu)
+        and pre-set templates by stating the explicit filename. If
+        returnvalue is set True then the method returns the config-file
+        object, which is used by "loadSpecificFromConfigFile" to load
+        only specific GUI-fields. If overwrite is False then empty
+        fields from config-file are not overwriting GUI-fields
         '''
         if not loadfile:
             loadfile = QFileDialog.getOpenFileName(self,
                         'Select where the config file is located',self.lastdir_config)
         if not loadfile:
             return
-        file_obj = FileIO(self,loadfile)
+        file_obj = ConfigFile(self,loadfile)
         
         if returnvalue:
             return file_obj
@@ -586,8 +621,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def loadTemplate(self, templatename):
         '''
-        method for loading menu template for SGE-script. it's basically the same as loading a
-        config file, only with additional color-highlighting
+        This method loads a given template for performing one or more
+        cluster calculations. It is basically the same as loading a
+        config file (with "loadConfigFile" method), only with
+        additional color-highlighting.
         '''
         template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
         template_obj = self.loadConfigFile(template_file, True)
@@ -603,7 +640,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         Dialog for setting a directory source with QFileDialog. First,
         we update "lastdir" property. After that, depending on the
-        directory, the textfield are updated and initialized.
+        directory, the textfields are updated and initialized.
         '''
         if not infostring:
             infostring = 'Select direcory'
@@ -631,7 +668,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def setWavletParameters(self):
         '''
-        method for adding the wavelet correction to the command line string
+        Method for adding the wavelet correction to the command line
+        string
         '''
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
@@ -642,26 +680,23 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         return cmd
         
         
-    def setZingerParameters(self):
-        '''
-        method for adding zinger removal parameters
-        '''
-        self.cmd += '-z 1 '
-        self.cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-        self.cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
+#     def setZingerParameters(self):
+#         '''
+#         TODO: currently not supported
+#         method for adding zinger removal parameters
+#         '''
+#         self.cmd += '-z 1 '
+#         self.cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
+#         self.cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
 
         
     def displayErrorMessage(self,head,msg):
-        '''
-        method to display random error messages with QMessageBox
-        '''
+        ''' Displays random error messages with QMessageBox '''
         QMessageBox.warning(self, head, msg)        
 
         
     def displayYesNoMessage(self,head,txt):
-        '''
-        show dialog with yes/no answer and defined text
-        '''
+        ''' Displays dialog with "yes"/"no" and defined heading/text '''
         question = QMessageBox.warning(self, head, txt, QMessageBox.Yes, QMessageBox.No)
         
         if question == QMessageBox.Yes:
@@ -673,22 +708,23 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     def displayImageBig(self,img_file):
         '''
         method for displaying a single image in the big frame
+        TODO: to be outsourced
         '''
         if img_file[-3:].lower() == 'tif':
             myPixmap = QPixmap(img_file)
         elif img_file[-3:].lower() == 'dmp':
             myPixmap = DMPreader(img_file)
             
-        
         myScaledPixmap = myPixmap.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
         self.ImgViewer.setPixmap(myScaledPixmap)
         
         
     def debugTextField(self):
         '''
-        prints the command line string into a textfield that can be edited and
-        saves the (un)edited text string into the class property self.cmd to
-        be submitted to the cluster
+        Textfield that prints the command line string (CLS) for further
+        editing (derived from "DebugCommand" class from ui_dialogs.py).
+        It saves the (un-)/edited text string into the class property
+        "cmd" to which is then submitted to the cluster.
         '''
         debugwin = DebugCommand(self.parent)
         QTextEdit.insertPlainText(debugwin.textfield, self.cmd)
@@ -702,8 +738,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def changeOutputType(self):
         '''
-        method for appending correct reco-output directory name when changing
-        output type
+        This method is called whenever the combobox for output type is
+        changed. It appends the correct reco-output directory.
         '''
         ind = str(self.outputtype.currentIndex())
         if ind == '0':
@@ -724,7 +760,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def submitAndSingleSliceContextMenu(self,point):
         '''
-        Context menu for submit and SingleSlice buttons. When right-
+        Context menu for "Submit" and "SingleSlice" buttons. When right-
         clicking on one of these and "setting a target" the
         "changeSubmissionTarget" method gets executed.
         '''
@@ -743,8 +779,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def changeSubmissionTarget(self,target):
         '''
-        Sets the "target" property according "target" input and labels
-        the GUI buttons accordingly.
+        Sets the "target" property accordingly and addiotionally labels
+        the GUI buttons. If Merlin is the target, then the Merlin
+        username is asked (by running "performInitalCheck" from the job
+        object) in order to create correct directory paths on Merlin.
         '''
         self.target = target
         self.submit.setText("Submit "+"("+target+")")
@@ -754,9 +792,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.performInitalCheck()
             if not self.dirs.merlin_mount_dir:
                 self.getDirectory('merlin_mount_dir','Select where the Merlin directory is mounted')
-            # If Merlin is the target we need the merlin username
-            # immediately (otherwise we cannot create the correct
-            # directory paths)
         
 
 if __name__ == "__main__":

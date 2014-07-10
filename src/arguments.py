@@ -99,8 +99,8 @@ class ParameterWrap(object):
         a particular "combobox".
         '''
         if combobox is 'filter':
-            types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak", "4":"parzen",
-                          "5":"lanczos", "6":"dpc", "7":"none"}     
+            types_dict = {"0":"schepp", "1":"hanning", "2":"hamming", "3":"ramlak",
+                          "4":"parzen", "5":"lanczos", "6":"dpc", "7":"none"}     
         elif combobox is 'outputtype':
             types_dict = {"0":"8", "1":"0", "2":"1", "3":"16", "4":"8"}
         elif combobox is 'geometry':
@@ -170,13 +170,15 @@ class ParameterWrap(object):
             cls.parent.displayErrorMessage('Missing action', 'Check at least one action that should be calculated on the cluster (sino creation, fltp etc.)!')
             return
     
-        # (1) all parameters that are mandatory (they cannot have any child parameters)
+        # (1) all parameters that are mandatory (they cannot have any
+        # child parameters)
         for key,param in cls.CLA_dict.iteritems():
             if param.ismandatory and not param.performCheck():
                 color_list.append(param.name)
                 
-        # (2) all parameters that are NOT mandatory, but are set anyways --> then we need to
-        # perform a check of their children because in that case those must be set as well
+        # (2) all parameters that are NOT mandatory, but are set
+        # anyways --> then we need to perform a check of their
+        # children because in that case those must be set as well
         for key,param in cls.CLA_dict.iteritems():
                 if not param.ismandatory and param.performCheck():
                     for child_param in param.child_list:

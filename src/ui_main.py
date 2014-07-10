@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Mon Jul  7 10:52:39 2014
+# Created: Thu Jul 10 13:57:09 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -550,7 +550,7 @@ class Ui_reco_mainwin(object):
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayoutWidget_10 = QtGui.QWidget(self.tab)
-        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 291, 151))
+        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 409, 151))
         self.gridLayoutWidget_10.setObjectName("gridLayoutWidget_10")
         self.gridLayout_11 = QtGui.QGridLayout(self.gridLayoutWidget_10)
         self.gridLayout_11.setObjectName("gridLayout_11")
@@ -636,6 +636,8 @@ class Ui_reco_mainwin(object):
         self.menuRing_removal.setObjectName("menuRing_removal")
         self.menuSettings = QtGui.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
+        self.menuChange_Target = QtGui.QMenu(self.menuSettings)
+        self.menuChange_Target.setObjectName("menuChange_Target")
         reco_mainwin.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(reco_mainwin)
         self.statusbar.setObjectName("statusbar")
@@ -674,6 +676,10 @@ class Ui_reco_mainwin(object):
         self.menuLoadOnlyRingRemoval.setObjectName("menuLoadOnlyRingRemoval")
         self.menuChangeMerlinMountPoint = QtGui.QAction(reco_mainwin)
         self.menuChangeMerlinMountPoint.setObjectName("menuChangeMerlinMountPoint")
+        self.menuChangeTargetoX02da = QtGui.QAction(reco_mainwin)
+        self.menuChangeTargetoX02da.setObjectName("menuChangeTargetoX02da")
+        self.menuChangeTargetoMerlin = QtGui.QAction(reco_mainwin)
+        self.menuChangeTargetoMerlin.setObjectName("menuChangeTargetoMerlin")
         self.menuLoad_specific.addAction(self.menuLoadOnlyPaganin)
         self.menuLoad_specific.addAction(self.menuLoadOnlyRingRemoval)
         self.menuMenu.addAction(self.menuloadsettings)
@@ -696,7 +702,10 @@ class Ui_reco_mainwin(object):
         self.menuRun.addAction(self.menuReconstruction.menuAction())
         self.menuRun.addSeparator()
         self.menuRun.addAction(self.menuRing_removal.menuAction())
+        self.menuChange_Target.addAction(self.menuChangeTargetoX02da)
+        self.menuChange_Target.addAction(self.menuChangeTargetoMerlin)
         self.menuSettings.addAction(self.menuChangeMerlinMountPoint)
+        self.menuSettings.addAction(self.menuChange_Target.menuAction())
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuRun.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
@@ -706,7 +715,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.0.1-23-g528bf03", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.0.1-28-ge7da7c9", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("reco_mainwin", "Input directory (TIF folder)", None, QtGui.QApplication.UnicodeUTF8))
         self.setinputdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
@@ -841,12 +850,13 @@ class Ui_reco_mainwin(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("reco_mainwin", "Ring removal II", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuLoad_specific.setTitle(QtGui.QApplication.translate("reco_mainwin", "Load specific", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuRun.setTitle(QtGui.QApplication.translate("reco_mainwin", "Run", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuRun.setTitle(QtGui.QApplication.translate("reco_mainwin", "Templates", None, QtGui.QApplication.UnicodeUTF8))
         self.menuReconstruction.setTitle(QtGui.QApplication.translate("reco_mainwin", "Reconstruction", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProjections.setTitle(QtGui.QApplication.translate("reco_mainwin", "Projections", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSinograms.setTitle(QtGui.QApplication.translate("reco_mainwin", "Sinograms", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRing_removal.setTitle(QtGui.QApplication.translate("reco_mainwin", "Ring removal", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSettings.setTitle(QtGui.QApplication.translate("reco_mainwin", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuChange_Target.setTitle(QtGui.QApplication.translate("reco_mainwin", "Change Target to", None, QtGui.QApplication.UnicodeUTF8))
         self.menuloadsettings.setText(QtGui.QApplication.translate("reco_mainwin", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.menusavesettings.setText(QtGui.QApplication.translate("reco_mainwin", "Save settings", None, QtGui.QApplication.UnicodeUTF8))
         self.exitapp.setText(QtGui.QApplication.translate("reco_mainwin", "Exit", None, QtGui.QApplication.UnicodeUTF8))
@@ -856,7 +866,7 @@ class Ui_reco_mainwin(object):
         self.menuCreateCprLog.setText(QtGui.QApplication.translate("reco_mainwin", "Correct projections with log (standard CT)", None, QtGui.QApplication.UnicodeUTF8))
         self.menuCreateFltp.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin phase retrieval", None, QtGui.QApplication.UnicodeUTF8))
         self.menuCreateFltpCpr.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin phase retrieval (+keep corrected projs)", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuCreateSinosQuick.setText(QtGui.QApplication.translate("reco_mainwin", "Quick sinograms for preview", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuCreateSinosQuick.setText(QtGui.QApplication.translate("reco_mainwin", "Quick sinograms (old prj2sin)", None, QtGui.QApplication.UnicodeUTF8))
         self.menuCreateSinosFromTif.setText(QtGui.QApplication.translate("reco_mainwin", "Sinograms from TIF", None, QtGui.QApplication.UnicodeUTF8))
         self.menuCreateSinosFromFltp.setText(QtGui.QApplication.translate("reco_mainwin", "Sinograms from FLTP", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRingRemoval1.setText(QtGui.QApplication.translate("reco_mainwin", "Weak thin rings", None, QtGui.QApplication.UnicodeUTF8))
@@ -864,4 +874,6 @@ class Ui_reco_mainwin(object):
         self.menuLoadOnlyPaganin.setText(QtGui.QApplication.translate("reco_mainwin", "Paganin parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.menuLoadOnlyRingRemoval.setText(QtGui.QApplication.translate("reco_mainwin", "Ring removal parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.menuChangeMerlinMountPoint.setText(QtGui.QApplication.translate("reco_mainwin", "Change Merlin mount point", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuChangeTargetoX02da.setText(QtGui.QApplication.translate("reco_mainwin", "x02da", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuChangeTargetoMerlin.setText(QtGui.QApplication.translate("reco_mainwin", "Merlin", None, QtGui.QApplication.UnicodeUTF8))
 
