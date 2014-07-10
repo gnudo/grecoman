@@ -13,16 +13,15 @@
 ####  before submitting it to gridrec.
 ####
 ####  Example of bash command line to run the script:
-####  ./singleSliceFunc.py -W "-y db2 -M sym -V 3:8 -E 12" -F shepp
-####  -Z 0.5 -t 0 -a 0 -Di /sls/X02DA/data/e13657/Data10/disk1/mouseA_01_01_/sin/
-####  -i mouseA_01_01_0001.sin.DMP
+####  python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py 
+####  -F shepp -Z 0.5 -t 0 -a 0 --Di /sls/X02DA/data/e13657/Data10/disk1/mouseA_01_01_/sin/
+####  -i mouseA_01_01_0001.sin.DMP -y db2 -M sym -V 3:8 -E 12
 
 
 
 ####  GENERIC PYTHON MODULES
 import sys
 import os
-import numpy as np
 from optparse import OptionParser 
 
 
@@ -50,7 +49,7 @@ def getArgs():
                         help = 'Select filename of the ouput reconstruction' ) 
     parser.add_option( '-F' , dest='filter' , default='shepp-logan' ,
                         help = 'Select filter for the reconstruction with gridrec [default: %default]' )
-    parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.5 ,
+    parser.add_option( '-Z' , dest='edgepad' , type='float' , default=0.0 ,
                         help = 'Select edge padding for reconstruction with gridrec [default: %default]' )
     parser.add_option( '-G' , dest='geometry' , default='1',
                         help = 'Specify projection geometry for gridrec:'
@@ -80,6 +79,9 @@ def getArgs():
                         help = 'Specify Threshold used in zinger removal routine' )
     parser.add_option( '-w' , dest='zinger_width' , 
                         help = 'WIdth of smoothing kernel used in zinger removal routine' )
+    parser.add_option( '-x' , dest='machine' , 
+                        help = 'target machine, where the calculation takes place (Merlin or x02da)' )
+    
 
     args , options = parser.parse_args()
 
@@ -158,9 +160,19 @@ def main():
     flag_ring_removal = 0
     
     if args.wavelet_type is not None:
-        command_line = 'module load xbl/epd_free/7.3-2-2013.06; ' + \
-                       'module load xbl/PyWavelets/0.2.2; ' + \
-                       'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/src/Reconstruction/' + \
+        if args.machine == 'x02da':
+            command_line = 'module load xbl/epd_free/7.3-2-2013.06; ' + \
+                           'module load xbl/PyWavelets/0.2.2; '
+        elif args.machine == 'Merlin':
+            command_line = 'module use /opt/xbl-software/modulefiles-private; ' + \
+                           'module load xbl/epd; ' + \
+                           'module use /opt/xbl-software/modulefiles; ' + \
+                           'module load xbl/PyWavelets; '
+        else:
+            parser.print_help()
+            sys.exit('\nERROR: No target machine specified \n')
+        
+        command_line += 'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/src/Reconstruction/' + \
                        'waveletFFT.py '
 #python waveletFFT.py -t db2 -d 8 -O h -f 5.0 -p ds_ -M sym -o /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/ /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/Hornby_a1661.tif                       
         command_line += '-t ' + args.wavelet_type + ' '
@@ -180,7 +192,11 @@ def main():
 
 
     ##  Reconstruction with gridrec
-    command_line = 'gridrec_64 '
+    if args.machine == 'x02da':
+        command_line = 'gridrec_64 '
+    elif args.machine == 'Merlin':
+        command_line = '/afs/psi.ch/project/TOMCAT_pipeline/Merlin/tomcat_pipeline/src/Reconstruction/lib/gridRec '
+        
     command_line += '-f ' + args.filter + ' '
     command_line += '-Z ' + str( args.edgepad ) + ' '
     if args.center is not None:

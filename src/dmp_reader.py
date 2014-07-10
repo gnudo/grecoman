@@ -3,6 +3,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 def DMPreader(file):
+    '''
+    This function opens the DMP-file file and normalizes it by its
+    min and max value
+    TODO: has to be rewritten completely (next release)
+    '''
     fd = open(file, 'rb' )
     datatype = 'h'
     numberOfHeaderValues = 3

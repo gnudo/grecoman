@@ -1,7 +1,6 @@
 import subprocess
 from multiprocessing import Process, Queue
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from ui_dialogs import Login
 import os.path
 
 
@@ -15,17 +14,22 @@ class Connector(object):
         self.parent = parent
         self.afsuser = []
         self.eaccountuser = []
+        self.merlinuser = []
         self.afspw = []
         self.eaccountpw = []
         
     
     def performInitalCheck(self):
         '''
-        method for checking both AFS and EACCOUNT credentials
+        This method makes sure that the correct account credentials are
+        saved in the respective properties and if not, it launches the
+        "inputCredentials" method to get them via GUI-dialogs.
         '''
         # (0) if we are on cons-2 we don't need any credentials (at least for now)
-        if self.parent.cons2.isChecked():
-            return True 
+        if self.parent.cons2.isChecked() or self.parent.target == 'Merlin':
+            if not self.merlinuser:
+                self.inputCredentials('Merlin')
+            return True
         
         # (1) first we check whether we have AFS-credentials AND whether we actually get them
         if not self.afsuser or not self.afspw:
@@ -37,6 +41,20 @@ class Connector(object):
             if not self.inputCredentials('E-ACCOUNT'):
                 return False
         return True
+    
+    
+    def submitJob(self,cmd):
+        '''
+        This method determines where (on which machine) to submit the
+        reconstruction job and calls the appropriate method.
+        '''
+        if self.parent.afsaccount.isChecked():
+            if self.parent.target == 'x02da':
+                self.submitJobViaGateway(cmd+'\n','x02da-gw','x02da-cons-2')
+            elif self.parent.target == 'Merlin':
+                self.submitJobViaSshPublicKey(cmd+'\n','merlinc60')
+        elif self.parent.cons2.isChecked():
+            self.submitJobLocally(cmd)
     
     
     def submitJobLocally(self,cmd):
@@ -57,6 +75,20 @@ class Connector(object):
         '''
         proc = subprocess.Popen(cmd, shell=True)
         proc.communicate()
+        
+        
+    def submitJobViaSshPublicKey(self,cmd_str,target):
+        '''
+        method for submitting job via SSH when public key auth has
+        already been set up
+        '''
+        sshProcess = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE,shell=True)
+        sshProcess.stdin.write('ssh '+self.merlinuser+'@'+target+'\n')
+        sshProcess.stdin.write('whoami\n')
+        sshProcess.stdout.readline()
+        sshProcess.stdin.write(cmd_str)
+        sshProcess.stdout.readline()
         
         
     def submitJobViaGateway(self,cmd_str,gw,target):
@@ -125,7 +157,7 @@ class Connector(object):
         in memory. if the passwords are incorrect they are deleted again
         '''
         logwin = Login(self.parent,mode)
-        if logwin.exec_() == QDialog.Accepted:
+        if logwin.exec_() == Login.Accepted:
             if mode == 'AFS':
                 self.afsuser = str(logwin.username.text())
                 self.afspw = str(logwin.password.text())    
@@ -140,6 +172,8 @@ class Connector(object):
                     self.eaccountuser = []
                     self.afspw = []
                     return False
+            elif mode == 'Merlin':
+                self.merlinuser = str(logwin.username.text())
             return True
         return False
         
@@ -218,51 +252,3 @@ class Connector(object):
             return True
         else:
             return False
-            
-
-class Login(QDialog):
-    '''
-    minimalistic class for Login dialog 
-    '''
-    def __init__(self,parent,mode):
-        QDialog.__init__(self)
-        self.heading = QLabel()
-        self.heading.setObjectName("head")
-        self.heading.setText(QApplication.translate("Dialog", "Input "+mode+"-Credentials", None, QApplication.UnicodeUTF8))
-        self.label = QLabel()
-        self.label.setObjectName("label")
-        self.label.setText(QApplication.translate("Dialog", "Login:", None, QApplication.UnicodeUTF8))
-        self.label2 = QLabel()
-        self.label2.setObjectName("label2")
-        self.label2.setText(QApplication.translate("Dialog", "Password:", None, QApplication.UnicodeUTF8))
-        self.username = QLineEdit(self)
-        self.password = QLineEdit(self)
-        self.password.setEchoMode(QLineEdit.Password)
-        self.parent = parent
-        self.buttonlogin = QPushButton('Login', self)
-        self.buttonlogin.clicked.connect(self.execLoginButton)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.heading)
-        layout.addWidget(self.label)
-        layout.addWidget(self.username)
-        layout.addWidget(self.label2)
-        layout.addWidget(self.password)
-        layout.addWidget(self.buttonlogin)
-   
-   
-    def execLoginButton(self):
-        '''
-        method that is run when login button is pressed
-        '''
-        if not self.username.text() or not self.password.text():
-            self.parent.displayErrorMessage('Empty fields','The password and/or user name cannot be left blank')
-        else:
-            self.accept()
-            
-        
-if __name__ == "__main__":
-    # test playground
-    asdf = "echo "+'asdf'
-    p1 = subprocess.call(['echo "#!/bin/bash\n" > ~/test.sh'],shell=True)
-    p2 = subprocess.call(['echo '+asdf+' >> ~/test.sh'],shell=True)
-    p3 = subprocess.call(['chmod a+x ~/test.sh'],shell=True)

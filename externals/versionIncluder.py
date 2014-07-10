@@ -21,7 +21,9 @@ label, stderr = subprocess.Popen(["git", "describe","--tags"],stdin=subprocess.P
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.split(currentdir)[0]
 
-filename = os.path.join(parentdir,'gui.py')
+filename = os.path.join(parentdir,'src')
+filename = os.path.join(filename,'ui_main.py')
+print filename
 
 f = open(filename,'r')
 content = f.read()
@@ -39,4 +41,4 @@ f.close()
 '''
 (4) add changed GUI file
 '''
-subprocess.check_call(["git","add","gui.py"])
+subprocess.check_call(["git","add","src/ui_main.py"])

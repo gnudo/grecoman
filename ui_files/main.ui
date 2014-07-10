@@ -322,7 +322,7 @@
        <x>10</x>
        <y>110</y>
        <width>271</width>
-       <height>61</height>
+       <height>67</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_8">
@@ -462,7 +462,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Output directories</string>
+     <string>Input/Output directories</string>
     </property>
     <widget class="QWidget" name="gridLayoutWidget_6">
      <property name="geometry">
@@ -521,7 +521,7 @@
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QLineEdit" name="sinogramdirectory">
+       <widget class="QLineEdit" name="sindirectory">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -1002,271 +1002,6 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>30</y>
-      <width>301</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>Ring Removal</string>
-    </property>
-    <widget class="QComboBox" name="wavelettype">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>60</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>db1</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db2</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db3</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db4</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db5</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db6</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db7</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db8</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db9</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db11</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db12</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db13</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db14</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db15</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db16</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db17</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db18</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db19</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>db20</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>131</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wavelettype (-y)</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>161</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Decomposition level (-V)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="waveletdecompositionlevel">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>130</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>160</y>
-       <width>171</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Sigma in Gauss-filter (-E)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="sigmaingaussfilter">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>160</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="waveletpaddingmode">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>90</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>zero</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>constant</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>symmetric</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>periodic</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>smooth</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>181</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wavelet padding mode (-M)</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>20</y>
-       <width>251</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Activate wavelet ring removal</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="runringremoval">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>21</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="groupBox_6">
     <property name="geometry">
      <rect>
@@ -1306,7 +1041,7 @@
       <item row="7" column="0" colspan="3">
        <widget class="QCheckBox" name="reconstructon">
         <property name="text">
-         <string>Do reconstruction (-R)</string>
+         <string>Do reconstruction</string>
         </property>
        </widget>
       </item>
@@ -1497,13 +1232,19 @@
      <rect>
       <x>10</x>
       <y>860</y>
-      <width>801</width>
+      <width>921</width>
       <height>32</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_9">
      <item row="0" column="2">
       <widget class="QPushButton" name="singleslice">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>Single slice</string>
        </property>
@@ -1511,6 +1252,12 @@
      </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="submit">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>Submit</string>
        </property>
@@ -1552,6 +1299,230 @@
      <string>Open preview image in Fiji (externally)</string>
     </property>
    </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>30</y>
+      <width>301</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="accessibleName">
+     <string/>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Ring Removal I</string>
+     </attribute>
+     <widget class="QWidget" name="gridLayoutWidget_10">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>409</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="1" column="2">
+        <widget class="QComboBox" name="wavelettype">
+         <item>
+          <property name="text">
+           <string>db1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db4</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db5</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db6</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db7</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db8</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db9</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db10</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db11</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db12</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db13</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db14</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db15</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db17</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db18</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db19</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>db20</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QComboBox" name="waveletpaddingmode">
+         <item>
+          <property name="text">
+           <string>zero</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>constant</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>symmetric</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>periodic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>smooth</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="waveletdecompositionlevel"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="sigmaingaussfilter"/>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QCheckBox" name="runringremoval">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Activate wavelet ring removal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Wavelettype (-y)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Wavelet padding mode (-M)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Decomposition level (-V)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Sigma in Gauss-filter (-E)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Ring removal II</string>
+     </attribute>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1559,20 +1530,28 @@
      <x>0</x>
      <y>0</y>
      <width>1256</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
     <property name="title">
      <string>Menu</string>
     </property>
+    <widget class="QMenu" name="menuLoad_specific">
+     <property name="title">
+      <string>Load specific</string>
+     </property>
+     <addaction name="menuLoadOnlyPaganin"/>
+     <addaction name="menuLoadOnlyRingRemoval"/>
+    </widget>
     <addaction name="menuloadsettings"/>
     <addaction name="menusavesettings"/>
+    <addaction name="menuLoad_specific"/>
     <addaction name="exitapp"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
-     <string>Run</string>
+     <string>Templates</string>
     </property>
     <widget class="QMenu" name="menuReconstruction">
      <property name="title">
@@ -1611,8 +1590,23 @@
     <addaction name="separator"/>
     <addaction name="menuRing_removal"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <widget class="QMenu" name="menuChange_Target">
+     <property name="title">
+      <string>Change Target to</string>
+     </property>
+     <addaction name="menuChangeTargetoX02da"/>
+     <addaction name="menuChangeTargetoMerlin"/>
+    </widget>
+    <addaction name="menuChangeMerlinMountPoint"/>
+    <addaction name="menuChange_Target"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuRun"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="menuloadsettings">
@@ -1662,7 +1656,7 @@
   </action>
   <action name="menuCreateSinosQuick">
    <property name="text">
-    <string>Quick sinograms for preview</string>
+    <string>Quick sinograms (old prj2sin)</string>
    </property>
   </action>
   <action name="menuCreateSinosFromTif">
@@ -1683,6 +1677,31 @@
   <action name="menuRingRemoval2">
    <property name="text">
     <string>Strong thick rings</string>
+   </property>
+  </action>
+  <action name="menuLoadOnlyPaganin">
+   <property name="text">
+    <string>Paganin parameters</string>
+   </property>
+  </action>
+  <action name="menuLoadOnlyRingRemoval">
+   <property name="text">
+    <string>Ring removal parameters</string>
+   </property>
+  </action>
+  <action name="menuChangeMerlinMountPoint">
+   <property name="text">
+    <string>Change Merlin mount point</string>
+   </property>
+  </action>
+  <action name="menuChangeTargetoX02da">
+   <property name="text">
+    <string>x02da</string>
+   </property>
+  </action>
+  <action name="menuChangeTargetoMerlin">
+   <property name="text">
+    <string>Merlin</string>
    </property>
   </action>
  </widget>
