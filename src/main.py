@@ -795,8 +795,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
 
 if __name__ == "__main__":
-    mainapp = QApplication(sys.argv,True)  # create Qt application
-    mainapp.setStyle('Mac')
+    sysargs = sys.argv+['-style', 'mac']
+    mainapp = QApplication(sysargs,True)  # create Qt application
     win = MainWindow()  # create main window
     win.show()
  
