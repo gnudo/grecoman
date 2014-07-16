@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1256</width>
+    <width>1251</width>
     <height>945</height>
    </rect>
   </property>
@@ -1008,11 +1008,23 @@
       <x>940</x>
       <y>550</y>
       <width>301</width>
-      <height>281</height>
+      <height>301</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="title">
      <string>Actions</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
     </property>
     <widget class="QWidget" name="gridLayoutWidget_5">
      <property name="geometry">
@@ -1020,7 +1032,7 @@
        <x>10</x>
        <y>20</y>
        <width>293</width>
-       <height>261</height>
+       <height>271</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
@@ -1078,26 +1090,6 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
-       <widget class="QRadioButton" name="sin_fromcpr">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>from cpr</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2" colspan="2">
-       <widget class="QRadioButton" name="sin_fromfltp">
-        <property name="text">
-         <string>from fltp</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1" colspan="2">
        <widget class="QCheckBox" name="withlog">
         <property name="text">
@@ -1107,6 +1099,12 @@
       </item>
       <item row="3" column="1" colspan="3">
        <widget class="QWidget" name="widget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -1144,19 +1142,12 @@
         </widget>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QRadioButton" name="sin_fromtif">
-        <property name="text">
-         <string>from tif</string>
-        </property>
-       </widget>
-      </item>
       <item row="8" column="0" colspan="3">
        <widget class="QWidget" name="widget_2" native="true">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>21</height>
+          <height>30</height>
          </size>
         </property>
         <widget class="QWidget" name="layoutWidget">
@@ -1195,6 +1186,70 @@
             </property>
             <property name="text">
              <string>from sino</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="4">
+       <widget class="QWidget" name="widget_3" native="true">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>261</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QRadioButton" name="sin_fromtif">
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>from tif</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="sin_fromcpr">
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>from cpr</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="sin_fromfltp">
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>from fltp</string>
             </property>
            </widget>
           </item>
@@ -1323,7 +1378,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>409</width>
+        <width>291</width>
         <height>151</height>
        </rect>
       </property>
@@ -1529,7 +1584,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1256</width>
+     <width>1251</width>
      <height>23</height>
     </rect>
    </property>
