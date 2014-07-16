@@ -26,17 +26,21 @@ class Connector(object):
         "inputCredentials" method to get them via GUI-dialogs.
         '''
         # (0) if we are on cons-2 we don't need any credentials (at least for now)
-        if self.parent.cons2.isChecked() or self.parent.target == 'Merlin':
+        if self.parent.cons2.isChecked():
+            return True
+        
+        # (1) if the Target is 'Merlin'
+        if self.parent.target == 'Merlin':
             if not self.merlinuser:
                 self.inputCredentials('Merlin')
             return True
         
-        # (1) first we check whether we have AFS-credentials AND whether we actually get them
+        # (2) first we check whether we have AFS-credentials AND whether we actually get them
         if not self.afsuser or not self.afspw:
             if not self.inputCredentials('AFS'):
                 return False
             
-        # (2) ... whether we have eaccount number and password
+        # (3) ... whether we have eaccount number and password
         if not self.eaccountuser or not self.eaccountpw:
             if not self.inputCredentials('E-ACCOUNT'):
                 return False

@@ -133,7 +133,7 @@ class DatasetFolder(object):
                     path = self.cons2Path2afs(path)
                 elif self.parent.target == 'Merlin':
                     path = self.merlin2SshfsPath(path)
-            elif self.cons2.isChecked():
+            elif self.parent.cons2.isChecked():
                 pass
             return path
             
