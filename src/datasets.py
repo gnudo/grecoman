@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, name
 import os.path
 
 
@@ -20,6 +20,11 @@ class DatasetFolder(object):
         self.merlin_base = '/gpfs/home/'
         self.sls_base_dir = '/sls/X02DA/data/'
         
+        if os.uname()[1] == 'x02da-cons-2':  # set computing location based on computer name
+            parent.cons2.setChecked(1)
+        
+        if self.homedir[0:16] == '/afs/psi.ch/user':  # set location based on PSI/AFS home-dir
+            parent.afsaccount.setChecked(1)
         
     def initInputDirectory(self):
         '''

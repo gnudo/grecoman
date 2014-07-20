@@ -54,6 +54,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
         QObject.connect(self.outputtype,
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
+        self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
+        self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -570,6 +572,31 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 return
             
             
+    def setUnsetComputingLocation(self):
+        '''
+        This method checks the computing location and directory paths
+        and changes the directories if necessary. It should be run when
+        toggling the computing location and after loading config files. 
+        '''
+        paths = ['inputdirectory','cprdirectory','fltpdirectory','sindirectory','recodirectory']
+        
+        if not self.target == 'x02da':
+            return
+        
+        for path_item in paths:
+            path = str(getattr(self,path_item).text()) 
+            if self.afsaccount.isChecked():
+                if path[0:16] == '/sls/X02DA/data/' and \
+                        self.dirs.homedir[0:16] == '/afs/psi.ch/user':
+                    newpath = self.dirs.cons2Path2afs(path)
+                    getattr(self,path_item).setText(newpath)
+            
+            if self.cons2.isChecked():
+                if path[0:16] == '/afs/psi.ch/user':
+                    newpath = self.dirs.afsPath2Cons2(path)
+                    getattr(self,path_item).setText(newpath)
+            
+            
     def saveConfigFile(self):
         '''
         This method is run when pressing Menu->Save settings.
@@ -604,6 +631,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         self.lastdir_config = self.dirs.getParentDir(str(loadfile))
         file_obj.loadFile(ParameterWrap,overwrite)
+        self.setUnsetComputingLocation()
         self.dirs.inputdir = self.inputdirectory.text()
         self.dirs.initSinDirectory()
         
@@ -741,21 +769,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         This method is called whenever the combobox for output type is
         changed. It appends the correct reco-output directory.
         '''
+        types = ['rec_8bit','rec_DMP','rec_DMP_HF5','rec_16bit','rec_8bit','unknown_output']
         ind = str(self.outputtype.currentIndex())
-        if ind == '0':
-            newname = 'rec_8bit'
-        elif ind == '1':
-            newname = 'rec_DMP'
-        elif ind ==  '2':
-            newname = 'rec_DMP_HF5'
-        elif ind ==  '3':
-            newname = 'rec_16bit'
-        elif ind ==  '4':
-            newname = 'rec_8bit'
-        else:
-            newname = 'unknown_output'
-            
-        self.dirs.setOutputDirectory(newname)
+        self.dirs.setOutputDirectory(types[ind])
         
         
     def submitAndSingleSliceContextMenu(self,point):
