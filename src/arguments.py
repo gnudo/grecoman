@@ -79,6 +79,7 @@ class ParameterWrap(object):
         cls.addParameter('outputtype','-t',[],False)
         cls.addParameter('geometry','-G',[],False)
         cls.addParameter('stitchingtype','-S',[],False)
+        cls.addParameter('jobpriority','--priority',[],False)
         
         # we add radio box as well in order to require certain input directories
         cls.addParameter('sin_fromtif','',['inputdirectory'],False)
@@ -111,6 +112,8 @@ class ParameterWrap(object):
             types_dict = {"0":"0", "1":"2", "2":"1", "3":"3"}
         elif combobox is 'stitchingtype':
             types_dict = {"0":"0", "1":"L", "2":"R"}
+        elif combobox is 'jobpriority':
+            types_dict = {"0":"0", "1":"-500", "2":"-1000"}
          
         corr_str = str(getattr(cls.parent,combobox).currentIndex())
         return types_dict[corr_str]

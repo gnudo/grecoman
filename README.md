@@ -1,4 +1,4 @@
-GRecoMan 1.1.1
+GRecoMan 1.1.2
 ========
 
 Public repository of the Graphical Reconstruction Manager for use at the [TOMCAT beamline](http://www.psi.ch/sls/tomcat/). For using it, please follow the steps below. In addition, the repository can also be cloned/downloaded to any PSI/AFS and/or beamline computer and run locally. There are two branches: *master* for the last stable release and *development* including the most recent (eventually untested) features.
