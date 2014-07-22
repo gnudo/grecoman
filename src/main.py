@@ -347,6 +347,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+jobname+'_'+mode+' '
+        
+        # optional job priority
+        if not getattr(self,'jobpriority').currentIndex() == 0:
+            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
+            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
   
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
@@ -431,6 +436,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 += '--jobname='+jobname+'_sin '
         
+        # optional job priority
+        if not getattr(self,'jobpriority').currentIndex() == 0:
+            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
+            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
+        
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
@@ -509,6 +519,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             cmd1 += '--hold='+jobname+'_sin '
             
         cmd1 += '--jobname='+jobname+'_reco '
+        
+        # optional job priority
+        if not getattr(self,'jobpriority').currentIndex() == 0:
+            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
+            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
         
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
@@ -770,7 +785,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         changed. It appends the correct reco-output directory.
         '''
         types = ['rec_8bit','rec_DMP','rec_DMP_HF5','rec_16bit','rec_8bit','unknown_output']
-        ind = str(self.outputtype.currentIndex())
+        ind = self.outputtype.currentIndex()
         self.dirs.setOutputDirectory(types[ind])
         
         
