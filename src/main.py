@@ -7,7 +7,7 @@ from datasets import DatasetFolder
 from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from time import sleep # TODO: preliminary
+from time import sleep,strftime # TODO: preliminary
 import os.path  # TODO: preliminary
 import sys
 
@@ -131,7 +131,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                        'develbranchon']
         for key in range(len(field_order)-1):
             self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
-        
+
  
     def submitToCluster(self):
         '''
@@ -165,6 +165,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
         
         self.job.submitJob(self.cmd)
+        self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
             
             
     def calcSingleSlice(self):
