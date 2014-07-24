@@ -56,6 +56,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
+        self.sinoslider.valueChanged.connect(self.setSinoWithSlider)
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -611,7 +612,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 if path[0:16] == '/afs/psi.ch/user':
                     newpath = self.dirs.afsPath2Cons2(path)
                     getattr(self,path_item).setText(newpath)
-            
+
+
+    def setSinoWithSlider(self):
+        ''' Changes the sinogram in combo by moving slider '''
+        if not self.sinograms.count() == 0:
+            ind = self.sinoslider.value()
+            self.sinograms.setCurrentIndex(int(ind))
+        
             
     def saveConfigFile(self):
         '''
