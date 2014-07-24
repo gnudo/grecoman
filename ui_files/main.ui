@@ -130,7 +130,7 @@
        <x>10</x>
        <y>290</y>
        <width>283</width>
-       <height>191</height>
+       <height>197</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -475,7 +475,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>221</height>
+       <height>231</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_6" rowminimumheight="0,0,0,0,0,0,30,0,0,0">
@@ -721,7 +721,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>481</height>
+       <height>482</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -919,6 +919,9 @@
       </item>
       <item row="20" column="0">
        <widget class="QCheckBox" name="zingeron">
+        <property name="toolTip">
+         <string>If 1D is selected the zinger removal is applied during the reconstruction step on a sinogram. In de 2D version (not implemented yet) it is applied on a corrected projection, before creating the sinogram.</string>
+        </property>
         <property name="text">
          <string>Zinger removal</string>
         </property>
@@ -1010,6 +1013,20 @@
       </item>
       <item row="11" column="1">
        <widget class="QLineEdit" name="tifmax"/>
+      </item>
+      <item row="20" column="1">
+       <widget class="QComboBox" name="zingermode">
+        <item>
+         <property name="text">
+          <string>1D</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2D</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -1384,7 +1401,7 @@
      <rect>
       <x>320</x>
       <y>830</y>
-      <width>281</width>
+      <width>291</width>
       <height>23</height>
      </rect>
     </property>
@@ -1405,7 +1422,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -1614,6 +1631,77 @@
      <attribute name="title">
       <string>Ring removal II</string>
      </attribute>
+     <widget class="QWidget" name="gridLayoutWidget_11">
+      <property name="geometry">
+       <rect>
+        <x>6</x>
+        <y>9</y>
+        <width>281</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_10">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="runringremovalstd">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="text">
+          <string>Activate standard ring removal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Mode (-L)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="ring_std_mode">
+         <item>
+          <property name="text">
+           <string>standard</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>shift by 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>MBA</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_45">
+         <property name="toolTip">
+          <string>Difference in standard deviation</string>
+         </property>
+         <property name="text">
+          <string>Diff. in std.deviation (-D)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="ring_std_diff"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_46">
+         <property name="text">
+          <string>Max. ring width in px (-W)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="ring_std_ringwidth"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
   </widget>

@@ -78,7 +78,13 @@ def getArgs():
     parser.add_option( '-H' , dest='zinger_thresh' , 
                         help = 'Specify Threshold used in zinger removal routine' )
     parser.add_option( '-w' , dest='zinger_width' , 
-                        help = 'WIdth of smoothing kernel used in zinger removal routine' )
+                        help = 'Width of smoothing kernel used in zinger removal routine' )
+    parser.add_option( '-L' , dest='ring_std_mode' , 
+                        help = 'Set ring removal mode: 0 (unused), 1 (used), 2 (with shift), 3 (MBA)' )
+    parser.add_option( '-D' , dest='ring_std_diff' , 
+                        help = 'Set the difference in standard deviation' )
+    parser.add_option( '-W' , dest='ring_std_ringwidth' , 
+                        help = 'Set the maximum ring width in pixels')
     parser.add_option( '-x' , dest='machine' , 
                         help = 'target machine, where the calculation takes place (Merlin or x02da)' )
     
@@ -206,11 +212,17 @@ def main():
     if args.file_type is not None:
         command_line += '-t ' + args.file_type + ' '
     if args.zinger is not None:
-        command_line += '-z ' + args.zinger + ' '
+        command_line += '-z 1 '
     if args.zinger_thresh is not None:
         command_line += '-T ' + args.zinger_thresh + ' '
     if args.zinger_width is not None:
         command_line += '-k ' + args.zinger_width + ' '
+    if args.ring_std_mode is not None:
+        command_line += '-i ' + args.ring_std_mode + ' '
+    if args.ring_std_diff is not None:
+        command_line += '-d ' + args.ring_std_diff + ' '
+    if args.ring_std_ringwidth is not None:
+        command_line += '-W ' + args.ring_std_ringwidth + ' '
     if args.geometry is not None:
         command_line += '-g ' + args.geometry + ' '
     command_line += '-O ' + pathout + ' '
