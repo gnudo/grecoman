@@ -49,8 +49,11 @@ class ParameterWrap(object):
         cls.addParameter('pag_pxsize','',[],False)
         cls.addParameter('pag_distance','',[],False)
         cls.addParameter('runringremoval','',['waveletdecompositionlevel', 'sigmaingaussfilter'],False)
+        cls.addParameter('runringremovalstd','',['ring_std_diff', 'ring_std_ringwidth'],False)
         cls.addParameter('waveletdecompositionlevel','-V',[],False)
         cls.addParameter('sigmaingaussfilter','-E',[],False)
+        cls.addParameter('ring_std_diff','-D',[],False)
+        cls.addParameter('ring_std_ringwidth','-W',[],False)
         cls.addParameter('cutofffrequency','-U',[],False)
         cls.addParameter('edgepadding','-Z',[],False)
         cls.addParameter('centerofrotation','-c',[],False)
@@ -75,11 +78,13 @@ class ParameterWrap(object):
         cls.addParameter('inputtype','-I',[],False)
         cls.addParameter('wavelettype','-y',[],False)
         cls.addParameter('waveletpaddingmode','-M',[],False)
+        cls.addParameter('ring_std_mode','-L',[],False)
         cls.addParameter('filter','-F',[],False)
         cls.addParameter('outputtype','-t',[],False)
         cls.addParameter('geometry','-G',[],False)
         cls.addParameter('stitchingtype','-S',[],False)
         cls.addParameter('jobpriority','--priority',[],False)
+        cls.addParameter('zingermode','-z',[],False)
         
         # we add radio box as well in order to require certain input directories
         cls.addParameter('sin_fromtif','',['inputdirectory'],False)
@@ -114,6 +119,8 @@ class ParameterWrap(object):
             types_dict = {"0":"0", "1":"L", "2":"R"}
         elif combobox is 'jobpriority':
             types_dict = {"0":"0", "1":"-500", "2":"-1000"}
+        elif combobox is 'ring_std_mode':
+            types_dict = {"0":"1", "1":"2", "2":"3"}
          
         corr_str = str(getattr(cls.parent,combobox).currentIndex())
         return types_dict[corr_str]

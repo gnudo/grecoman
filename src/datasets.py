@@ -59,7 +59,8 @@ class DatasetFolder(object):
         by opening a file dialog from main.py or by copying the path
         in the respective field and pressing RETURN. If the sinogram-
         directory exists, it populates the sinogram combobox with all
-        file-names or displays an error if no sinograms exist.
+        file-names or displays an error if no sinograms exist. Then it
+        sets the min and max range for the sino slider.
         '''
         self.parent.sinograms.clear()  # clear sinogram combo box
         self.sinodir = os.path.join(str(self.parent.sindirectory.text()),'')
@@ -76,9 +77,11 @@ class DatasetFolder(object):
         
         dmp_list = tif_list + dmp_list
         dmp_list.sort()
-        for item in dmp_list:
-            self.parent.sinograms.addItem(item)
-            
+        self.parent.sinograms.addItems(dmp_list) # Populate sino comboxbox
+        
+        self.parent.sinoslider.setMinimum(0)
+        self.parent.sinoslider.setMaximum(len(dmp_list)-1)
+        
             
     def checkFolder(self,subdir):
         '''

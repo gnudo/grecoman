@@ -20,177 +20,92 @@
       <x>10</x>
       <y>30</y>
       <width>301</width>
-      <height>521</height>
+      <height>481</height>
      </rect>
     </property>
     <property name="title">
      <string>Input Data</string>
     </property>
-    <widget class="QLineEdit" name="inputdirectory">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>251</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>231</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Input directory (TIF folder)</string>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="setinputdirectory">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>50</y>
-       <width>30</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>80</y>
-       <width>101</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Input type (-I)</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="inputtype">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>80</y>
-       <width>151</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>DMP</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>HDF5</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>TIF</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>DMP sinos</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>170</y>
-       <width>281</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Scan parameters (-f): Number of images</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>190</y>
+       <y>180</y>
        <width>281</width>
-       <height>91</height>
+       <height>112</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QLineEdit" name="flats">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="label_12">
         <property name="text">
          <string>Flats</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="2" column="2">
        <widget class="QLabel" name="label_13">
         <property name="text">
          <string>Interflats</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
+      <item row="2" column="3">
        <widget class="QLineEdit" name="interflats">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="label_14">
         <property name="text">
          <string>Raw</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QLineEdit" name="raws"/>
       </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <widget class="QLabel" name="label_15">
         <property name="text">
          <string>Darks</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="1" column="3">
        <widget class="QLineEdit" name="darks">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="3" column="0" colspan="2">
        <widget class="QLabel" name="label_16">
         <property name="text">
          <string>Flat frequency</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QLineEdit" name="flatfreq">
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="4">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Scan parameters (-f): Number of images</string>
         </property>
        </widget>
       </item>
@@ -213,9 +128,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>300</y>
-       <width>291</width>
-       <height>213</height>
+       <y>290</y>
+       <width>283</width>
+       <height>197</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -227,7 +142,14 @@
        </widget>
       </item>
       <item row="6" column="3">
-       <widget class="QLineEdit" name="binsize"/>
+       <widget class="QLineEdit" name="binsize">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="4" column="2">
        <widget class="QLabel" name="label_22">
@@ -237,7 +159,14 @@
        </widget>
       </item>
       <item row="3" column="3">
-       <widget class="QLineEdit" name="roi_right"/>
+       <widget class="QLineEdit" name="roi_right">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_21">
@@ -247,7 +176,14 @@
        </widget>
       </item>
       <item row="4" column="3">
-       <widget class="QLineEdit" name="roi_lower"/>
+       <widget class="QLineEdit" name="roi_lower">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="6" column="0" colspan="3">
        <widget class="QLabel" name="label_33">
@@ -257,7 +193,14 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="roi_upper"/>
+       <widget class="QLineEdit" name="roi_upper">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="7" column="0" colspan="4">
        <widget class="Line" name="line_19">
@@ -274,7 +217,14 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="roi_left"/>
+       <widget class="QLineEdit" name="roi_left">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_19">
@@ -312,7 +262,14 @@
        </widget>
       </item>
       <item row="8" column="3">
-       <widget class="QLineEdit" name="scaleimagefactor"/>
+       <widget class="QLineEdit" name="scaleimagefactor">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>27</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -320,37 +277,37 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
-       <width>271</width>
-       <height>67</height>
+       <y>27</y>
+       <width>281</width>
+       <height>151</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_8">
-      <item row="0" column="1">
+      <item row="3" column="1" colspan="2">
        <widget class="QLineEdit" name="prefix"/>
       </item>
-      <item row="0" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Prefix (-p)</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="label_44">
         <property name="text">
          <string>Stiching/360 (-S)</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="5" column="0" colspan="3">
        <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="4" column="1" colspan="2">
        <widget class="QComboBox" name="stitchingtype">
         <item>
          <property name="text">
@@ -367,6 +324,54 @@
           <string>right</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Input type (-I)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QComboBox" name="inputtype">
+        <item>
+         <property name="text">
+          <string>DMP</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>HDF5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>TIF</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DMP sinos</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLineEdit" name="inputdirectory"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QToolButton" name="setinputdirectory">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Input directory (TIF folder)</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -456,7 +461,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>550</y>
+      <y>520</y>
       <width>301</width>
       <height>271</height>
      </rect>
@@ -470,10 +475,10 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>221</height>
+       <height>231</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout_6" rowminimumheight="0,0,0,0,0,0,30,0,0">
+     <layout class="QGridLayout" name="gridLayout_6" rowminimumheight="0,0,0,0,0,0,30,0,0,0">
       <property name="verticalSpacing">
        <number>0</number>
       </property>
@@ -560,7 +565,7 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
+      <item row="8" column="0">
        <widget class="QLabel" name="label_43">
         <property name="text">
          <string>Reconstructions</string>
@@ -590,7 +595,7 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
+      <item row="9" column="0">
        <widget class="QLineEdit" name="recodirectory">
         <property name="minimumSize">
          <size>
@@ -600,7 +605,7 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="1">
+      <item row="9" column="1">
        <widget class="QToolButton" name="setrecodirectory">
         <property name="minimumSize">
          <size>
@@ -610,6 +615,13 @@
         </property>
         <property name="text">
          <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QSlider" name="sinoslider">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -709,7 +721,7 @@
        <x>10</x>
        <y>30</y>
        <width>281</width>
-       <height>481</height>
+       <height>482</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
@@ -907,6 +919,9 @@
       </item>
       <item row="20" column="0">
        <widget class="QCheckBox" name="zingeron">
+        <property name="toolTip">
+         <string>If 1D is selected the zinger removal is applied during the reconstruction step on a sinogram. In de 2D version (not implemented yet) it is applied on a corrected projection, before creating the sinogram.</string>
+        </property>
         <property name="text">
          <string>Zinger removal</string>
         </property>
@@ -998,6 +1013,20 @@
       </item>
       <item row="11" column="1">
        <widget class="QLineEdit" name="tifmax"/>
+      </item>
+      <item row="20" column="1">
+       <widget class="QComboBox" name="zingermode">
+        <item>
+         <property name="text">
+          <string>1D</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2D</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -1278,7 +1307,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="jobname"/>
+      <widget class="QLineEdit" name="jobname">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>27</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1365,7 +1401,7 @@
      <rect>
       <x>320</x>
       <y>830</y>
-      <width>281</width>
+      <width>291</width>
       <height>23</height>
      </rect>
     </property>
@@ -1386,7 +1422,7 @@
      <string/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -1570,7 +1606,7 @@
        <item row="2" column="0" colspan="2">
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Wavelet padding mode (-M)</string>
+          <string>Padding mode (-M)</string>
          </property>
         </widget>
        </item>
@@ -1595,6 +1631,77 @@
      <attribute name="title">
       <string>Ring removal II</string>
      </attribute>
+     <widget class="QWidget" name="gridLayoutWidget_11">
+      <property name="geometry">
+       <rect>
+        <x>6</x>
+        <y>9</y>
+        <width>281</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_10">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="runringremovalstd">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="text">
+          <string>Activate standard ring removal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Mode (-L)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="ring_std_mode">
+         <item>
+          <property name="text">
+           <string>standard</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>shift by 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>MBA</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_45">
+         <property name="toolTip">
+          <string>Difference in standard deviation</string>
+         </property>
+         <property name="text">
+          <string>Diff. in std.deviation (-D)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="ring_std_diff"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_46">
+         <property name="text">
+          <string>Max. ring width in px (-W)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="ring_std_ringwidth"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
   </widget>

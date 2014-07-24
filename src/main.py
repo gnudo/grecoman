@@ -56,6 +56,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
+        self.sinoslider.valueChanged.connect(self.setSinoWithSlider)
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -191,8 +192,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if ParameterWrap.CLA_dict[combo].performCheck():
                 self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
         
-#         if self.zingeron.isChecked():  >>> no zingers supported at the moment
-#             self.setZingerParameters()
+        if self.zingeron.isChecked():
+            self.cmd += self.setZingerParameters()
         
         optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
         for param in optional_single:
@@ -201,6 +202,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
             self.cmd += self.setWavletParameters()
+            
+        if self.runringremovalstd.isChecked():
+            self.cmd += self.setStandardRingRemoval()
         
         # rewrite the sinogram-directory for use at the appropriate machine
         single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
@@ -513,7 +517,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         comboboxes = ['filter', 'outputtype', 'geometry']
         for combo in comboboxes:
             if ParameterWrap.CLA_dict[combo].performCheck():
-                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
+                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' '
+                
+        ## (5) Standard ring removal parameters
+        if self.runringremovalstd.isChecked():
+            cmd1 += self.setStandardRingRemoval()
+            
+        ## (6) Zinger removal
+        if self.zingeron.isChecked() and self.zingermode.currentIndex() == 0:
+            cmd1 += self.setZingerParameters()
                 
         # set correct jobname in order to wait for other jobs to finish
         if self.sinon.isChecked() and self.rec_fromsino.isChecked():
@@ -611,7 +623,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 if path[0:16] == '/afs/psi.ch/user':
                     newpath = self.dirs.afsPath2Cons2(path)
                     getattr(self,path_item).setText(newpath)
-            
+
+
+    def setSinoWithSlider(self):
+        ''' Changes the sinogram in combo by moving slider '''
+        if not self.sinograms.count() == 0:
+            ind = self.sinoslider.value()
+            self.sinograms.setCurrentIndex(int(ind))
+        
             
     def saveConfigFile(self):
         '''
@@ -713,7 +732,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     def setWavletParameters(self):
         '''
         Method for adding the wavelet correction to the command line
-        string
+        string.
         '''
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
@@ -722,16 +741,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
         cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
         return cmd
+    
+    
+    def setStandardRingRemoval(self):
+        ''' Method for setting the standard ring removal parameters '''
+        cmd = ParameterWrap.CLA_dict['ring_std_mode'].flag+' '+ParameterWrap.getComboBoxContent('ring_std_mode')+' '
+        cmd += ParameterWrap.CLA_dict['ring_std_diff'].flag+' '+getattr(self,'ring_std_diff').text()+' '
+        cmd += ParameterWrap.CLA_dict['ring_std_ringwidth'].flag+' '+getattr(self,'ring_std_ringwidth').text()+' '
+        return cmd
         
         
-#     def setZingerParameters(self):
-#         '''
-#         TODO: currently not supported
-#         method for adding zinger removal parameters
-#         '''
-#         self.cmd += '-z 1 '
-#         self.cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-#         self.cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
+    def setZingerParameters(self):
+        '''
+        method for adding zinger removal parameters
+        '''
+        cmd = '-z s ' ## TODO: has to be fixed after 2D version is implemented
+        cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
+        cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
+        return cmd
 
         
     def displayErrorMessage(self,head,msg):
