@@ -2,6 +2,7 @@ import subprocess
 from multiprocessing import Process, Queue
 from ui_dialogs import Login
 import os.path
+import hashlib
 
 
 class Connector(object):
@@ -17,6 +18,7 @@ class Connector(object):
         self.merlinuser = []
         self.afspw = []
         self.eaccountpw = []
+        self.cmds_cache = [None] * 5
         
     
     def performInitalCheck(self):
@@ -45,6 +47,20 @@ class Connector(object):
             if not self.inputCredentials('E-ACCOUNT'):
                 return False
         return True
+    
+    
+    def checkIdenticalJobs(self,cmd):
+        '''
+        This method checks whether an identical job has been submitted
+        during the last 5 job submissions and if yes, it returns True.
+        '''
+        md5_str = hashlib.md5(cmd).hexdigest()[0:10]
+        for item in self.cmds_cache:
+            if item == md5_str:
+                return True
+        
+        self.cmds_cache.pop(0)
+        self.cmds_cache.append(md5_str)
     
     
     def submitJob(self,cmd):

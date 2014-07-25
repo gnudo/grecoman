@@ -165,6 +165,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.job.performInitalCheck():  # check account credentials
             return
         
+        if self.job.checkIdenticalJobs(self.cmd):
+            if not self.displayYesNoMessage('Identical Job','You have' \
+                    ' submitted an identical job just before. Are you' \
+                    ' sure you want to submit it again?'):
+                self.statusBar().clearMessage()
+                return
+        
         self.job.submitJob(self.cmd)
         self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
             
