@@ -981,7 +981,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Width of smoothin kernel (-w)</string>
+         <string>Width of smoothing kernel (-w)</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
