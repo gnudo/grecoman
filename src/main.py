@@ -29,6 +29,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.lastdir_config = self.lastdir  # set the starting open directory for config-files
         self.changeSubmissionTarget('x02da')  # set the submission target standardly to x02da
         
+        ## GUI settings
+        self.setAcceptDrops(True)  # accept Drag'n drop files
+        
         ## GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"),lambda param='inputdirectory': self.getDirectory(param))  # data input directory
@@ -56,7 +59,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
-        self.sinoslider.valueChanged.connect(self.setSinoWithSlider)
+        self.sinoslider.valueChanged.connect(self.setSinoWithSlider)  # Sinograms slider event
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -164,6 +167,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         if not self.job.performInitalCheck():  # check account credentials
             return
+        
+        if self.job.checkIdenticalJobs(self.cmd):
+            if not self.displayYesNoMessage('Identical Job','You have' \
+                    ' submitted an identical job just before. Are you' \
+                    ' sure you want to submit it again?'):
+                self.statusBar().clearMessage()
+                return
         
         self.job.submitJob(self.cmd)
         self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
@@ -665,10 +675,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return file_obj
         
         self.lastdir_config = self.dirs.getParentDir(str(loadfile))
-        file_obj.loadFile(ParameterWrap,overwrite)
+        file_obj.loadFile(overwrite)
         self.setUnsetComputingLocation()
         self.dirs.inputdir = self.inputdirectory.text()
-        self.dirs.initSinDirectory()
+        if not str(self.sindirectory.text()) == '':
+            self.dirs.initSinDirectory()
         
         
     def loadSpecificFromConfigFile(self,param_list):
@@ -691,7 +702,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
         template_obj = self.loadConfigFile(template_file, True)
-        template_obj.loadFile(ParameterWrap,False)
+        template_obj.loadFile(False)
         
         ParameterWrap.resetAllStyleSheets()
         for param in template_obj.config.options(template_obj.heading):
@@ -851,6 +862,27 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.performInitalCheck()
             if not self.dirs.merlin_mount_dir:
                 self.getDirectory('merlin_mount_dir','Select where the Merlin directory is mounted')
+        
+                
+    def dragEnterEvent(self, event):
+        '''
+        This method accepts dragging files from outside into the
+        application
+        '''
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+
+    def dropEvent(self, event):
+        '''
+        This method tries to load a config file after being dropped
+        into the application. When multiple files are dropped, only the
+        last one is loaded.
+        '''
+        for path in event.mimeData().urls():
+            self.loadConfigFile( path.toLocalFile().toLocal8Bit().data() )
         
 
 if __name__ == "__main__":

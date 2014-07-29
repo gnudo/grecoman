@@ -34,7 +34,7 @@ class ConfigFile(object):
             self.config.write(configfile)
         
         
-    def loadFile(self,ParameterWrap,overwrite):
+    def loadFile(self,overwrite):
         '''
         This method loads all parameters from a configuration file into
         the available GUI-fields. Here we iterate through config-file
@@ -42,7 +42,13 @@ class ConfigFile(object):
         make sure that if we add new GUI-fields in the future, old
         config files will still be compatible.
         '''
-        self.config.read(self.cfgfile)
+        try:
+            self.config.read(self.cfgfile)
+        except ConfigParser.MissingSectionHeaderError:
+            self.parent.displayErrorMessage('Loading wrong file', \
+                'The file you are trying to load does not seem to be' \
+                ' a valid GRecoMan config file!')
+            return
         
         for param in self.config.options(self.heading):
             self.loadSingleParamter(param,overwrite)
