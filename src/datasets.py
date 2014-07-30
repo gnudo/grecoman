@@ -73,7 +73,7 @@ class DatasetFolder(object):
         tif_list = [name for name in os.listdir(self.sinodir)
                     if name.lower().endswith('.tif') and not name.startswith('.')]
         dmp_list = [name for name in os.listdir(self.sinodir)
-                    if name.lower().endswith('.dmp') and not name.startswith('.')]
+                    if name.lower().endswith('.sin.dmp') and not name.startswith('.')]
         
         dmp_list = tif_list + dmp_list
         dmp_list.sort()
