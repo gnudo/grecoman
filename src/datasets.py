@@ -285,6 +285,7 @@ class DatasetFolder(object):
                 'There are no tif, dmp, nor hd5 files in the input folder!')
             return False
 
+            
     def determinePrefix(self):
         '''
         This method determines the prefix from the parent directory
