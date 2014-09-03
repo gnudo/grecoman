@@ -19,13 +19,13 @@ class DatasetFolder(object):
         self.afs_base = self.homedir+'/slsbl/x02da/'
         self.merlin_base = '/gpfs/home/'
         self.sls_base_dir = '/sls/X02DA/data/'
-        
+
         if os.uname()[1] == 'x02da-cons-2':  # set computing location based on computer name
             parent.cons2.setChecked(1)
-        
+
         if self.homedir[0:16] == '/afs/psi.ch/user':  # set location based on PSI/AFS home-dir
             parent.afsaccount.setChecked(1)
-        
+
     def initInputDirectory(self):
         '''
         This method is called when a new input directory is set either
@@ -37,22 +37,22 @@ class DatasetFolder(object):
         from the log-file.
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),'')
-        
+
         if not self.inputdir or not os.path.isdir(self.inputdir):
             return
-        
+
         self.parent.lastdir = self.getParentDir(str(self.inputdir))
-        
+
         if self.determineInputType():
             self.determinePrefix()
-        
+
         subdirs = ['sin','cpr','fltp','reco']
         for item in subdirs: # set all I/O folders and initialize
             self.checkFolder(item)
-        
+
         self.loadAndParseLogFile()  # load GUI-fields from log-file
-        
-        
+
+
     def initSinDirectory(self):
         '''
         This method is run when a new sinogram directory is set either
@@ -64,25 +64,25 @@ class DatasetFolder(object):
         '''
         self.parent.sinograms.clear()  # clear sinogram combo box
         self.sinodir = os.path.join(str(self.parent.sindirectory.text()),'')
-        
+
         if not os.path.exists(self.sinodir):
             self.parent.displayErrorMessage('"sin" folder missing', \
                             'No sinograms found in standard sin folder')
             return
-        
+
         tif_list = [name for name in os.listdir(self.sinodir)
                     if name.lower().endswith('.tif') and not name.startswith('.')]
         dmp_list = [name for name in os.listdir(self.sinodir)
                     if name.lower().endswith('.dmp') and not name.startswith('.')]
-        
+
         dmp_list = tif_list + dmp_list
         dmp_list.sort()
         self.parent.sinograms.addItems(dmp_list) # Populate sino comboxbox
-        
+
         self.parent.sinoslider.setMinimum(0)
         self.parent.sinoslider.setMaximum(len(dmp_list)-1)
-        
-            
+
+
     def checkFolder(self,subdir):
         '''
         This method sets the respective I/O directory ("subdir"),
@@ -95,15 +95,15 @@ class DatasetFolder(object):
         if os.path.exists(dir):
             self.parent.displayErrorMessage('Existing directory',\
                     'You should probably rename the '+subdir+'-directory!')
-        
+
         getattr(self.parent,subdir+'directory').setText(dir)
-        
+
         if subdir == 'reco':
             self.setOutputDirectory('rec_8bit')
         elif subdir == 'sin':
             self.initSinDirectory()
-        
-        
+
+
     def setOutputDirectory(self,newname):
         '''
         This method sets the correct output directory for
@@ -114,8 +114,8 @@ class DatasetFolder(object):
         newpathlist = outputpaths[:-2]+[newname]
         pathstr = self.glueOsPath(newpathlist)
         self.parent.recodirectory.setText(pathstr)
-        
-        
+
+
     def rewriteDirectoryPath(self,path,mode):
         '''
         This method should rewrite any absolute directory path to a
@@ -144,8 +144,8 @@ class DatasetFolder(object):
             elif self.parent.cons2.isChecked():
                 pass
             return path
-            
-            
+
+
     def afsPath2Cons2(self,path):
         '''
         Transforms a blmount-filepath to a file path that can be run
@@ -156,8 +156,8 @@ class DatasetFolder(object):
         sls_base_dir = self.splitOsPath(self.sls_base_dir)
         tmp_list = sls_base_dir+splitted_dir[8:]
         return os.path.join(*tmp_list)
-    
-    
+
+
     def cons2Path2afs(self,path):
         '''
         Transforms a beamline computer file path to a filepath that can
@@ -167,11 +167,11 @@ class DatasetFolder(object):
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = afs_base+[splitted_dir[4]]+splitted_dir[5:]
         return os.path.join(*tmp_list)
-    
-    
+
+
     def sshfsPath2Merlin(self,path):
         '''
-        Transforms a mounted Merlin path to the original Merlin path. 
+        Transforms a mounted Merlin path to the original Merlin path.
         '''
         self.merlin_mount_dir = os.path.join(str(self.merlin_mount_dir),'')
         split_merlin_mount = self.splitOsPath(self.merlin_mount_dir)
@@ -179,8 +179,8 @@ class DatasetFolder(object):
         tmp_list = [self.merlin_base+self.parent.job.merlinuser]+ \
                     splitted_dir[len(split_merlin_mount)-1:]
         return os.path.join(*tmp_list)
-    
-    
+
+
     def merlin2SshfsPath(self,path):
         '''
         Transforms the original Merlin path to a mounted Merlin path.
@@ -190,8 +190,8 @@ class DatasetFolder(object):
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_mount_dir]+splitted_dir[len(split_merlin_base):]
         return os.path.join(*tmp_list)
-        
-        
+
+
     def splitOsPath(self, path):
         '''
         This method splits any OS path to a list of folders and should
@@ -209,23 +209,23 @@ class DatasetFolder(object):
             path = path_tmp
         parts.reverse()
         return parts
-    
-    
+
+
     def glueOsPath(self, pathlist):
         ''' This method is the reverse to the "splitOsPath" '''
         newpath = pathlist[0]
         for item in pathlist[1:]:
             newpath = os.path.join(newpath,item)
         return newpath
-    
-    
+
+
     def getParentDir(self,directory):
         ''' Returns the parent directory of a directory '''
         directory = os.path.join(str(directory),'')
         tmp_dir = os.path.split(directory[:-1])
         return os.path.join(tmp_dir[0],'')
-        
-        
+
+
     def loadAndParseLogFile(self):
         '''
         This method loads the log-file and sets GUI fields automatically.
@@ -236,7 +236,7 @@ class DatasetFolder(object):
                 break
         else: # if for-loop is run w/o break
             return
-        
+
         logfile_handle = open(os.path.join(str(self.inputdir),logfile), 'r')
         # Go through all the lines in the logfile
         for line in logfile_handle:
@@ -259,8 +259,12 @@ class DatasetFolder(object):
                 # Magnification and pixel size
                 elif (line.split()[0] == 'Actual' and line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(str(line.split(':')[1]).strip()+'E-6')
-    
-    
+                # Rotation center
+                elif (line.split()[0] == 'Rotation' and
+                        line.split()[1] == 'center:'):
+                    self.parent.raws.setText(str(line.split(':')[1]).strip())
+
+
     def determineInputType(self):
         ''' Determines the input type based on the file extension '''
         for imgfile in listdir(self.inputdir):
@@ -280,7 +284,7 @@ class DatasetFolder(object):
             self.parent.displayErrorMessage('No images found', 'There are no tif, dmp, nor hd5 files in the input folder!')
             return False
 
-            
+
     def determinePrefix(self):
         '''
         This method determines the prefix from the parent directory
