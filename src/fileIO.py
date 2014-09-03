@@ -15,10 +15,9 @@ class ConfigFile(object):
         self.cfgfile = str(cfgfile)
         self.heading = 'GRecoMan Config'
         self.config = ConfigParser.RawConfigParser()
-        self.config.optionxform=str
-       
-        
-    def writeFile(self,ParameterWrap):
+        self.config.optionxform = str
+
+    def writeFile(self, ParameterWrap):
         '''
         This method writes a full configuration file by iterating
         through all parameters (CLA-s) from the GUI that are saved in
@@ -26,15 +25,14 @@ class ConfigFile(object):
         arguments.py) and calling "writeSingleParameter" method.
         '''
         self.config.add_section(self.heading)
-        
-        for key,param in ParameterWrap.CLA_dict.iteritems():
-            self.writeSingleParameter(key,param)
-        
+
+        for key, param in ParameterWrap.CLA_dict.iteritems():
+            self.writeSingleParameter(key, param)
+
         with open(self.cfgfile, 'wb') as configfile:
             self.config.write(configfile)
-        
-        
-    def loadFile(self,overwrite):
+
+    def loadFile(self, overwrite):
         '''
         This method loads all parameters from a configuration file into
         the available GUI-fields. Here we iterate through config-file
@@ -49,15 +47,14 @@ class ConfigFile(object):
                 'The file you are trying to load does not seem to be' \
                 ' a valid GRecoMan config file!')
             return
-        
+
         for param in self.config.options(self.heading):
-            self.loadSingleParamter(param,overwrite)
-                
-                
-    def writeSingleParameter(self,key,param):
+            self.loadSingleParamter(param, overwrite)
+
+    def writeSingleParameter(self, key, param):
         '''Method for writing a single Parameter to a config file.'''
-        name_handle = getattr(self.parent,param.name)
-        
+        name_handle = getattr(self.parent, param.name)
+
         if type(name_handle).__name__ == 'QLineEdit':
             self.config.set(self.heading, key, name_handle.text())
         if type(name_handle).__name__ == 'QCheckBox':
@@ -67,20 +64,19 @@ class ConfigFile(object):
                 self.config.set(self.heading, key, 'false')
         if type(name_handle).__name__ == 'QComboBox':
             self.config.set(self.heading, key, name_handle.currentIndex())
-        
-        
-    def loadSingleParamter(self,param,overwrite):
+
+    def loadSingleParamter(self, param, overwrite):
         '''Method for loading a single parameter from a config file.'''
         try:
-            name_handle = getattr(self.parent,param)
+            name_handle = getattr(self.parent, param)
         except AttributeError:  # If GUI-field doesn't exist, don't load
             # However, if in the future we change some GUI-field names,
             # we have to make sure that they can still be loaded
             if param == 'sinogramdirectory':
-                name_handle = getattr(self.parent,'sindirectory')
+                name_handle = getattr(self.parent, 'sindirectory')
             else:
                 return
-        
+
         if type(name_handle).__name__ == 'QLineEdit':
             txt = self.config.get(self.heading, param)
             if overwrite or txt:
