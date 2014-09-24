@@ -507,6 +507,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         ' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
             if self.runringremoval.isChecked():  # wavelet parameters
                 standard += self.setWavletParameters()
+            if getattr(self,'roion').isChecked():
+                standard += ParameterWrap.CLA_dict['roion'].flag+' '
+                for child in ParameterWrap.CLA_dict['roion'].child_list:
+                    standard += getattr(self,child).text()+','
+                standard = standard[:-1]+' '
             standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
                         getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
