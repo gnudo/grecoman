@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Thu Jul 24 14:33:13 2014
+# Created: Wed Sep 24 17:15:42 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -786,7 +786,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.4-5-gb91d32b 1.1.4", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.4-18-g1cd281a", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -864,7 +864,7 @@ class Ui_reco_mainwin(object):
         self.zingeron.setText(QtGui.QApplication.translate("reco_mainwin", "Zinger removal", None, QtGui.QApplication.UnicodeUTF8))
         self.shiftcorrection.setText(QtGui.QApplication.translate("reco_mainwin", "Correct for shift (-q)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("reco_mainwin", "Rotation angle (-a)", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_41.setText(QtGui.QApplication.translate("reco_mainwin", "Width of smoothin kernel (-w)", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_41.setText(QtGui.QApplication.translate("reco_mainwin", "Width of smoothing kernel (-w)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("reco_mainwin", "Min. value for tif (-n)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_42.setText(QtGui.QApplication.translate("reco_mainwin", "Max. value for tif (-x)", None, QtGui.QApplication.UnicodeUTF8))
         self.zingermode.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "1D", None, QtGui.QApplication.UnicodeUTF8))

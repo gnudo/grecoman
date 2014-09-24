@@ -25,3 +25,4 @@ pag_beta =
 pag_pxsize = 
 rec_fromsino = true
 recodirectory = 
+edgepadding = 0.5
