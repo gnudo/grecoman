@@ -41,6 +41,13 @@ class DatasetFolder(object):
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),
                                      '')
+        print self.inputdir[-4:-1]
+        
+        if not self.inputdir[-4:-1] == 'tif':
+            print "it is not"
+            self.inputdir = os.path.join(self.inputdir,'tif')
+            self.inputdir = os.path.join(self.inputdir,'')
+            self.parent.inputdirectory.setText(self.inputdir)
 
         if not self.inputdir or not os.path.isdir(self.inputdir):
             return
@@ -85,6 +92,8 @@ class DatasetFolder(object):
 
         self.parent.sinoslider.setMinimum(0)
         self.parent.sinoslider.setMaximum(len(dmp_list) - 1)
+        self.parent.setSliderPosition(1)  # Reset slider position
+        
 
     def checkFolder(self, subdir):
         '''
