@@ -55,6 +55,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),lambda param='reconstructon': self.setUnsetActionCheckBox(param))  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
+        QObject.connect(self.sinograms,
+            SIGNAL("currentIndexChanged(const QString&)"),self.moveSliderBySinochange)  # change output-dir name according to output type
         QObject.connect(self.outputtype,
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
@@ -821,6 +823,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return True
         else:
             return False
+        
+        
+    def moveSliderBySinochange(self):
+        '''
+        This method moves the slider when selecting a sinogram from the
+        Dropdown menu. 
+        '''
+        ind = self.sinograms.currentIndex()
+        self.sinoslider.setSliderPosition(ind)
         
         
     def changeOutputType(self):
