@@ -62,6 +62,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.sinoslider.valueChanged.connect(self.setSinoWithSlider)  # Sinograms slider event
+        self.sinoslider.setInvertedControls(1)  # invert the slider scrolling direction
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -74,8 +75,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## MENU connections
         QObject.connect(self.menuloadsettings,
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
+        QShortcut(QKeySequence("Ctrl+O"), self, self.loadConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+        QShortcut(QKeySequence("Ctrl+S"), self, self.saveConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menuLoadOnlyPaganin,
             SIGNAL("triggered()"),lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
@@ -110,6 +113,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
         QObject.connect(self.menuChangeTargetoMerlin,
             SIGNAL("triggered()"),lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
+    
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
