@@ -18,7 +18,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     methods should be contained in other classes
     '''
  
-    def __init__(self):        
+    def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
 

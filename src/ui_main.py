@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Wed Oct  1 10:01:10 2014
+# Created: Wed Oct  1 17:55:48 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -267,7 +267,7 @@ class Ui_reco_mainwin(object):
         self.addpostfix = QtGui.QToolButton(self.gridLayoutWidget_6)
         self.addpostfix.setMinimumSize(QtCore.QSize(30, 25))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("ico/flag.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/ui_icons/ico/flag.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.addpostfix.setIcon(icon)
         self.addpostfix.setObjectName("addpostfix")
         self.gridLayout_6.addWidget(self.addpostfix, 0, 1, 1, 1)
@@ -971,3 +971,4 @@ class Ui_reco_mainwin(object):
         self.menuChangeTargetoX02da.setText(QtGui.QApplication.translate("reco_mainwin", "x02da", None, QtGui.QApplication.UnicodeUTF8))
         self.menuChangeTargetoMerlin.setText(QtGui.QApplication.translate("reco_mainwin", "Merlin", None, QtGui.QApplication.UnicodeUTF8))
 
+import ui_icons_rc
