@@ -1,5 +1,5 @@
 from ui_main import Ui_reco_mainwin
-from ui_dialogs import DebugCommand
+from ui_dialogs import DebugCommand, Postfix
 from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
@@ -47,6 +47,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+        QObject.connect(self.addpostfix,
+            SIGNAL("clicked()"),self.appendPostfix)  # open textfield for defining postfix
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
@@ -113,7 +115,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
         QObject.connect(self.menuChangeTargetoMerlin,
             SIGNAL("triggered()"),lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
-    
+
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
@@ -903,6 +905,40 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         for path in event.mimeData().urls():
             self.loadConfigFile( path.toLocalFile().toLocal8Bit().data() )
+            
+            
+    def appendPostfix(self):
+        '''
+        This method opens a textfield and appends a postfix to all
+        directories: cpr, fltp, sin, rec_Xbit
+        '''
+        logwin = Postfix(self.parent)
+        if not logwin.exec_() == Postfix.Accepted:  # if ESC is hit
+            return
+
+        if not logwin.postfix.text():  # if postfix text is empty
+            added_string = '/'
+        else:
+            added_string = '__'+str(logwin.postfix.text())+'/'
+            
+        fields = ['cprdirectory','fltpdirectory','sindirectory','recodirectory']
+        
+        for item in fields:
+            handle = getattr(self,item)
+            item_txt = str(handle.text())
+            if not item_txt:
+                continue
+            else:
+                if item_txt[-1] == '/':
+                    newstring = item_txt[:-1]
+                else:
+                    newstring = item_txt
+            try:
+                ind = newstring.index('__')
+                print ind
+            except ValueError:
+                ind = len(newstring)
+            handle.setText(newstring[0:ind]+added_string)
         
 
 if __name__ == "__main__":

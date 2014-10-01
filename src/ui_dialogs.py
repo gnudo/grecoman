@@ -31,7 +31,7 @@ class Login(QDialog):
     "Merlin" account we assume to have set up public key
     authentification. Thus, only a Merlin username has to be provided. 
     '''
-    def __init__(self,parent,mode):
+    def __init__(self,parent):
         QDialog.__init__(self)
         self.heading = QLabel()
         self.heading.setObjectName("head")
@@ -68,3 +68,22 @@ class Login(QDialog):
             self.parent.displayErrorMessage('Empty fields','The password and/or user name cannot be left blank')
         else:
             self.accept()
+            
+            
+class Postfix(QDialog):
+    '''
+    GUI Window (simple QLineedit) for entering a postfix)
+    '''
+    def __init__(self,parent):
+        QDialog.__init__(self)
+        self.heading = QLabel()
+        self.heading.setObjectName("head")
+        self.heading.setText(QApplication.translate("Dialog", "Define Postfix:", None, QApplication.UnicodeUTF8))
+        self.postfix = QLineEdit(self)
+        self.parent = parent
+        self.buttonok = QPushButton('Ok', self)
+        self.buttonok.clicked.connect(self.accept)
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.heading)
+        layout.addWidget(self.postfix)
+        layout.addWidget(self.buttonok)
