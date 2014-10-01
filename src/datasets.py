@@ -41,6 +41,11 @@ class DatasetFolder(object):
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),
                                      '')
+        
+        if not self.inputdir[-4:-1] == 'tif':
+            self.inputdir = os.path.join(self.inputdir,'tif')
+            self.inputdir = os.path.join(self.inputdir,'')
+            self.parent.inputdirectory.setText(self.inputdir)
 
         if not self.inputdir or not os.path.isdir(self.inputdir):
             return
@@ -85,6 +90,8 @@ class DatasetFolder(object):
 
         self.parent.sinoslider.setMinimum(0)
         self.parent.sinoslider.setMaximum(len(dmp_list) - 1)
+        self.parent.sinoslider.setSliderPosition(0)  # Reset slider position
+        
 
     def checkFolder(self, subdir):
         '''
@@ -263,6 +270,10 @@ class DatasetFolder(object):
                        line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(
                         str(line.split(':')[1]).strip() + 'E-6')
+                # Rotation center
+                elif (line.split()[0] == 'Rotation' and
+                      line.split()[1] == 'center:'):
+                    self.parent.raws.setText(str(line.split(':')[1]).strip())
 
     def determineInputType(self):
         ''' Determines the input type based on the file extension '''

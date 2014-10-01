@@ -1,5 +1,5 @@
 from ui_main import Ui_reco_mainwin
-from ui_dialogs import DebugCommand
+from ui_dialogs import DebugCommand, Postfix
 from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
@@ -47,6 +47,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+        QObject.connect(self.addpostfix,
+            SIGNAL("clicked()"),self.appendPostfix)  # open textfield for defining postfix
         QObject.connect(self.sinon,
             SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
@@ -55,11 +57,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("clicked()"),lambda param='reconstructon': self.setUnsetActionCheckBox(param))  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
             SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
+        QObject.connect(self.sinograms,
+            SIGNAL("currentIndexChanged(const QString&)"),self.moveSliderBySinochange)  # change output-dir name according to output type
         QObject.connect(self.outputtype,
             SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.sinoslider.valueChanged.connect(self.setSinoWithSlider)  # Sinograms slider event
+        self.sinoslider.setInvertedControls(1)  # invert the slider scrolling direction
         
         ## GUI buttons connections
         QObject.connect(self.submit,
@@ -72,8 +77,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         ## MENU connections
         QObject.connect(self.menuloadsettings,
             SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
+        QShortcut(QKeySequence("Ctrl+O"), self, self.loadConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menusavesettings,
             SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+        QShortcut(QKeySequence("Ctrl+S"), self, self.saveConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menuLoadOnlyPaganin,
             SIGNAL("triggered()"),lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
@@ -108,6 +115,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"),lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
         QObject.connect(self.menuChangeTargetoMerlin,
             SIGNAL("triggered()"),lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
+
         
         ## Context menus
         self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
@@ -823,6 +831,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return False
         
         
+    def moveSliderBySinochange(self):
+        '''
+        This method moves the slider when selecting a sinogram from the
+        Dropdown menu. 
+        '''
+        ind = self.sinograms.currentIndex()
+        self.sinoslider.setSliderPosition(ind)
+        
+        
     def changeOutputType(self):
         '''
         This method is called whenever the combobox for output type is
@@ -888,6 +905,40 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         for path in event.mimeData().urls():
             self.loadConfigFile( path.toLocalFile().toLocal8Bit().data() )
+            
+            
+    def appendPostfix(self):
+        '''
+        This method opens a textfield and appends a postfix to all
+        directories: cpr, fltp, sin, rec_Xbit
+        '''
+        logwin = Postfix(self.parent)
+        if not logwin.exec_() == Postfix.Accepted:  # if ESC is hit
+            return
+
+        if not logwin.postfix.text():  # if postfix text is empty
+            added_string = '/'
+        else:
+            added_string = '__'+str(logwin.postfix.text())+'/'
+            
+        fields = ['cprdirectory','fltpdirectory','sindirectory','recodirectory']
+        
+        for item in fields:
+            handle = getattr(self,item)
+            item_txt = str(handle.text())
+            if not item_txt:
+                continue
+            else:
+                if item_txt[-1] == '/':
+                    newstring = item_txt[:-1]
+                else:
+                    newstring = item_txt
+            try:
+                ind = newstring.index('__')
+                print ind
+            except ValueError:
+                ind = len(newstring)
+            handle.setText(newstring[0:ind]+added_string)
         
 
 if __name__ == "__main__":
