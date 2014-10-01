@@ -31,7 +31,7 @@ class Login(QDialog):
     "Merlin" account we assume to have set up public key
     authentification. Thus, only a Merlin username has to be provided. 
     '''
-    def __init__(self,parent):
+    def __init__(self,parent,mode):
         QDialog.__init__(self)
         self.heading = QLabel()
         self.heading.setObjectName("head")

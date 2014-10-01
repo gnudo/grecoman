@@ -270,6 +270,10 @@ class DatasetFolder(object):
                        line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(
                         str(line.split(':')[1]).strip() + 'E-6')
+                # Rotation center
+                elif (line.split()[0] == 'Rotation' and
+                      line.split()[1] == 'center:'):
+                    self.parent.raws.setText(str(line.split(':')[1]).strip())
 
     def determineInputType(self):
         ''' Determines the input type based on the file extension '''
