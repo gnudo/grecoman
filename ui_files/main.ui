@@ -640,8 +640,8 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>ico/flag.png</normaloff>ico/flag.png</iconset>
+         <iconset resource="ui_icons.qrc">
+          <normaloff>:/ui_icons/ico/flag.png</normaloff>:/ui_icons/ico/flag.png</iconset>
         </property>
        </widget>
       </item>
@@ -1906,6 +1906,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="ui_icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
