@@ -273,7 +273,7 @@ class DatasetFolder(object):
                 # Rotation center
                 elif (line.split()[0] == 'Rotation' and
                       line.split()[1] == 'center:'):
-                    self.parent.raws.setText(str(line.split(':')[1]).strip())
+                    self.parent.centerofrotation.setText(str(line.split(':')[1]).strip())
 
     def determineInputType(self):
         ''' Determines the input type based on the file extension '''
