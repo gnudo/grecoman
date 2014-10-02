@@ -935,7 +935,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     newstring = item_txt
             try:
                 ind = newstring.index('__')
-                print ind
             except ValueError:
                 ind = len(newstring)
             handle.setText(newstring[0:ind]+added_string)

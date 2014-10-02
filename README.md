@@ -20,7 +20,7 @@ For the most part the basic functionality has been debugged and usage should be 
 * if you want to have preview in Fiji, make sure to also activate the single instance listener in Fiji (Edit -> Options -> Misc. -> Run single..)
 * when reconstructing with the angles.txt file, place it into your tif-directory
 * on computers with newer OpenSSH versions (above 5.6), you cannot run the program from the terminal - just by double-clicking the Desktop-icon
-* for using Merlin, you need you set up Public key (password-less) authentification and the Merlin home directory needs to be mounted somewhere (e.g. with *sshfs merlinc01:/gpfs/home/$MERLINUSER ~/Desktop/merlin/*). Then, when chaning the submission target in GRecoMan, you'll be asked the Merlin username and mount point.
+* for using Merlin, you need you set up Public key (password-less) authentification and the Merlin home directory needs to be mounted somewhere (e.g. with *sshfs merlinc01:/gpfs/home/$MERLINUSER ~/Desktop/merlin/*). Then, when changing the submission target in GRecoMan, you'll be asked the Merlin username and mount point.
 
 ## Problems
 
