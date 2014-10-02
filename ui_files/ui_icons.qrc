@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="ui_icons">
+    <file>ico/flag.png</file>
+  </qresource>
+</RCC>

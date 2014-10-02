@@ -41,6 +41,11 @@ class DatasetFolder(object):
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),
                                      '')
+        
+        if not self.inputdir[-4:-1] == 'tif':
+            self.inputdir = os.path.join(self.inputdir,'tif')
+            self.inputdir = os.path.join(self.inputdir,'')
+            self.parent.inputdirectory.setText(self.inputdir)
 
         if not self.inputdir or not os.path.isdir(self.inputdir):
             return
@@ -77,15 +82,16 @@ class DatasetFolder(object):
                     if name.lower().endswith('.tif') and
                     not name.startswith('.')]
         dmp_list = [name for name in os.listdir(self.sinodir)
-                    if name.lower().endswith('.dmp') and
-                    not name.startswith('.')]
-
+                    if name.lower().endswith('.sin.dmp') and not name.startswith('.')]
+ 
         dmp_list = tif_list + dmp_list
         dmp_list.sort()
         self.parent.sinograms.addItems(dmp_list)  # Populate sino comboxbox
 
         self.parent.sinoslider.setMinimum(0)
         self.parent.sinoslider.setMaximum(len(dmp_list) - 1)
+        self.parent.sinoslider.setSliderPosition(0)  # Reset slider position
+        
 
     def checkFolder(self, subdir):
         '''
@@ -264,6 +270,10 @@ class DatasetFolder(object):
                        line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(
                         str(line.split(':')[1]).strip() + 'E-6')
+                # Rotation center
+                elif (line.split()[0] == 'Rotation' and
+                      line.split()[1] == 'center:'):
+                    self.parent.centerofrotation.setText(str(line.split(':')[1]).strip())
 
     def determineInputType(self):
         ''' Determines the input type based on the file extension '''

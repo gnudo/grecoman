@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Thu Jul 24 14:33:13 2014
+# Created: Thu Oct  2 14:22:58 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -264,6 +264,13 @@ class Ui_reco_mainwin(object):
         self.sinoslider.setOrientation(QtCore.Qt.Horizontal)
         self.sinoslider.setObjectName("sinoslider")
         self.gridLayout_6.addWidget(self.sinoslider, 7, 0, 1, 1)
+        self.addpostfix = QtGui.QToolButton(self.gridLayoutWidget_6)
+        self.addpostfix.setMinimumSize(QtCore.QSize(30, 25))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/ui_icons/ico/flag.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.addpostfix.setIcon(icon)
+        self.addpostfix.setObjectName("addpostfix")
+        self.gridLayout_6.addWidget(self.addpostfix, 0, 1, 1, 1)
         self.gridLayout_6.setRowMinimumHeight(6, 30)
         self.groupBox_5 = QtGui.QGroupBox(self.centralwidget)
         self.groupBox_5.setGeometry(QtCore.QRect(320, 30, 301, 171))
@@ -544,7 +551,7 @@ class Ui_reco_mainwin(object):
         self.horizontalLayout_4.addWidget(self.sin_fromfltp)
         self.gridLayout_5.addWidget(self.widget_3, 5, 0, 1, 4)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 820, 231, 31))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(20, 820, 251, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -786,7 +793,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.4", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.5-3-g6f4e162", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -826,6 +833,8 @@ class Ui_reco_mainwin(object):
         self.label_43.setText(QtGui.QApplication.translate("reco_mainwin", "Reconstructions", None, QtGui.QApplication.UnicodeUTF8))
         self.setsinogramdirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.setrecodirectory.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.addpostfix.setToolTip(QtGui.QApplication.translate("reco_mainwin", "Define a postfix to be appended to all directories", None, QtGui.QApplication.UnicodeUTF8))
+        self.addpostfix.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("reco_mainwin", "Paganin", None, QtGui.QApplication.UnicodeUTF8))
         self.label_25.setText(QtGui.QApplication.translate("reco_mainwin", "Pixel size [m]", None, QtGui.QApplication.UnicodeUTF8))
         self.label_24.setText(QtGui.QApplication.translate("reco_mainwin", "Energy", None, QtGui.QApplication.UnicodeUTF8))
@@ -864,7 +873,7 @@ class Ui_reco_mainwin(object):
         self.zingeron.setText(QtGui.QApplication.translate("reco_mainwin", "Zinger removal", None, QtGui.QApplication.UnicodeUTF8))
         self.shiftcorrection.setText(QtGui.QApplication.translate("reco_mainwin", "Correct for shift (-q)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_31.setText(QtGui.QApplication.translate("reco_mainwin", "Rotation angle (-a)", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_41.setText(QtGui.QApplication.translate("reco_mainwin", "Width of smoothin kernel (-w)", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_41.setText(QtGui.QApplication.translate("reco_mainwin", "Width of smoothing kernel (-w)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_35.setText(QtGui.QApplication.translate("reco_mainwin", "Min. value for tif (-n)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_42.setText(QtGui.QApplication.translate("reco_mainwin", "Max. value for tif (-x)", None, QtGui.QApplication.UnicodeUTF8))
         self.zingermode.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "1D", None, QtGui.QApplication.UnicodeUTF8))
@@ -962,3 +971,4 @@ class Ui_reco_mainwin(object):
         self.menuChangeTargetoX02da.setText(QtGui.QApplication.translate("reco_mainwin", "x02da", None, QtGui.QApplication.UnicodeUTF8))
         self.menuChangeTargetoMerlin.setText(QtGui.QApplication.translate("reco_mainwin", "Merlin", None, QtGui.QApplication.UnicodeUTF8))
 
+import ui_icons_rc

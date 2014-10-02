@@ -625,6 +625,26 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="addpostfix">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Define a postfix to be appended to all directories</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="ui_icons.qrc">
+          <normaloff>:/ui_icons/ico/flag.png</normaloff>:/ui_icons/ico/flag.png</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
@@ -1294,7 +1314,7 @@
      <rect>
       <x>20</x>
       <y>820</y>
-      <width>231</width>
+      <width>251</width>
       <height>31</height>
      </rect>
     </property>
@@ -1886,6 +1906,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="ui_icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
