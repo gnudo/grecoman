@@ -43,7 +43,8 @@ class DatasetFolder(object):
                                      '')
         
         if not self.inputdir[-4:-1] == 'tif':
-            self.inputdir = os.path.join(self.inputdir,'tif')
+            if os.path.isdir(os.path.join(self.inputdir,'tif')):
+                self.inputdir = os.path.join(self.inputdir,'tif')
             self.inputdir = os.path.join(self.inputdir,'')
             self.parent.inputdirectory.setText(self.inputdir)
 

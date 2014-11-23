@@ -178,7 +178,7 @@ def main():
             parser.print_help()
             sys.exit('\nERROR: No target machine specified \n')
         
-        command_line += 'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/src/Reconstruction/' + \
+        command_line += 'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/bin/Reconstruction/' + \
                        'waveletFFT.py '
 #python waveletFFT.py -t db2 -d 8 -O h -f 5.0 -p ds_ -M sym -o /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/ /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/Hornby_a1661.tif                       
         command_line += '-t ' + args.wavelet_type + ' '
@@ -201,7 +201,7 @@ def main():
     if args.machine == 'x02da':
         command_line = 'gridrec_64 '
     elif args.machine == 'Merlin':
-        command_line = '/afs/psi.ch/project/TOMCAT_pipeline/Merlin/tomcat_pipeline/src/Reconstruction/lib/gridRec '
+        command_line = '/afs/psi.ch/project/TOMCAT_pipeline/Merlin/tomcat_pipeline/bin/Reconstruction/lib/gridRec '
         
     command_line += '-f ' + args.filter + ' '
     command_line += '-Z ' + str( args.edgepad ) + ' '
