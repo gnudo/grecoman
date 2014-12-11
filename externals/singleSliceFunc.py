@@ -87,6 +87,8 @@ def getArgs():
                         help = 'Set the maximum ring width in pixels')
     parser.add_option( '-x' , dest='machine' , 
                         help = 'target machine, where the calculation takes place (Merlin or x02da)' )
+    parser.add_option( '-U' , dest='cutoff' , 
+                        help = 'cutoff frequency from gridrec (default=0.5)' )
     
 
     args , options = parser.parse_args()
@@ -179,7 +181,7 @@ def main():
             sys.exit('\nERROR: No target machine specified \n')
         
         command_line += 'python /afs/psi.ch/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/bin/Reconstruction/' + \
-                       'waveletFFT.py '
+                       'waveletFFT.pyc '
 #python waveletFFT.py -t db2 -d 8 -O h -f 5.0 -p ds_ -M sym -o /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/ /afs/psi.ch/user/s/studer_a1/BeamLines/Tomcat/tifFiles/corTest/Hornby_a1661.tif                       
         command_line += '-t ' + args.wavelet_type + ' '
         command_line += '-d ' + args.multiresol + ' '
@@ -225,6 +227,8 @@ def main():
         command_line += '-W ' + args.ring_std_ringwidth + ' '
     if args.geometry is not None:
         command_line += '-g ' + args.geometry + ' '
+    if args.cutoff is not None:
+        command_line += '-q ' + args.cutoff + ' '
     command_line += '-O ' + pathout + ' '
 
     if flag_ring_removal:
