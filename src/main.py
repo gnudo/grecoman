@@ -203,7 +203,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
 
         # create the command line string for single slice reconstruction
-        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc2.py '
+        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
         
         combos_single = ['filter','geometry']
         for combo in combos_single:
