@@ -663,6 +663,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         'Select where the config file should be saved',self.lastdir_config)
         if not savefile:
             return
+        if not str(savefile).lower().endswith('.txt'):
+            savefile = str(savefile)+'.txt'
         file_obj = ConfigFile(self,savefile)
         file_obj.writeFile(ParameterWrap)
         self.lastdir_config = self.dirs.getParentDir(str(savefile))
