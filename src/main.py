@@ -8,7 +8,6 @@ from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from time import sleep,strftime # TODO: preliminary
-import os.path  # TODO: preliminary
 import sys
 
 
@@ -230,6 +229,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmd += '-x '+self.target+' '
         self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
+        if ParameterWrap.getComboBoxContent('geometry') == '0':
+            angfile = self.dirs.glueOsPath([self.sindirectory.text(),'angles.txt'])
+            if not self.dirs.checkIfFileExist(angfile):
+                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the sin directory.')
+                return
+        
         if self.print_cmd.isChecked():
             if not self.debugTextField():
                  return
@@ -248,14 +253,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
         
-        if os.path.isfile(img):
+        if self.dirs.checkIfFileExist(img):
             self.job.submitJobLocallyAndWait('rm '+img)  
         
         # after all checks completed, singleSliceFunc is called and we wait until image is done
         self.job.submitJob(self.cmd)
         
         for kk in range(30):
-            if os.path.isfile(img):
+            if self.dirs.checkIfFileExist(img):
                 break
             else:
                 sleep(0.5)
@@ -284,7 +289,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmds = []
         
         if self.develbranchon.isChecked():
-            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/src/prj2sinSGE.sh "
+            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/bin/prj2sinSGE.sh "
         else:
             self.cmd0 = "prj2sinSGE "
         
@@ -378,7 +383,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
   
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 ' 
+            cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
   
         # only for Paganin phase retrieval
         if mode == 'fltp':
@@ -436,7 +443,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     cmd1 += getattr(self,child).text()+','
                 cmd1 = cmd1[:-1]+' '
         else:
-            standard = '-d -k 2 -g 0 -I 0 '
+            standard = '-d -g 0 -I 0 '
             cmd1 = self.cmd0+standard
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
@@ -467,6 +474,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
         
         if ParameterWrap.CLA_dict['steplines'].performCheck():
             cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
@@ -531,6 +540,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             
         cmd1 = self.cmd0+standard
 
+        if ParameterWrap.getComboBoxContent('geometry') == '0':
+            angfile = self.dirs.glueOsPath([self.dirs.inputdir,'angles.txt'])
+            print angfile
+            if not self.dirs.checkIfFileExist(angfile):
+                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the tif directory.')
+                return
+
         optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
         for param in optional:
             if not getattr(self,param).text() == '':
@@ -564,6 +580,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
         
         outputdir = self.recodirectory.text()
         sinodir_tmp = self.dirs.getParentDir(inputdir)
