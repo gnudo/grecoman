@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Thu Dec 11 16:48:37 2014
+# Created: Fri Dec 12 15:00:34 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -182,7 +182,7 @@ class Ui_reco_mainwin(object):
         self.ImgViewer.setGeometry(QtCore.QRect(0, 0, 611, 611))
         self.ImgViewer.setObjectName("ImgViewer")
         self.gridLayoutWidget_2 = QtGui.QWidget(self.centralwidget)
-        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(410, 0, 441, 31))
+        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(200, 0, 441, 31))
         self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
         self.gridLayout_2 = QtGui.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -694,6 +694,26 @@ class Ui_reco_mainwin(object):
         self.ring_std_ringwidth.setObjectName("ring_std_ringwidth")
         self.gridLayout_10.addWidget(self.ring_std_ringwidth, 3, 1, 1, 1)
         self.tabWidget.addTab(self.tab_2, "")
+        self.widget1 = QtGui.QWidget(self.centralwidget)
+        self.widget1.setGeometry(QtCore.QRect(750, 0, 251, 29))
+        self.widget1.setObjectName("widget1")
+        self.gridLayout_12 = QtGui.QGridLayout(self.widget1)
+        self.gridLayout_12.setObjectName("gridLayout_12")
+        self.label_47 = QtGui.QLabel(self.widget1)
+        self.label_47.setMinimumSize(QtCore.QSize(0, 26))
+        self.label_47.setObjectName("label_47")
+        self.gridLayout_12.addWidget(self.label_47, 0, 0, 1, 1)
+        self.queue = QtGui.QComboBox(self.widget1)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queue.sizePolicy().hasHeightForWidth())
+        self.queue.setSizePolicy(sizePolicy)
+        self.queue.setMinimumSize(QtCore.QSize(0, 26))
+        self.queue.setObjectName("queue")
+        self.queue.addItem("")
+        self.queue.addItem("")
+        self.gridLayout_12.addWidget(self.queue, 0, 1, 1, 1)
         reco_mainwin.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(reco_mainwin)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1251, 23))
@@ -789,11 +809,11 @@ class Ui_reco_mainwin(object):
         self.menubar.addAction(self.menuSettings.menuAction())
 
         self.retranslateUi(reco_mainwin)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.5-9-g835729e", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -942,6 +962,9 @@ class Ui_reco_mainwin(object):
         self.label_45.setText(QtGui.QApplication.translate("reco_mainwin", "Diff. in std.deviation (-D)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_46.setText(QtGui.QApplication.translate("reco_mainwin", "Max. ring width in px (-W)", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("reco_mainwin", "Ring removal II", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_47.setText(QtGui.QApplication.translate("reco_mainwin", "Queue:", None, QtGui.QApplication.UnicodeUTF8))
+        self.queue.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "Standard User Operation", None, QtGui.QApplication.UnicodeUTF8))
+        self.queue.setItemText(1, QtGui.QApplication.translate("reco_mainwin", "Offline queue", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuLoad_specific.setTitle(QtGui.QApplication.translate("reco_mainwin", "Load specific", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRun.setTitle(QtGui.QApplication.translate("reco_mainwin", "Templates", None, QtGui.QApplication.UnicodeUTF8))

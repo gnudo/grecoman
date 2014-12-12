@@ -289,7 +289,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmds = []
         
         if self.develbranchon.isChecked():
-            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/src/prj2sinSGE.sh "
+            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/bin/prj2sinSGE.sh "
         else:
             self.cmd0 = "prj2sinSGE "
         
@@ -383,7 +383,9 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
   
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 ' 
+            cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
   
         # only for Paganin phase retrieval
         if mode == 'fltp':
@@ -472,6 +474,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
         
         if ParameterWrap.CLA_dict['steplines'].performCheck():
             cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
@@ -576,6 +580,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # probably increases job priority on Merlin (?!)
         if self.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
+        else:
+            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
         
         outputdir = self.recodirectory.text()
         sinodir_tmp = self.dirs.getParentDir(inputdir)
