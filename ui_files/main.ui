@@ -1191,7 +1191,7 @@
         </widget>
        </widget>
       </item>
-      <item row="8" column="0" colspan="3">
+      <item row="8" column="0" colspan="4">
        <widget class="QWidget" name="widget_2" native="true">
         <property name="minimumSize">
          <size>
@@ -1204,7 +1204,7 @@
           <rect>
            <x>5</x>
            <y>2</y>
-           <width>211</width>
+           <width>281</width>
            <height>31</height>
           </rect>
          </property>
@@ -1235,6 +1235,13 @@
             </property>
             <property name="text">
              <string>from sino</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rec_fromfltp">
+            <property name="text">
+             <string>from fltp</string>
             </property>
            </widget>
           </item>
@@ -1724,7 +1731,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>750</x>

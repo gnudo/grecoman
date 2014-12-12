@@ -102,6 +102,7 @@ class ParameterWrap(object):
         cls.addParameter('fltp_fromtif', '', ['inputdirectory'], False)
         cls.addParameter('rec_fromtif', '', ['inputdirectory'], False)
         cls.addParameter('rec_fromsino', '', ['sindirectory'], False)
+        cls.addParameter('rec_fromfltp', '', ['fltpdirectory'], False)
 
     @classmethod
     def getComboBoxContent(cls, combobox):

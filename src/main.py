@@ -534,6 +534,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif self.rec_fromsino.isChecked():
             inputdir = self.sindirectory.text()
             standard = '-d -k 1 -I 3 -R 0 -g 0 '
+        elif self.rec_fromfltp.isChecked():
+            inputdir = self.fltpdirectory.text()
+            standard = '-d -k 0 -I 0 -R 0 -g 0 '
+            standard += '-f '+self.raws.text()
+            standard += ',0,0,0,0 '
+            if getattr(self,'roion').isChecked():
+                standard += ParameterWrap.CLA_dict['roion'].flag+' '
+                for child in ParameterWrap.CLA_dict['roion'].child_list:
+                    standard += getattr(self,child).text()+','
+                standard = standard[:-1]+' '
+            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                        getattr(self,'prefix').text()+'####.fltp.DMP '
         else:
             self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
             return
@@ -587,7 +599,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         sinodir_tmp = self.dirs.getParentDir(inputdir)
         sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
         
-        if self.rec_fromtif.isChecked():
+        if self.rec_fromtif.isChecked() or self.rec_fromfltp.isChecked():
             cmd1 += '-o '+self.dirs.rewriteDirectoryPath(sinodir_tmp,'forward')+' '
         cmd1 += '-O '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
         cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
@@ -619,7 +631,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif mode == 'paganinon':
             dependencies = ['fltp_fromcpr','fltp_fromtif']
         elif mode == 'reconstructon':
-            dependencies = ['rec_fromtif','rec_fromsino']
+            dependencies = ['rec_fromtif','rec_fromsino','rec_fromfltp']
             
         if not getattr(self,mode).isChecked():
             for param in dependencies:

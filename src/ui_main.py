@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Fri Dec 12 15:00:34 2014
+# Created: Fri Dec 12 16:26:37 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -514,7 +514,7 @@ class Ui_reco_mainwin(object):
         self.widget_2.setMinimumSize(QtCore.QSize(0, 30))
         self.widget_2.setObjectName("widget_2")
         self.layoutWidget = QtGui.QWidget(self.widget_2)
-        self.layoutWidget.setGeometry(QtCore.QRect(5, 2, 211, 31))
+        self.layoutWidget.setGeometry(QtCore.QRect(5, 2, 281, 31))
         self.layoutWidget.setObjectName("layoutWidget")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.layoutWidget)
         self.horizontalLayout_3.setSpacing(0)
@@ -527,7 +527,10 @@ class Ui_reco_mainwin(object):
         self.rec_fromsino.setMinimumSize(QtCore.QSize(0, 21))
         self.rec_fromsino.setObjectName("rec_fromsino")
         self.horizontalLayout_3.addWidget(self.rec_fromsino)
-        self.gridLayout_5.addWidget(self.widget_2, 8, 0, 1, 3)
+        self.rec_fromfltp = QtGui.QRadioButton(self.layoutWidget)
+        self.rec_fromfltp.setObjectName("rec_fromfltp")
+        self.horizontalLayout_3.addWidget(self.rec_fromfltp)
+        self.gridLayout_5.addWidget(self.widget_2, 8, 0, 1, 4)
         self.widget_3 = QtGui.QWidget(self.gridLayoutWidget_5)
         self.widget_3.setEnabled(True)
         self.widget_3.setMinimumSize(QtCore.QSize(0, 30))
@@ -694,16 +697,16 @@ class Ui_reco_mainwin(object):
         self.ring_std_ringwidth.setObjectName("ring_std_ringwidth")
         self.gridLayout_10.addWidget(self.ring_std_ringwidth, 3, 1, 1, 1)
         self.tabWidget.addTab(self.tab_2, "")
-        self.widget1 = QtGui.QWidget(self.centralwidget)
-        self.widget1.setGeometry(QtCore.QRect(750, 0, 251, 29))
-        self.widget1.setObjectName("widget1")
-        self.gridLayout_12 = QtGui.QGridLayout(self.widget1)
+        self.layoutWidget2 = QtGui.QWidget(self.centralwidget)
+        self.layoutWidget2.setGeometry(QtCore.QRect(750, 0, 251, 29))
+        self.layoutWidget2.setObjectName("layoutWidget2")
+        self.gridLayout_12 = QtGui.QGridLayout(self.layoutWidget2)
         self.gridLayout_12.setObjectName("gridLayout_12")
-        self.label_47 = QtGui.QLabel(self.widget1)
+        self.label_47 = QtGui.QLabel(self.layoutWidget2)
         self.label_47.setMinimumSize(QtCore.QSize(0, 26))
         self.label_47.setObjectName("label_47")
         self.gridLayout_12.addWidget(self.label_47, 0, 0, 1, 1)
-        self.queue = QtGui.QComboBox(self.widget1)
+        self.queue = QtGui.QComboBox(self.layoutWidget2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -813,7 +816,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-1-g4929667", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -909,6 +912,7 @@ class Ui_reco_mainwin(object):
         self.fltp_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
         self.rec_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from TIF", None, QtGui.QApplication.UnicodeUTF8))
         self.rec_fromsino.setText(QtGui.QApplication.translate("reco_mainwin", "from sino", None, QtGui.QApplication.UnicodeUTF8))
+        self.rec_fromfltp.setText(QtGui.QApplication.translate("reco_mainwin", "from fltp", None, QtGui.QApplication.UnicodeUTF8))
         self.sin_fromtif.setText(QtGui.QApplication.translate("reco_mainwin", "from tif", None, QtGui.QApplication.UnicodeUTF8))
         self.sin_fromcpr.setText(QtGui.QApplication.translate("reco_mainwin", "from cpr", None, QtGui.QApplication.UnicodeUTF8))
         self.sin_fromfltp.setText(QtGui.QApplication.translate("reco_mainwin", "from fltp", None, QtGui.QApplication.UnicodeUTF8))
