@@ -8,7 +8,6 @@ from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from time import sleep,strftime # TODO: preliminary
-import os.path  # TODO: preliminary
 import sys
 
 
@@ -230,6 +229,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.cmd += '-x '+self.target+' '
         self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
         
+        if ParameterWrap.getComboBoxContent('geometry') == '0':
+            angfile = self.dirs.glueOsPath([self.sindirectory.text(),'angles.txt'])
+            if not self.dirs.checkIfFileExist(angfile):
+                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the sin directory.')
+                return
+        
         if self.print_cmd.isChecked():
             if not self.debugTextField():
                  return
@@ -248,14 +253,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
         
-        if os.path.isfile(img):
+        if self.dirs.checkIfFileExist(img):
             self.job.submitJobLocallyAndWait('rm '+img)  
         
         # after all checks completed, singleSliceFunc is called and we wait until image is done
         self.job.submitJob(self.cmd)
         
         for kk in range(30):
-            if os.path.isfile(img):
+            if self.dirs.checkIfFileExist(img):
                 break
             else:
                 sleep(0.5)
@@ -530,6 +535,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
             
         cmd1 = self.cmd0+standard
+
+        if ParameterWrap.getComboBoxContent('geometry') == '0':
+            angfile = self.dirs.glueOsPath([self.dirs.inputdir,'angles.txt'])
+            print angfile
+            if not self.dirs.checkIfFileExist(angfile):
+                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the tif directory.')
+                return
 
         optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
         for param in optional:

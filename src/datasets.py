@@ -92,7 +92,6 @@ class DatasetFolder(object):
         self.parent.sinoslider.setMinimum(0)
         self.parent.sinoslider.setMaximum(len(dmp_list) - 1)
         self.parent.sinoslider.setSliderPosition(0)  # Reset slider position
-        
 
     def checkFolder(self, subdir):
         '''
@@ -113,6 +112,13 @@ class DatasetFolder(object):
             self.setOutputDirectory('rec_8bit')
         elif subdir == 'sin':
             self.initSinDirectory()
+            
+    def checkIfFileExist(self,file):
+        '''Check whether <file> exists and if yes returns true'''
+        if os.path.isfile(file):
+            return True
+        else:
+            return False
 
     def setOutputDirectory(self, newname):
         '''
@@ -219,7 +225,7 @@ class DatasetFolder(object):
         ''' This method is the reverse to the "splitOsPath" '''
         newpath = pathlist[0]
         for item in pathlist[1:]:
-            newpath = os.path.join(newpath, item)
+            newpath = os.path.join(str(newpath), str(item))
         return newpath
 
     def getParentDir(self, directory):
