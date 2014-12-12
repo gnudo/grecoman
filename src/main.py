@@ -441,7 +441,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     cmd1 += getattr(self,child).text()+','
                 cmd1 = cmd1[:-1]+' '
         else:
-            standard = '-d -k 2 -g 0 -I 0 '
+            standard = '-d -g 0 -I 0 '
             cmd1 = self.cmd0+standard
             cmd1 += '-f '+self.raws.text()
             cmd1 += ',0,0,0,0 '
