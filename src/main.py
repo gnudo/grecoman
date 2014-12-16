@@ -4,6 +4,7 @@ from dmp_reader import DMPreader
 from arguments import ParameterWrap
 from connector import Connector
 from datasets import DatasetFolder
+from prj2sin import Prj2sinWrap
 from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -165,8 +166,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             else:
                 self.jobname_str = str(self.jobname.text())
             
-        if not self.createCommand():  # returns True if further checks succeed
-            return
+        if not Prj2sinWrap.createCommand(self):  # returns True if further checks succeed
+            return 
         
         if self.print_cmd.isChecked():  # prints full CLS if checked 
             if not self.debugTextField():
@@ -175,14 +176,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not self.job.performInitalCheck():  # check account credentials
             return
         
-        if self.job.checkIdenticalJobs(self.cmd):
+        if self.job.checkIdenticalJobs(Prj2sinWrap.cmd):
             if not self.displayYesNoMessage('Identical Job','You have' \
                     ' submitted an identical job just before. Are you' \
                     ' sure you want to submit it again?'):
                 self.statusBar().clearMessage()
                 return
         
-        self.job.submitJob(self.cmd)
+        self.job.submitJob(Prj2sinWrap.cmd)
         self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
             
             
@@ -191,50 +192,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         This method is launched when pressing "Single Slice" button
         from the GUI. It's similar to "submitToCluster", however, it
         doesn't utilize the "createCommand" method. Instead, it creates
-        the command line string (CLS) itself and in the end displays
-        the image.
+        the command line string (CLS) by calling
+        "createSingleSliceCommand" and in the end displays the image.
         '''
-        if not str(self.sinograms.currentText()):
-            self.displayErrorMessage('No sinogram selected', 'Select the Sinogram directory and press Enter. Then select one to be reconstructed.')
-            return
-        
-        if not self.checkComputingLocation():  # self-explaining
-            return
+        Prj2sinWrap.createSingleSliceCommand(self)
 
-        # create the command line string for single slice reconstruction
-        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
-        
-        combos_single = ['filter','geometry']
-        for combo in combos_single:
-            if ParameterWrap.CLA_dict[combo].performCheck():
-                self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
-        
-        if self.zingeron.isChecked():
-            self.cmd += self.setZingerParameters()
-        
-        optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
-        for param in optional_single:
-            if not getattr(self,param).text() == '':
-                self.cmd += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-        
-        if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
-            self.cmd += self.setWavletParameters()
-            
-        if self.runringremovalstd.isChecked():
-            self.cmd += self.setStandardRingRemoval()
-        
         # rewrite the sinogram-directory for use at the appropriate machine
         single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
-        
-        self.cmd += '-x '+self.target+' '
-        self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
-        
-        if ParameterWrap.getComboBoxContent('geometry') == '0':
-            angfile = self.dirs.glueOsPath([self.sindirectory.text(),'angles.txt'])
-            if not self.dirs.checkIfFileExist(angfile):
-                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the sin directory.')
-                return
-        
+
         if self.print_cmd.isChecked():
             if not self.debugTextField():
                  return
@@ -257,7 +222,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.submitJobLocallyAndWait('rm '+img)  
         
         # after all checks completed, singleSliceFunc is called and we wait until image is done
-        self.job.submitJob(self.cmd)
+        self.job.submitJob(Prj2sinWrap.cmd)
         
         for kk in range(30):
             if self.dirs.checkIfFileExist(img):
@@ -265,7 +230,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             else:
                 sleep(0.5)
         else:
-            self.displayErrorMessage('No reconstructed slice found', 'After waiting 15 sec the reconstructed slice was not found')
+            self.displayErrorMessage('No reconstructed slice found', \
+                'After waiting 15 sec the reconstructed slice was not found')
             return
                                     
         # we display the image
@@ -273,354 +239,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.job.submitJobLocally('fiji -eval \"open(\\"'+img+'\\")\"')
         else:
             self.displayImageBig(img)
- 
-
-    def createCommand(self):
-        '''
-        This is the main method for creating the command line string
-        (CLS) which dependent on the checked "actions" in the GUI calls
-        other methods like "createCprAndFltpCmd", "createSinCmd" etc.
-        We have three different properties in use: (i) self.cmd is full
-        CLS to be submitted to the cluster (ii) self.cmds is a list of
-        separate cluster commands and (ii) self.cmd0 is the cluster
-        command for executing a single action.
-        '''
-        self.cmd = ''
-        self.cmds = []
-        
-        if self.develbranchon.isChecked():
-            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/bin/prj2sinSGE.sh "
-        else:
-            self.cmd0 = "prj2sinSGE "
-        
-        # (1) We check whether we need to create CPR-s.
-        if self.cpron.isChecked():
-            if not self.createCprAndFltpCmd('cpr',self.jobname_str):
-                return False
-        
-        # (2) Then we check whether we need FLTP-s.
-        if self.paganinon.isChecked():
-            if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
-                self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
-                return False
-            if not self.createCprAndFltpCmd('fltp',self.jobname_str):
-                return False
-            
-        # (3) After that we check whether we need sinograms.
-        if self.sinon.isChecked():
-            if not self.createSinCmd(self.jobname_str):
-                return False
-            
-        ## (4) Finally we check whether reconstructions will be created.
-        if self.reconstructon.isChecked():
-            if not self.createRecoCmd(self.jobname_str):
-                return False
-        
-        for cmd_tmp in self.cmds:  # compose the full CLS
-            self.cmd = self.cmd+cmd_tmp+';' 
-        
-        return True
-            
-    
-    def createCprAndFltpCmd(self,mode,jobname):
-        '''
-        This method is used to compose both, the command line string
-        (CLS) for creating cprs and/or for creating fltps (since they
-        are both very similar). Understanding the following code is not
-        expected, as it requires also the understanding of the
-        reconstruction pipeline.
-        '''
-        ## Compose all mandatory
-        standard = '-d -C '
-        cmd1 = self.cmd0+standard
-        
-        if self.cpron.isChecked() and not self.paganinon.isChecked():
-            if self.withlog.isChecked():
-                g_param = 7
-            else:
-                g_param = 3
-        elif self.fltp_fromcpr.isChecked() and mode == 'fltp':
-            g_param = 0
-        elif self.fltp_fromtif.isChecked() and mode == 'fltp':
-            g_param = 3
-        else: # case for mode == 'cpr'
-            g_param = 3
-        
-        # only if CPR if set, else only in FLTP
-        if mode == 'cpr' or self.fltp_fromtif.isChecked():
-            optional = ['binsize', 'scaleimagefactor']
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ','+self.darks.text()
-            cmd1 += ','+self.flats.text()
-            cmd1 += ','+self.interflats.text()
-            cmd1 += ','+self.flatfreq.text()+' '
-            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
-            for param in optional:
-                if not getattr(self,param).text() == '':
-                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-            
-            # Region of interest optional
-            if getattr(self,'roion').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    cmd1 += getattr(self,child).text()+','
-                cmd1 = cmd1[:-1]+' '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
-        else:
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ',0,0,0,0 '
-            cmd1 += '-I 0 '
-            if self.cpron.isChecked():
-                cmd1 += '--hold='+jobname+'_cpr '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
-        
-        cmd1 += '--jobname='+jobname+'_'+mode+' '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-  
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-  
-        # only for Paganin phase retrieval
-        if mode == 'fltp':
-            cmd1 += ParameterWrap.CLA_dict['paganinon'].flag+' '
-            for child in ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
-                cmd1 += getattr(self,child).text()+','
-            cmd1 = cmd1[:-1]+' '
-                
-        # only in CPR if cpr is set , else only in FLTP
-        if mode == 'cpr' or not self.cpron.isChecked():
-            if getattr(self,'preflatsonly').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
-        
-        cmd1 += '-g '+str(g_param)+' '
-        
-        ## define input and output dirs
-        if mode == 'cpr':
-            inputdir = self.inputdirectory.text()
-            outputdir = self.cprdirectory.text()
-        elif mode == 'fltp':
-            if self.fltp_fromcpr.isChecked():
-                inputdir = self.cprdirectory.text()
-            else:
-                inputdir = self.inputdirectory.text()
-            outputdir = self.fltpdirectory.text()
-        else:
-            inputdir = self.cprdirectory.text()
-            outputdir = self.fltpdirectory.text()
-
-        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-
-        self.cmds.append(cmd1)
-        return True
-    
-    
-    def createSinCmd(self,jobname):
-        '''
-        This method is used to compose the command line string (CLS)
-        for creating sinograms. Again, understanding the following code
-        is not expected, as it requires also the understanding of the
-        reconstruction pipeline.
-        '''
-        if self.sin_fromtif.isChecked():
-            standard = '-d -g 7 -I 1 '
-            cmd1 = self.cmd0+standard
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ','+self.darks.text()
-            cmd1 += ','+self.flats.text()
-            cmd1 += ','+self.interflats.text()
-            cmd1 += ','+self.flatfreq.text()+' '
-            if getattr(self,'roion').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    cmd1 += getattr(self,child).text()+','
-                cmd1 = cmd1[:-1]+' '
-        else:
-            standard = '-d -g 0 -I 0 '
-            cmd1 = self.cmd0+standard
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ',0,0,0,0 '
-        
-        for param in ['preflatsonly','shiftcorrection']:
-            if getattr(self,param).isChecked():
-                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '
-        
-        if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_sin':  # wavelet parameters
-            cmd1 += '-k 2 '
-            cmd1 += self.setWavletParameters()
-        else:
-            cmd1 += '-k 1 '
-        
-        # set correct jobname in order to wait for other jobs to finish
-        if self.cpron.isChecked() and not self.paganinon.isChecked():
-            cmd1 += '--hold='+jobname+'_cpr '
-        elif self.paganinon.isChecked():
-            cmd1 += '--hold='+jobname+'_fltp '
-            
-        cmd1 += '--jobname='+jobname+'_sin '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-        
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-        
-        if ParameterWrap.CLA_dict['steplines'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
-            
-        if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-        
-        if self.sin_fromcpr.isChecked():
-            inputdir = self.cprdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
-        elif self.sin_fromfltp.isChecked():
-            inputdir = self.fltpdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
-        elif self.sin_fromtif.isChecked():
-            inputdir = self.inputdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
-        else:
-            self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
-            return
-        
-        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-            
-        self.cmds.append(cmd1)
-        return True
-    
-    
-    def createRecoCmd(self,jobname):
-        '''
-        This method is used to compose the command line string (CLS)
-        for creating tomographic reconstructions. Again, understanding
-        the following code is not expected, as it requires also the
-        understanding of the reconstruction pipeline.
-        '''
-        ## Compose all mandatory
-        if self.rec_fromtif.isChecked():
-            inputdir = self.inputdirectory.text()
-            standard = '-d -R 0 -k 0 -I 1 -g 7 '
-            standard += '-f '+self.raws.text()
-            standard += ','+self.darks.text()
-            standard += ','+self.flats.text()
-            standard += ','+self.interflats.text()
-            standard += ','+self.flatfreq.text()+' '
-            if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-                standard += ParameterWrap.CLA_dict['stitchingtype'].flag + \
-                        ' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-            if getattr(self,'roion').isChecked():
-                standard += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    standard += getattr(self,child).text()+','
-                standard = standard[:-1]+' '
-            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
-                        getattr(self,'prefix').text()+'####.tif '
-        elif self.rec_fromsino.isChecked():
-            inputdir = self.sindirectory.text()
-            standard = '-d -I 3 -R 0 -g 0 '
-            if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco':
-                standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
-                            getattr(self,'prefix').text()+' '
-                standard += '-k 0 '
-            else:
-                standard += '-k 1 '
-        elif self.rec_fromfltp.isChecked():
-            inputdir = self.fltpdirectory.text()
-            standard = '-d -k 0 -I 0 -R 0 -g 0 '
-            standard += '-f '+self.raws.text()
-            standard += ',0,0,0,0 '
-            if getattr(self,'roion').isChecked():
-                standard += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    standard += getattr(self,child).text()+','
-                standard = standard[:-1]+' '
-            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
-                        getattr(self,'prefix').text()+'####.fltp.DMP '
-        else:
-            self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
-            return
-        
-        
-        if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco':  # wavelet parameters
-            standard += self.setWavletParameters()
-        
-        cmd1 = self.cmd0+standard
-
-        if ParameterWrap.getComboBoxContent('geometry') == '0':
-            angfile = self.dirs.glueOsPath([self.dirs.inputdir,'angles.txt'])
-            print angfile
-            if not self.dirs.checkIfFileExist(angfile):
-                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the tif directory.')
-                return
-
-        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
-        for param in optional:
-            if not getattr(self,param).text() == '':
-                cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-        
-        ## (4) Comboboxes with respective dictionaries (except wavelet)
-        comboboxes = ['filter', 'outputtype', 'geometry']
-        for combo in comboboxes:
-            if ParameterWrap.CLA_dict[combo].performCheck():
-                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' '
-                
-        ## (5) Standard ring removal parameters
-        if self.runringremovalstd.isChecked():
-            cmd1 += self.setStandardRingRemoval()
-            
-        ## (6) Zinger removal
-        if self.zingeron.isChecked() and self.zingermode.currentIndex() == 0:
-            cmd1 += self.setZingerParameters()
-                
-        # set correct jobname in order to wait for other jobs to finish
-        if self.sinon.isChecked() and self.rec_fromsino.isChecked():
-            cmd1 += '--hold='+jobname+'_sin '
-        elif self.paganinon.isChecked() and self.rec_fromfltp.isChecked():
-            cmd1 += '--hold='+jobname+'_fltp '
-            
-        cmd1 += '--jobname='+jobname+'_reco '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-        
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-        
-        outputdir = self.recodirectory.text()
-        sinodir_tmp = self.dirs.getParentDir(inputdir)
-        sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
-        
-        if (
-            self.runringremoval.isChecked()
-            and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco'
-            or self.rec_fromtif.isChecked()
-            or self.rec_fromfltp.isChecked()
-            ):
-            cmd1 += '-o '+self.dirs.rewriteDirectoryPath(sinodir_tmp,'forward')+' '
-        cmd1 += '-O '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-        
-        self.cmds.append(cmd1)
-        return True
         
         
     def checkComputingLocation(self):
@@ -798,38 +416,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         elif mode =='sindirectory':
             self.dirs.initSinDirectory()
             return
-            
-        
-    def setWavletParameters(self):
-        '''
-        Method for adding the wavelet correction to the command line
-        string.
-        '''
-        combos = ['wavelettype','waveletpaddingmode']
-        textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
-        cmd = ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
-        cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
-        cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
-        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
-        return cmd
-    
-    
-    def setStandardRingRemoval(self):
-        ''' Method for setting the standard ring removal parameters '''
-        cmd = ParameterWrap.CLA_dict['ring_std_mode'].flag+' '+ParameterWrap.getComboBoxContent('ring_std_mode')+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_diff'].flag+' '+getattr(self,'ring_std_diff').text()+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_ringwidth'].flag+' '+getattr(self,'ring_std_ringwidth').text()+' '
-        return cmd
-        
-        
-    def setZingerParameters(self):
-        '''
-        method for adding zinger removal parameters
-        '''
-        cmd = '-z s ' ## TODO: has to be fixed after 2D version is implemented
-        cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-        cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
-        return cmd
 
         
     def displayErrorMessage(self,head,msg):
@@ -869,10 +455,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         "cmd" to which is then submitted to the cluster.
         '''
         debugwin = DebugCommand(self.parent)
-        QTextEdit.insertPlainText(debugwin.textfield, self.cmd)
+        QTextEdit.insertPlainText(debugwin.textfield, Prj2sinWrap.cmd)
         if debugwin.exec_() == QDialog.Accepted:
             tmp_string = str(QTextEdit.toPlainText(debugwin.textfield)).strip()
-            self.cmd = ' '.join(tmp_string.split())
+            self.Prj2sinWrap = ' '.join(tmp_string.split())
             return True
         else:
             return False
