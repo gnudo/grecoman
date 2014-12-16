@@ -277,7 +277,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
 
     def createCommand(self):
         '''
-        This is the main method for creating the command line stirng
+        This is the main method for creating the command line string
         (CLS) which dependent on the checked "actions" in the GUI calls
         other methods like "createCprAndFltpCmd", "createSinCmd" etc.
         We have three different properties in use: (i) self.cmd is full
@@ -452,7 +452,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if getattr(self,param).isChecked():
                     cmd1 += ParameterWrap.CLA_dict[param].flag+' '
         
-        if self.runringremoval.isChecked():  # wavelet parameters
+        if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_sin':  # wavelet parameters
             cmd1 += '-k 2 '
             cmd1 += self.setWavletParameters()
         else:
@@ -522,8 +522,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
                 standard += ParameterWrap.CLA_dict['stitchingtype'].flag + \
                         ' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-            if self.runringremoval.isChecked():  # wavelet parameters
-                standard += self.setWavletParameters()
             if getattr(self,'roion').isChecked():
                 standard += ParameterWrap.CLA_dict['roion'].flag+' '
                 for child in ParameterWrap.CLA_dict['roion'].child_list:
@@ -533,7 +531,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         getattr(self,'prefix').text()+'####.tif '
         elif self.rec_fromsino.isChecked():
             inputdir = self.sindirectory.text()
-            standard = '-d -k 1 -I 3 -R 0 -g 0 '
+            standard = '-d -I 3 -R 0 -g 0 '
+            if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco':
+                standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                            getattr(self,'prefix').text()+' '
+                standard += '-k 0 '
+            else:
+                standard += '-k 1 '
         elif self.rec_fromfltp.isChecked():
             inputdir = self.fltpdirectory.text()
             standard = '-d -k 0 -I 0 -R 0 -g 0 '
@@ -549,7 +553,11 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
             return
-            
+        
+        
+        if self.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco':  # wavelet parameters
+            standard += self.setWavletParameters()
+        
         cmd1 = self.cmd0+standard
 
         if ParameterWrap.getComboBoxContent('geometry') == '0':
@@ -581,6 +589,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # set correct jobname in order to wait for other jobs to finish
         if self.sinon.isChecked() and self.rec_fromsino.isChecked():
             cmd1 += '--hold='+jobname+'_sin '
+        elif self.paganinon.isChecked() and self.rec_fromfltp.isChecked():
+            cmd1 += '--hold='+jobname+'_fltp '
             
         cmd1 += '--jobname='+jobname+'_reco '
         
@@ -599,7 +609,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         sinodir_tmp = self.dirs.getParentDir(inputdir)
         sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
         
-        if self.rec_fromtif.isChecked() or self.rec_fromfltp.isChecked():
+        if (
+            self.runringremoval.isChecked()
+            and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_reco'
+            or self.rec_fromtif.isChecked()
+            or self.rec_fromfltp.isChecked()
+            ):
             cmd1 += '-o '+self.dirs.rewriteDirectoryPath(sinodir_tmp,'forward')+' '
         cmd1 += '-O '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
         cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')

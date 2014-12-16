@@ -1619,7 +1619,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Activate wavelet ring removal</string>
+          <string>Wavelet ring removal</string>
          </property>
         </widget>
        </item>
@@ -1653,6 +1653,26 @@
        </item>
       </layout>
      </widget>
+     <widget class="QComboBox" name="waveletfilterdest">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>0</y>
+        <width>101</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>on reco</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>on sino</string>
+       </property>
+      </item>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -1674,7 +1694,7 @@
           <string/>
          </property>
          <property name="text">
-          <string>Activate standard ring removal</string>
+          <string>Standard ring removal</string>
          </property>
         </widget>
        </item>

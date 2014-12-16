@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Fri Dec 12 16:26:37 2014
+# Created: Mon Dec 15 08:49:53 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -664,6 +664,11 @@ class Ui_reco_mainwin(object):
         self.label_7 = QtGui.QLabel(self.gridLayoutWidget_10)
         self.label_7.setObjectName("label_7")
         self.gridLayout_11.addWidget(self.label_7, 4, 0, 1, 2)
+        self.waveletfilterdest = QtGui.QComboBox(self.tab)
+        self.waveletfilterdest.setGeometry(QtCore.QRect(190, 0, 101, 27))
+        self.waveletfilterdest.setObjectName("waveletfilterdest")
+        self.waveletfilterdest.addItem("")
+        self.waveletfilterdest.addItem("")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -816,7 +821,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-1-g4929667", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-2-gdaf5555", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -951,13 +956,15 @@ class Ui_reco_mainwin(object):
         self.waveletpaddingmode.setItemText(2, QtGui.QApplication.translate("reco_mainwin", "symmetric", None, QtGui.QApplication.UnicodeUTF8))
         self.waveletpaddingmode.setItemText(3, QtGui.QApplication.translate("reco_mainwin", "periodic", None, QtGui.QApplication.UnicodeUTF8))
         self.waveletpaddingmode.setItemText(4, QtGui.QApplication.translate("reco_mainwin", "smooth", None, QtGui.QApplication.UnicodeUTF8))
-        self.runringremoval.setText(QtGui.QApplication.translate("reco_mainwin", "Activate wavelet ring removal", None, QtGui.QApplication.UnicodeUTF8))
+        self.runringremoval.setText(QtGui.QApplication.translate("reco_mainwin", "Wavelet ring removal", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("reco_mainwin", "Wavelettype (-y)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("reco_mainwin", "Padding mode (-M)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("reco_mainwin", "Decomposition level (-V)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("reco_mainwin", "Sigma in Gauss-filter (-E)", None, QtGui.QApplication.UnicodeUTF8))
+        self.waveletfilterdest.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "on reco", None, QtGui.QApplication.UnicodeUTF8))
+        self.waveletfilterdest.setItemText(1, QtGui.QApplication.translate("reco_mainwin", "on sino", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("reco_mainwin", "Ring Removal I", None, QtGui.QApplication.UnicodeUTF8))
-        self.runringremovalstd.setText(QtGui.QApplication.translate("reco_mainwin", "Activate standard ring removal", None, QtGui.QApplication.UnicodeUTF8))
+        self.runringremovalstd.setText(QtGui.QApplication.translate("reco_mainwin", "Standard ring removal", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("reco_mainwin", "Mode (-L)", None, QtGui.QApplication.UnicodeUTF8))
         self.ring_std_mode.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "standard", None, QtGui.QApplication.UnicodeUTF8))
         self.ring_std_mode.setItemText(1, QtGui.QApplication.translate("reco_mainwin", "shift by 1", None, QtGui.QApplication.UnicodeUTF8))

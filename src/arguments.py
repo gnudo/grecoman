@@ -92,6 +92,7 @@ class ParameterWrap(object):
         cls.addParameter('jobpriority', '--priority', [], False)
         cls.addParameter('zingermode', '-z', [], False)
         cls.addParameter('queue', '--queue', [], False)
+        cls.addParameter('waveletfilterdest', '', [], False)
 
         # we add radio box as well in order to require certain input
         # directories
@@ -133,6 +134,8 @@ class ParameterWrap(object):
             types_dict = {"0": "1", "1": "2", "2": "3"}
         elif combobox is 'queue':
             types_dict = {"0": "tomcat_NB.q", "1": "tomcat_offline.q"}
+        elif combobox is 'waveletfilterdest':
+            types_dict = {"0": "filter_reco", "1": "filter_sin"}
 
         corr_str = str(getattr(cls.parent, combobox).currentIndex())
         return types_dict[corr_str]
