@@ -12,7 +12,8 @@ class DebugCommand(QDialog):
         QDialog.__init__(self)
         self.heading = QLabel()
         self.heading.setObjectName("head")
-        self.heading.setText(QApplication.translate("Debug command", "Command to be submitted:", None, QApplication.UnicodeUTF8))
+        self.heading.setText(QApplication.translate("Debug command", \
+                "Command to be submitted:", None, QApplication.UnicodeUTF8))
         self.buttonsubmit = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
         self.textfield = QTextEdit(self)
         self.buttonsubmit.accepted.connect(self.accept)

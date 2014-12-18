@@ -311,3 +311,16 @@ class DatasetFolder(object):
         prefix = self.splitOsPath(str(self.inputdir))[-3]
         self.parent.prefix.setText(prefix)
         self.parent.jobname.setText(prefix)
+        
+                
+    def createSingleSliceImagePath(self):
+        '''
+        This method creates the path for the reconstructed single slice
+        and saves it to the "img_reco" property.
+        '''
+        single_sino = self.rewriteDirectoryPath(self.parent.sindirectory.text(),'forward')
+        basedir = self.rewriteDirectoryPath(self.getParentDir(single_sino),'backward')
+        
+        new_filename = self.parent.sinograms.currentText()[:-7]+'rec.'
+        self.img_reco = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+

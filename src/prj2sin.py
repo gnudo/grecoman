@@ -119,10 +119,12 @@ class Prj2sinWrap(object):
             cmd1 += ','+parent.flats.text()
             cmd1 += ','+parent.interflats.text()
             cmd1 += ','+parent.flatfreq.text()+' '
-            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
+            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ \
+                    ParameterWrap.getComboBoxContent('inputtype')+' '
             for param in optional:
                 if not getattr(parent,param).text() == '':
-                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(parent,param).text()+' '
+                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '+ \
+                            getattr(parent,param).text()+' '
             
             # Region of interest optional
             if getattr(parent,'roion').isChecked():
@@ -130,14 +132,16 @@ class Prj2sinWrap(object):
                 for child in ParameterWrap.CLA_dict['roion'].child_list:
                     cmd1 += getattr(parent,child).text()+','
                 cmd1 = cmd1[:-1]+' '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(parent,'prefix').text()+'####.tif '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                    getattr(parent,'prefix').text()+'####.tif '
         else:
             cmd1 += '-f '+parent.raws.text()
             cmd1 += ',0,0,0,0 '
             cmd1 += '-I 0 '
             if parent.cpron.isChecked():
                 cmd1 += '--hold='+parent.jobname_str+'_cpr '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(parent,'prefix').text()+'####.cpr.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                    getattr(parent,'prefix').text()+'####.cpr.DMP '
         
         cmd1 += '--jobname='+parent.jobname_str+'_'+mode+' '
         
@@ -150,7 +154,8 @@ class Prj2sinWrap(object):
         if parent.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
         else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
+            cmd1 += ParameterWrap.CLA_dict['queue'].flag+'='+ \
+                    ParameterWrap.getComboBoxContent('queue')+' '
   
         # only for Paganin phase retrieval
         if mode == 'fltp':
@@ -217,7 +222,10 @@ class Prj2sinWrap(object):
             if getattr(parent,param).isChecked():
                     cmd1 += ParameterWrap.CLA_dict[param].flag+' '
         
-        if parent.runringremoval.isChecked() and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_sin':  # wavelet parameters
+        if (
+            parent.runringremoval.isChecked()
+            and ParameterWrap.getComboBoxContent('waveletfilterdest') is 'filter_sin'
+            ):  # wavelet parameters
             cmd1 += '-k 2 '
             cmd1 += cls.setWavletParameters(parent)
         else:
@@ -240,23 +248,29 @@ class Prj2sinWrap(object):
         if parent.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
         else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
+            cmd1 += ParameterWrap.CLA_dict['queue'].flag+'='+ \
+                    ParameterWrap.getComboBoxContent('queue')+' '
         
         if ParameterWrap.CLA_dict['steplines'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(parent,'steplines').text()+' '
+            cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+ \
+                    getattr(parent,'steplines').text()+' '
             
         if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
+            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ \
+                    ParameterWrap.getComboBoxContent('stitchingtype')+' '
         
         if parent.sin_fromcpr.isChecked():
             inputdir = parent.cprdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(parent,'prefix').text()+'####.cpr.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                    getattr(parent,'prefix').text()+'####.cpr.DMP '
         elif parent.sin_fromfltp.isChecked():
             inputdir = parent.fltpdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(parent,'prefix').text()+'####.fltp.DMP '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                    getattr(parent,'prefix').text()+'####.fltp.DMP '
         elif parent.sin_fromtif.isChecked():
             inputdir = parent.inputdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(parent,'prefix').text()+'####.tif '
+            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
+                    getattr(parent,'prefix').text()+'####.tif '
         
         cmd1 += '-o '+parent.dirs.rewriteDirectoryPath(parent.sindirectory.text(),'forward')+' '
         cmd1 += parent.dirs.rewriteDirectoryPath(inputdir,'forward')
@@ -324,7 +338,8 @@ class Prj2sinWrap(object):
         
         cmd1 = cls.cmd0+standard
 
-        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
+        optional = ['cutofffrequency','edgepadding','centerofrotation',
+                    'rotationangle','tifmin','tifmax']
         for param in optional:
             if not getattr(parent,param).text() == '':
                 cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(parent,param).text()+' '
@@ -333,7 +348,8 @@ class Prj2sinWrap(object):
         comboboxes = ['filter', 'outputtype', 'geometry']
         for combo in comboboxes:
             if ParameterWrap.CLA_dict[combo].performCheck():
-                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' '
+                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ \
+                        ParameterWrap.getComboBoxContent(combo)+' '
                 
         ## (5) Standard ring removal parameters
         if parent.runringremovalstd.isChecked():
@@ -360,7 +376,8 @@ class Prj2sinWrap(object):
         if parent.target == 'Merlin':
             cmd1 += '--queue=prime_ti.q --ncores=16 '
         else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
+            cmd1 += ParameterWrap.CLA_dict['queue'].flag+'='+ \
+                    ParameterWrap.getComboBoxContent('queue')+' '
         
         outputdir = parent.recodirectory.text()
         sinodir_tmp = parent.dirs.getParentDir(inputdir)
@@ -397,7 +414,8 @@ class Prj2sinWrap(object):
         if ParameterWrap.getComboBoxContent('geometry') == '0':
             angfile = parent.dirs.glueOsPath([parent.sindirectory.text(),'angles.txt'])
             if not parent.dirs.checkIfFileExist(angfile):
-                parent.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the sin directory.')
+                parent.displayErrorMessage('Missing angles file',
+                    'The file "angles.txt" is missing in the sin directory.')
                 return
         
         if not parent.checkComputingLocation():  # self-explaining
@@ -409,15 +427,18 @@ class Prj2sinWrap(object):
         combos_single = ['filter','geometry']
         for combo in combos_single:
             if ParameterWrap.CLA_dict[combo].performCheck():
-                cls.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
+                cls.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ \
+                           ParameterWrap.getComboBoxContent(combo)+' ' 
         
         if parent.zingeron.isChecked():
             cls.cmd += cls.setZingerParameters(parent)
         
-        optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
+        optional_single = ['cutofffrequency','edgepadding',
+                           'centerofrotation','rotationangle']
         for param in optional_single:
             if not getattr(parent,param).text() == '':
-                cls.cmd += ParameterWrap.CLA_dict[param].flag+' '+getattr(parent,param).text()+' '
+                cls.cmd += ParameterWrap.CLA_dict[param].flag+' '+ \
+                           getattr(parent,param).text()+' '
         
         if parent.runringremoval.isChecked():  # the wavelet parameters are composed separately
             cls.cmd += cls.setWavletParameters(parent)
@@ -440,19 +461,26 @@ class Prj2sinWrap(object):
         '''
         combos = ['wavelettype','waveletpaddingmode']
         textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
-        cmd = ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(parent,combos[0]).currentText())+' '
-        cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(parent,textedit[0]).text()+' '
-        cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(parent,textedit[1]).text()+' '
-        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
+        cmd = ParameterWrap.CLA_dict[combos[0]].flag+' '+ \
+                str(getattr(parent,combos[0]).currentText())+' '
+        cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+ \
+                getattr(parent,textedit[0]).text()+' '
+        cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+ \
+                getattr(parent,textedit[1]).text()+' '
+        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ \
+                ParameterWrap.getComboBoxContent(combos[1])+' '
         return cmd
 
 
     @classmethod
     def setStandardRingRemoval(cls,parent):
         ''' Method for setting the standard ring removal parameters '''
-        cmd = ParameterWrap.CLA_dict['ring_std_mode'].flag+' '+ParameterWrap.getComboBoxContent('ring_std_mode')+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_diff'].flag+' '+getattr(parent,'ring_std_diff').text()+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_ringwidth'].flag+' '+getattr(parent,'ring_std_ringwidth').text()+' '
+        cmd = ParameterWrap.CLA_dict['ring_std_mode'].flag+' '+ \
+                ParameterWrap.getComboBoxContent('ring_std_mode')+' '
+        cmd += ParameterWrap.CLA_dict['ring_std_diff'].flag+' '+ \
+                getattr(parent,'ring_std_diff').text()+' '
+        cmd += ParameterWrap.CLA_dict['ring_std_ringwidth'].flag+' '+ \
+                getattr(parent,'ring_std_ringwidth').text()+' '
         return cmd
 
 
@@ -462,6 +490,8 @@ class Prj2sinWrap(object):
         method for adding zinger removal parameters
         '''
         cmd = '-z s ' ## TODO: has to be fixed after 2D version is implemented
-        cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(parent,'zinger_thresh').text())+' '
-        cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(parent,'zinger_width').text())+' '
+        cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+ \
+                str(getattr(parent,'zinger_thresh').text())+' '
+        cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+ \
+                str(getattr(parent,'zinger_width').text())+' '
         return cmd

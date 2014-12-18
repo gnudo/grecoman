@@ -14,11 +14,18 @@ import sys
 
 class MainWindow(QMainWindow, Ui_reco_mainwin):
     '''
-    main class containing methods for ideally all window actions in the main app. other specific
-    methods should be contained in other classes
+    Main class containing methods for ideally all window actions in
+    the main application. All methods, which affect GUI-behavior
+    should be included/changed here whereas other specific methods
+    should be placed elsewhere.
     '''
  
     def __init__(self):
+        '''
+        Initializing method for main application: when launched, all
+        necessary objects are created, GUI events and actions are set,
+        tabulator ordering is aligned etc. 
+        '''
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
 
@@ -129,18 +136,19 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         field_order = ['afsaccount','cons2','inputdirectory','setinputdirectory','inputtype',\
                        'prefix','stitchingtype','raws','darks','flats','interflats','flatfreq',\
                        'preflatsonly','roion','roi_left','roi_right','roi_upper','roi_lower',\
-                       'binsize','scaleimagefactor','cprdirectory','setcprdirectory',\
+                       'binsize','scaleimagefactor','addpostfix','cprdirectory','setcprdirectory',\
                        'fltpdirectory','setfltpdirectory','sindirectory','setsinogramdirectory',\
-                       'sinograms','recodirectory','setrecodirectory','jobname','pag_energy',\
-                       'pag_pxsize','pag_delta','pag_beta','pag_distance','runringremoval',\
-                       'wavelettype','waveletpaddingmode','waveletdecompositionlevel',
-                       'sigmaingaussfilter','filter','cutofffrequency','edgepadding',\
-                       'centerofrotation','outputtype','tifmin','tifmax','shiftcorrection',\
-                       'rotationangle','geometry','zingeron','zinger_thresh','zinger_width','cpron',\
-                       'withlog','paganinon','fltp_fromtif','fltp_fromcpr','sinon','sin_fromtif',\
-                       'sin_fromcpr','sin_fromfltp','steplines','reconstructon','rec_fromtif',\
-                       'rec_fromsino','openinfiji','submit','clearfields','singleslice','print_cmd',\
-                       'develbranchon']
+                       'sinograms','sinoslider','recodirectory','setrecodirectory','jobname',\
+                       'pag_energy','pag_pxsize','pag_delta','pag_beta','pag_distance',
+                       'runringremoval','waveletfilterdest','wavelettype','waveletpaddingmode',\
+                       'waveletdecompositionlevel','sigmaingaussfilter','runringremovalstd',\
+                       'ring_std_mode','ring_std_diff','ring_std_ringwidth','filter',\
+                       'cutofffrequency','edgepadding','centerofrotation','outputtype','tifmin',\
+                       'tifmax','shiftcorrection','rotationangle','geometry','zingeron',\
+                       'zinger_thresh','zinger_width','cpron','withlog','paganinon','fltp_fromtif',\
+                       'fltp_fromcpr','sinon','sin_fromtif','sin_fromcpr','sin_fromfltp','steplines'\
+                       ,'reconstructon','rec_fromtif','rec_fromsino','openinfiji','submit',\
+                       'jobpriority','clearfields','singleslice','print_cmd','develbranchon']
         for key in range(len(field_order)-1):
             self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
 
@@ -166,25 +174,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             else:
                 self.jobname_str = str(self.jobname.text())
             
-        if not Prj2sinWrap.createCommand(self):  # returns True if further checks succeed
+        if not Prj2sinWrap.createCommand(self):  # returns True if cmd was created
             return 
         
         if self.print_cmd.isChecked():  # prints full CLS if checked 
             if not self.debugTextField():
                  return
         
-        if not self.job.performInitalCheck():  # check account credentials
-            return
-        
-        if self.job.checkIdenticalJobs(Prj2sinWrap.cmd):
-            if not self.displayYesNoMessage('Identical Job','You have' \
-                    ' submitted an identical job just before. Are you' \
-                    ' sure you want to submit it again?'):
-                self.statusBar().clearMessage()
-                return
-        
-        self.job.submitJob(Prj2sinWrap.cmd)
-        self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
+        if self.job.submitJob(Prj2sinWrap.cmd):
+            self.statusBar().showMessage('Job successfully submitted: '+ \
+                                         strftime('%H:%M:%S - %x'))
             
             
     def calcSingleSlice(self):
@@ -197,35 +196,38 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         Prj2sinWrap.createSingleSliceCommand(self)
 
-        # rewrite the sinogram-directory for use at the appropriate machine
-        single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
-
         if self.print_cmd.isChecked():
             if not self.debugTextField():
                  return
 
-        if not self.job.performInitalCheck():  # check account credentials
-            return
+#         if not self.job.performInitalCheck():  # check account credentials
+#             return
         
         # TODO: probably whole part below should be rewritten and
         # outsourced to "imageOpen class" or similar...
         # we look for the image and delete it if it exists
-        basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
-        
-        new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+
+        # rewrite the sinogram-directory for use at the appropriate machine
+#         single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
+#         basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
+#         
+#         new_filename = self.sinograms.currentText()[:-7]+'rec.'
+#         img = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+        # Create path for reconstructed single slice image
+        self.dirs.createSingleSliceImagePath()
         
         if self.openinfiji.isChecked():
-            self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
+            self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+ \
+                                    str(self.prefix.text())+'*\\");\"')
         
-        if self.dirs.checkIfFileExist(img):
-            self.job.submitJobLocallyAndWait('rm '+img)  
+        if self.dirs.checkIfFileExist(self.dirs.img_reco):
+            self.job.submitJobLocallyAndWait('rm '+self.dirs.img_reco)
         
         # after all checks completed, singleSliceFunc is called and we wait until image is done
         self.job.submitJob(Prj2sinWrap.cmd)
         
         for kk in range(30):
-            if self.dirs.checkIfFileExist(img):
+            if self.dirs.checkIfFileExist(self.dirs.img_reco):
                 break
             else:
                 sleep(0.5)
@@ -236,7 +238,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                                     
         # we display the image
         if self.openinfiji.isChecked():
-            self.job.submitJobLocally('fiji -eval \"open(\\"'+img+'\\")\"')
+            self.job.submitJobLocally('fiji -eval \"open(\\"'+self.dirs.img_reco+'\\")\"')
         else:
             self.displayImageBig(img)
         
@@ -244,11 +246,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
     def checkComputingLocation(self):
         '''
         This method makes sure that the radiobox from where GRecoMan is
-        run, is checked and will also determine this in future releases
-        automatically.
+        run, is checked because it is needed for creating the correct
+        directory paths.
         '''
         if not self.afsaccount.isChecked() and not self.cons2.isChecked():
-            self.displayErrorMessage('Missing radio box', 'From where are you running the application?')
+            self.displayErrorMessage('Missing radio box', \
+                                     'From where are you running the application?')
             return False
         return True
     
@@ -292,7 +295,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         and changes the directories if necessary. It should be run when
         toggling the computing location and after loading config files. 
         '''
-        paths = ['inputdirectory','cprdirectory','fltpdirectory','sindirectory','recodirectory']
+        paths = ['inputdirectory','cprdirectory','fltpdirectory',
+                 'sindirectory','recodirectory']
         
         if not self.target == 'x02da':
             return
@@ -312,7 +316,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
 
 
     def setSinoWithSlider(self):
-        ''' Changes the sinogram in combo by moving slider '''
+        ''' Changes the sinogram in combobox by moving slider '''
         if not self.sinograms.count() == 0:
             ind = self.sinoslider.value()
             self.sinograms.setCurrentIndex(int(ind))
@@ -378,7 +382,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         config file (with "loadConfigFile" method), only with
         additional color-highlighting.
         '''
-        template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
+        template_file = self.dirs.glueOsPath([self.dirs.runningdir, \
+                                              'templates' ,templatename+'.txt'])
         template_obj = self.loadConfigFile(template_file, True)
         template_obj.loadFile(False)
         
@@ -504,7 +509,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
     def changeSubmissionTarget(self,target):
         '''
-        Sets the "target" property accordingly and addiotionally labels
+        Sets the "target" property accordingly and additionally labels
         the GUI buttons. If Merlin is the target, then the Merlin
         username is asked (by running "performInitalCheck" from the job
         object) in order to create correct directory paths on Merlin.
