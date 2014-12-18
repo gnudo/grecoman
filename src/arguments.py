@@ -34,7 +34,8 @@ class ParameterWrap(object):
         cls.addParameter('flatfreq', '', [], True)
         cls.addParameter('preflatsonly', '-u', [], False)
         cls.addParameter('roion', '-r',
-            ['roi_left', 'roi_right', 'roi_upper', 'roi_lower'], False)
+                         ['roi_left', 'roi_right', 'roi_upper', 'roi_lower'],
+                         False)
         cls.addParameter('roi_left', '', [], False)
         cls.addParameter('roi_right', '', [], False)
         cls.addParameter('roi_upper', '', [], False)
@@ -44,17 +45,19 @@ class ParameterWrap(object):
         cls.addParameter('steplines', '-j', [], False)
         cls.addParameter('sindirectory', '-o', [], True)
         cls.addParameter('paganinon', '-Y',
-            ['pag_energy', 'pag_pxsize', 'pag_delta', 'pag_beta',
-             'pag_distance', 'fltpdirectory'], False)
+                         ['pag_energy', 'pag_pxsize', 'pag_delta', 'pag_beta',
+                          'pag_distance', 'fltpdirectory'],
+                         False)
         cls.addParameter('pag_energy', '', [], False)
         cls.addParameter('pag_delta', '', [], False)
         cls.addParameter('pag_beta', '', [], False)
         cls.addParameter('pag_pxsize', '', [], False)
         cls.addParameter('pag_distance', '', [], False)
         cls.addParameter('runringremoval', '',
-            ['waveletdecompositionlevel', 'sigmaingaussfilter'], False)
+                         ['waveletdecompositionlevel', 'sigmaingaussfilter'],
+                         False)
         cls.addParameter('runringremovalstd', '',
-            ['ring_std_diff', 'ring_std_ringwidth'], False)
+                         ['ring_std_diff', 'ring_std_ringwidth'], False)
         cls.addParameter('waveletdecompositionlevel', '-V', [], False)
         cls.addParameter('sigmaingaussfilter', '-E', [], False)
         cls.addParameter('ring_std_diff', '-D', [], False)
@@ -65,7 +68,7 @@ class ParameterWrap(object):
         cls.addParameter('shiftcorrection', '-q', [], False)
         cls.addParameter('rotationangle', '-a', [], False)
         cls.addParameter('zingeron', '-z', ['zinger_thresh', 'zinger_width'],
-            False)
+                         False)
         cls.addParameter('zinger_thresh', '-H', [], False)
         cls.addParameter('zinger_width', '-w', [], False)
         cls.addParameter('cpron', '', ['cprdirectory'], False)
@@ -184,14 +187,15 @@ class ParameterWrap(object):
         cls.resetAllStyleSheets()
 
         # (0) Make sure that at least one action is checked
-        if not cls.parent.cpron.isChecked() \
-            and not cls.parent.paganinon.isChecked() \
-            and not cls.parent.sinon.isChecked() \
-            and not cls.parent.reconstructon.isChecked():
+        if not cls.parent.cpron.isChecked() and not \
+                cls.parent.paganinon.isChecked() and not \
+                cls.parent.sinon.isChecked() and not \
+                cls.parent.reconstructon.isChecked():
             cls.parent.displayErrorMessage('Missing action',
-                ' '.join(['Check at least one action that should be',
-                          'calculated on the cluster (sino creation, fltp',
-                          ' etc.)!']))
+                                           'Check at least one action '
+                                           'that should be calculated on '
+                                           'the cluster (sino creation, '
+                                           'fltp etc.)!')
             return
 
         # (1) all parameters that are mandatory (they cannot have any
