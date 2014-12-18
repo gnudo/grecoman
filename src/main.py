@@ -1,6 +1,6 @@
 from ui_main import Ui_reco_mainwin
 from ui_dialogs import DebugCommand, Postfix
-from dmp_reader import DMPreader
+from io_img import Image
 from arguments import ParameterWrap
 from connector import Connector
 from datasets import DatasetFolder
@@ -200,19 +200,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             if not self.debugTextField():
                  return
 
-#         if not self.job.performInitalCheck():  # check account credentials
-#             return
-        
-        # TODO: probably whole part below should be rewritten and
-        # outsourced to "imageOpen class" or similar...
-        # we look for the image and delete it if it exists
-
-        # rewrite the sinogram-directory for use at the appropriate machine
-#         single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
-#         basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
-#         
-#         new_filename = self.sinograms.currentText()[:-7]+'rec.'
-#         img = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
         # Create path for reconstructed single slice image
         self.dirs.createSingleSliceImagePath()
         
@@ -240,7 +227,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             self.job.submitJobLocally('fiji -eval \"open(\\"'+self.dirs.img_reco+'\\")\"')
         else:
-            self.displayImageBig(img)
+            self.displayImageBig(self.dirs.img_reco)
         
         
     def checkComputingLocation(self):
@@ -439,16 +426,14 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         
         
     def displayImageBig(self,img_file):
-        '''
-        method for displaying a single image in the big frame
-        TODO: to be outsourced
-        '''
-        if img_file[-3:].lower() == 'tif':
-            myPixmap = QPixmap(img_file)
-        elif img_file[-3:].lower() == 'dmp':
-            myPixmap = DMPreader(img_file)
+        ''' Displays the DMP image "img_file" in the preview window '''
+        self.img_obj = Image(img_file)
+        
+        img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
+                     self.img_obj.img_height, QImage.Format_RGB32)
+        img = QPixmap.fromImage(img)
             
-        myScaledPixmap = myPixmap.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
+        myScaledPixmap = img.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
         self.ImgViewer.setPixmap(myScaledPixmap)
         
         

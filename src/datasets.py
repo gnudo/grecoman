@@ -322,5 +322,5 @@ class DatasetFolder(object):
         basedir = self.rewriteDirectoryPath(self.getParentDir(single_sino),'backward')
         
         new_filename = self.parent.sinograms.currentText()[:-7]+'rec.'
-        self.img_reco = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
+        self.img_reco = basedir+'viewrec/'+str(new_filename+self.parent.sinograms.currentText()[-3:])
 
