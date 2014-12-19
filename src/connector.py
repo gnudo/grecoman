@@ -22,7 +22,6 @@ class Connector(object):
         self.eaccountpw = []
         self.cmds_cache = [None] * 5
 
-
     def performInitalCheck(self):
         '''
         This method makes sure that the correct account credentials are
@@ -51,7 +50,6 @@ class Connector(object):
                 return False
         return True
 
-
     def checkIdenticalJobs(self, cmd):
         '''
         This method checks whether an identical job has been submitted
@@ -65,7 +63,6 @@ class Connector(object):
         self.cmds_cache.pop(0)
         self.cmds_cache.append(md5_str)
 
-
     def submitJob(self, cmd):
         '''
         This method determines where (on which machine) to submit the
@@ -73,11 +70,13 @@ class Connector(object):
         '''
         if not self.performInitalCheck():  # check account credentials
             return
-       
+
         if self.checkIdenticalJobs(cmd):
-            if not self.parent.displayYesNoMessage('Identical Job','You have' \
-                    ' submitted an identical job just before. Are you' \
-                    ' sure you want to submit it again?'):
+            if not self.parent.displayYesNoMessage('Identical Job',
+                                                   'You have submitted an '
+                                                   'identical job just '
+                                                   'before. Are you sure you '
+                                                   'want to submit it again?'):
                 self.parent.statusBar().clearMessage()
                 return
 
@@ -89,22 +88,19 @@ class Connector(object):
                 self.submitJobViaSshPublicKey(cmd + '\n', 'merlinc60')
         elif self.parent.cons2.isChecked():
             self.submitJobLocally(cmd)
-        
-        return True
 
+        return True
 
     def submitJobLocally(self, cmd):
         ''' Submits a command to the local shell (bash) '''
         proc = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE, shell=True)
+                                stdout=subprocess.PIPE, shell=True)
         proc.stdin.write(cmd + '\n')
-
 
     def submitJobLocallyAndWait(self, cmd):
         ''' Submits a command to the local shell and waits till executed '''
         proc = subprocess.Popen(cmd, shell=True)
         proc.communicate()
-
 
     def submitJobViaSshPublicKey(self, cmd_str, target):
         '''
@@ -119,7 +115,6 @@ class Connector(object):
         sshProcess.stdin.write(cmd_str)
         sshProcess.stdout.readline()
 
-
     def submitJobViaGateway(self, cmd_str, gw, target):
         '''
         Submits the job via a gateway, assuming AFS-credentials for
@@ -127,7 +122,7 @@ class Connector(object):
         target computer. When running the method we must be sure, that
         all credentials are correct otherwise the whole application
         will hang forever.
-        
+
         Background: This method represents quite a "hack" as it is
         currently impossible to have public-key authentication on
         AFS-machines as well as it is impossible to establish direct
@@ -145,32 +140,32 @@ class Connector(object):
         file.
         '''
 
-        ## (1) first we create files with passwords
+        # (1) first we create files with passwords
         kk = 1
         afshome = '/afs/psi.ch/user/' + self.afsuser[0] + '/' + self.afsuser
         for ii in [self.afspw, self.eaccountpw]:
             pw = 'echo \\\"' + ii + '\\\"'
-            p1 = subprocess.call(['echo "#!/bin/bash\n" > ' + afshome + \
-                '/pw' + str(kk) + '.sh'], shell=True)
-            p2 = subprocess.call(['echo ' + pw + ' >> ' + afshome + '/pw' + \
-                str(kk) + '.sh'], shell=True)
-            p3 = subprocess.call(['chmod a+x ' + afshome + '/pw' + str(kk) + \
-                '.sh'], shell=True)
+            p1 = subprocess.call(['echo "#!/bin/bash\n" > ' + afshome + '/pw' +
+                                  str(kk) + '.sh'], shell=True)
+            p2 = subprocess.call(['echo ' + pw + ' >> ' + afshome + '/pw' +
+                                  str(kk) + '.sh'], shell=True)
+            p3 = subprocess.call(['chmod a+x ' + afshome + '/pw' + str(kk) +
+                                  '.sh'], shell=True)
             kk = kk + 1
 
-        ## (2) establish the connection to gateway
+        # (2) establish the connection to gateway
         sshProcess = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE, shell=True)
 
         # TODO: substitute below lines so that we don't save cleartext pw-files
         # >> didn't work for eaccount
         # sshProcess.stdin.write('export SSH_ASKPASS=~/returnpass.sh\n')
-        # sshProcess.stdin.write('echo \\\"' + self.afspw + '\\\"|ssh ' + \
-            # self.afsuser + '@' + x02dagw + '\n')
+        # sshProcess.stdin.write('echo \\\"' + self.afspw + '\\\"|ssh ' +
+        #                        self.afsuser + '@' + x02dagw + '\n')
         sshProcess.stdin.write('export SSH_ASKPASS=' + afshome + '/pw1.sh\n')
         sshProcess.stdin.write('export DISPLAY=dummydisplay:0\n')
-        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' + \
-            self.afsuser + '@' + gw + '\n')
+        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' +
+                               self.afsuser + '@' + gw + '\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
 
@@ -179,8 +174,8 @@ class Connector(object):
         sshProcess.stdin.write('export DISPLAY=dummydisplay:0\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
-        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' + \
-            self.eaccountuser + '@' + target + '\n')
+        sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' +
+                               self.eaccountuser + '@' + target + '\n')
         sshProcess.stdin.write('echo $SSH_ASKPASS\n')
         sshProcess.stdout.readline()
 
@@ -191,7 +186,6 @@ class Connector(object):
         # (5) submit the command line string from the GUI on target
         sshProcess.stdin.write(cmd_str)
         sshProcess.stdout.readline()  # hangs if "cmd_str" doesn't return value
-
 
     def inputCredentials(self, mode):
         '''
@@ -220,7 +214,6 @@ class Connector(object):
             return True
         return False
 
-
     def blMountEaccount(self):
         '''
         Mounts the e-account on an AFS-machine with the "blmount"
@@ -229,14 +222,14 @@ class Connector(object):
         mountdir = self.parent.dirs.homedir + '/slsbl/x02da/' + \
             self.eaccountuser
         p1 = subprocess.check_call(['blumount -d ' + mountdir], shell=True)
-        p1 = subprocess.check_call(['blmount -a ' + self.eaccountuser + \
-            ' -s x02da -p ' + self.eaccountpw], shell=True)
+        p1 = subprocess.check_call(['blmount -a ' + self.eaccountuser +
+                                    ' -s x02da -p ' + self.eaccountpw],
+                                   shell=True)
 
         if not os.listdir(mountdir):
             return False
         else:
             return True
-
 
     def checkAfsCredentials(self):
         '''
@@ -246,8 +239,9 @@ class Connector(object):
         TODO: Obviously any simpler solution is more than welcome...
         '''
         if not self.afsuser or not self.afspw:
-            self.parent.displayErrorMessage('Missing',
-                'No blank fields for AFS-credentials allowed')
+            self.parent.displayErrorMessage('Missing', 'No blank fields for '
+                                                       'AFS-credentials '
+                                                       'allowed')
             return
 
         comp = 'llc1'
@@ -268,13 +262,12 @@ class Connector(object):
         except IOError as e:
             subprocess.call(['rm ~/pw.sh'], shell=True)
             p.terminate()
-            self.parent.displayErrorMessage('Error',
-                'Wrong AFS Password/Username!')
+            self.parent.displayErrorMessage('Error', 'Wrong AFS '
+                                                     'Password/Username!')
             return False
         except ValueError:
             print "value error"
             return False
-
 
     def checkAfsCredentialsHelper(self, comp, queue1):  # ,comp):
         '''
@@ -282,15 +275,14 @@ class Connector(object):
         timeout of operation.
         '''
         p = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, shell=True)
+                             stdout=subprocess.PIPE, shell=True)
         p.stdin.write('export SSH_ASKPASS=~/pw.sh\n')
-        p.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' + self.afsuser + \
-            '@' + comp + '\n')
+        p.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' + self.afsuser +
+                      '@' + comp + '\n')
         p.stdin.write('echo $HOSTNAME\n')
         host = p.stdout.readline()  # this method hangs if password is wrong!
         if str(host[:len(comp)]) == str(comp):
             queue1.put(True)
-
 
     def isInstalled(self, application):
         '''
