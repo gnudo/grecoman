@@ -7,13 +7,13 @@ class Image(object):
     GRecoMan.
     '''
     def __init__(self, img_path):
-        self.min_val = []
-        self.max_val = []
+        self.min_val = np.float
+        self.max_val = np.float
         self.path = img_path
-        self.img_mat = []
+        self.img_mat = []  # image matrix from reconstructed single slice
         self.img_width = []
         self.img_height = []
-        self.img_disp = []
+        self.img_disp = []  # image matrix for displaying in GRecoMan
 
         # (1) Read DMP
         self.readDMP()
@@ -38,12 +38,16 @@ class Image(object):
         self.img_width = imageShape[1]
         self.img_height = imageShape[0]
 
-    def normalizeImage(self, min=None, max=None):
+    def normalizeImage(self, min_str='', max_str=''):
         ''' Rescale gray values of image by min and max values '''
-        if min is None:
+        if min_str == '':
             min = self.min_val
-        if max is None:
+        else:
+            min = np.float(min_str)
+        if max_str == '':
             max = self.max_val
+        else:
+            max = np.float(max_str)
 
         img_tmp = self.img_mat[:][:] - min
         img_tmp /= max

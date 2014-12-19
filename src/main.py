@@ -1,11 +1,11 @@
 from ui_main import Ui_reco_mainwin
 from ui_dialogs import DebugCommand, Postfix
 from io_img import Image
+from io_config import ConfigFile
 from arguments import ParameterWrap
 from connector import Connector
 from datasets import DatasetFolder
 from prj2sin import Prj2sinWrap
-from fileIO import ConfigFile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from time import sleep,strftime # TODO: preliminary
@@ -54,6 +54,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
             SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+        QObject.connect(self.tifmin,
+            SIGNAL("returnPressed()"),self.displayImageBig)  # Refresh Single slice from min-val
+        QObject.connect(self.tifmax,
+            SIGNAL("returnPressed()"),self.displayImageBig)  # Refresh Single slice from max-val
+        QObject.connect(self.refreshslice,
+            SIGNAL("clicked()"),self.displayImageBig)  # Refresh Single slice from Refresh button
         QObject.connect(self.addpostfix,
             SIGNAL("clicked()"),self.appendPostfix)  # open textfield for defining postfix
         QObject.connect(self.sinon,
@@ -227,7 +233,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             self.job.submitJobLocally('fiji -eval \"open(\\"'+self.dirs.img_reco+'\\")\"')
         else:
-            self.displayImageBig(self.dirs.img_reco)
+            self.img_obj = Image(self.dirs.img_reco)
+            self.displayImageBig()
         
         
     def checkComputingLocation(self):
@@ -425,10 +432,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return False 
         
         
-    def displayImageBig(self,img_file):
-        ''' Displays the DMP image "img_file" in the preview window '''
-        self.img_obj = Image(img_file)
+    def displayImageBig(self):
+        ''' Displays the DMP image "img_file" in the preview window '''  
+        if not hasattr(self, 'img_obj'):
+            return
         
+        if not self.tifmin.text():  # populate tif-min value
+            self.tifmin.setText(str(self.img_obj.min_val))
+        if not self.tifmax.text():  # populate tif-max value
+            self.tifmax.setText(str(self.img_obj.max_val))
+            
+        self.img_obj.normalizeImage(str(self.tifmin.text()), str(self.tifmax.text()))
+              
         img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
                      self.img_obj.img_height, QImage.Format_RGB32)
         img = QPixmap.fromImage(img)

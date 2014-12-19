@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Thu Dec 18 12:02:02 2014
+# Created: Fri Dec 19 11:19:04 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -602,7 +602,7 @@ class Ui_reco_mainwin(object):
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayoutWidget_10 = QtGui.QWidget(self.tab)
-        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 291, 151))
+        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 331, 151))
         self.gridLayoutWidget_10.setObjectName("gridLayoutWidget_10")
         self.gridLayout_11 = QtGui.QGridLayout(self.gridLayoutWidget_10)
         self.gridLayout_11.setObjectName("gridLayout_11")
@@ -722,6 +722,12 @@ class Ui_reco_mainwin(object):
         self.queue.addItem("")
         self.queue.addItem("")
         self.gridLayout_12.addWidget(self.queue, 0, 1, 1, 1)
+        self.refreshslice = QtGui.QToolButton(self.centralwidget)
+        self.refreshslice.setGeometry(QtCore.QRect(900, 830, 30, 26))
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/ui_icons/ico/refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.refreshslice.setIcon(icon1)
+        self.refreshslice.setObjectName("refreshslice")
         reco_mainwin.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(reco_mainwin)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1251, 23))
@@ -821,7 +827,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-4-gf5295b3", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-9-g8b1b8a0", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
@@ -976,6 +982,8 @@ class Ui_reco_mainwin(object):
         self.label_47.setText(QtGui.QApplication.translate("reco_mainwin", "Queue:", None, QtGui.QApplication.UnicodeUTF8))
         self.queue.setItemText(0, QtGui.QApplication.translate("reco_mainwin", "Standard User Operation", None, QtGui.QApplication.UnicodeUTF8))
         self.queue.setItemText(1, QtGui.QApplication.translate("reco_mainwin", "Offline queue", None, QtGui.QApplication.UnicodeUTF8))
+        self.refreshslice.setToolTip(QtGui.QApplication.translate("reco_mainwin", "Refresh image to test min and max values for tif-conversion", None, QtGui.QApplication.UnicodeUTF8))
+        self.refreshslice.setText(QtGui.QApplication.translate("reco_mainwin", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("reco_mainwin", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuLoad_specific.setTitle(QtGui.QApplication.translate("reco_mainwin", "Load specific", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRun.setTitle(QtGui.QApplication.translate("reco_mainwin", "Templates", None, QtGui.QApplication.UnicodeUTF8))
