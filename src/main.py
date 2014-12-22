@@ -1,5 +1,6 @@
 from ui_main import Ui_reco_mainwin
 from ui_dialogs import DebugCommand, Postfix
+from ui_slider import RangeSlider
 from io_img import Image
 from io_config import ConfigFile
 from arguments import ParameterWrap
@@ -39,6 +40,26 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # GUI settings
         self.setAcceptDrops(True)  # accept Drag'n drop files
 
+        ## Range Slider
+        self.slider = RangeSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10000)
+        self.slider.setTickPosition(QSlider.TicksBelow)
+        QObject.connect(self.slider, SIGNAL('sliderMoved(int)'),
+                        self.changeMinMaxTifValues)
+        QObject.connect(self.slider, SIGNAL('sliderReleased()'),
+                        self.displayImageBig)
+        self.slider.show()
+        self.slider.raise_()
+        self.sliderlayout.insertWidget(0,self.slider)
+        self.slider.setStyleSheet("""
+        .RangeSlider {
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: rgb(255, 255, 255);
+            }
+        """)
+        
         # GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"), lambda param='inputdirectory': self.getDirectory(param))  # data input directory
@@ -138,22 +159,23 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     self.submitAndSingleSliceContextMenu)  # Single slice button
         
         ## Set tab order for all fields in GUI
-        field_order = ['afsaccount','cons2','inputdirectory','setinputdirectory','inputtype',\
-                       'prefix','stitchingtype','raws','darks','flats','interflats','flatfreq',\
-                       'preflatsonly','roion','roi_left','roi_right','roi_upper','roi_lower',\
-                       'binsize','scaleimagefactor','addpostfix','cprdirectory','setcprdirectory',\
-                       'fltpdirectory','setfltpdirectory','sindirectory','setsinogramdirectory',\
-                       'sinograms','sinoslider','recodirectory','setrecodirectory','jobname',\
-                       'pag_energy','pag_pxsize','pag_delta','pag_beta','pag_distance',
-                       'runringremoval','waveletfilterdest','wavelettype','waveletpaddingmode',\
-                       'waveletdecompositionlevel','sigmaingaussfilter','runringremovalstd',\
-                       'ring_std_mode','ring_std_diff','ring_std_ringwidth','filter',\
-                       'cutofffrequency','edgepadding','centerofrotation','outputtype','tifmin',\
-                       'tifmax','shiftcorrection','rotationangle','geometry','zingeron',\
-                       'zinger_thresh','zinger_width','cpron','withlog','paganinon','fltp_fromtif',\
-                       'fltp_fromcpr','sinon','sin_fromtif','sin_fromcpr','sin_fromfltp','steplines'\
-                       ,'reconstructon','rec_fromtif','rec_fromsino','openinfiji','submit',\
-                       'jobpriority','clearfields','singleslice','print_cmd','develbranchon']
+        field_order = ['afsaccount', 'cons2', 'inputdirectory', 'setinputdirectory', 'inputtype',
+                       'prefix', 'stitchingtype', 'raws', 'darks', 'flats', 'interflats',
+                       'flatfreq', 'preflatsonly', 'roion', 'roi_left', 'roi_right', 'roi_upper',
+                       'roi_lower', 'binsize', 'scaleimagefactor', 'addpostfix', 'cprdirectory',
+                       'setcprdirectory', 'fltpdirectory', 'setfltpdirectory', 'sindirectory',
+                       'setsinogramdirectory', 'sinograms', 'sinoslider', 'recodirectory',
+                       'setrecodirectory', 'jobname', 'pag_energy', 'pag_pxsize', 'pag_delta',
+                       'pag_beta', 'pag_distance', 'runringremoval', 'waveletfilterdest',
+                       'wavelettype', 'waveletpaddingmode', 'waveletdecompositionlevel',
+                       'sigmaingaussfilter', 'runringremovalstd', 'ring_std_mode','ring_std_diff',
+                       'ring_std_ringwidth', 'filter', 'cutofffrequency', 'edgepadding',
+                       'centerofrotation', 'outputtype', 'tifmin', 'tifmax','shiftcorrection',
+                       'rotationangle', 'geometry', 'zingeron', 'zinger_thresh', 'zinger_width',
+                       'cpron', 'withlog', 'paganinon', 'fltp_fromtif', 'fltp_fromcpr', 'sinon',
+                       'sin_fromtif', 'sin_fromcpr', 'sin_fromfltp', 'steplines', 'reconstructon',
+                       'rec_fromtif', 'rec_fromsino', 'openinfiji', 'submit', 'jobpriority',
+                       'clearfields','singleslice','print_cmd','develbranchon']
         for key in range(len(field_order)-1):
             self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
 
@@ -426,7 +448,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return False 
         
     def displayImageBig(self):
-        ''' Displays the DMP image "img_file" in the preview window '''  
+        ''' Displays the DMP image "img_file" in the preview window '''
         if not hasattr(self, 'img_obj'):
             return
         
@@ -436,6 +458,12 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             self.tifmax.setText(str(self.img_obj.max_val))
             
         self.img_obj.normalizeImage(str(self.tifmin.text()), str(self.tifmax.text()))
+        
+        # Move the RangeSlider to the correct position
+        min,max = self.img_obj.floatMinMax2IntMinMax(str(self.tifmin.text()),
+                                                     str(self.tifmax.text()), 10000)
+        self.slider.setLow(min)
+        self.slider.setHigh(max)
               
         img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
                      self.img_obj.img_height, QImage.Format_RGB32)
@@ -565,6 +593,21 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             except ValueError:
                 ind = len(newstring)
             handle.setText(newstring[0:ind] + added_string)
+            
+    def changeMinMaxTifValues(self):
+        '''
+        This method changes the min and max values for the TIF-
+        conversion in the respective GUI-fields and is called when
+        the Range slider is changed.
+        '''
+        if not hasattr(self, 'img_obj'):
+            return
+        
+        min, max = self.img_obj.intMinMax2FloatMinMax(self.slider.low(),
+                                                      self.slider.high(), 10000)
+        
+        self.tifmin.setText("%.2e" % min)
+        self.tifmax.setText("%.2e" % max)
 
 
 if __name__ == "__main__":

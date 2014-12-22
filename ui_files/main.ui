@@ -1802,25 +1802,31 @@
      </item>
     </layout>
    </widget>
-   <widget class="QToolButton" name="refreshslice">
+   <widget class="QWidget" name="horizontalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>900</x>
+      <x>630</x>
       <y>830</y>
-      <width>30</width>
-      <height>26</height>
+      <width>301</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string>Refresh image to test min and max values for tif-conversion</string>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-    <property name="icon">
-     <iconset resource="ui_icons.qrc">
-      <normaloff>:/ui_icons/ico/refresh.png</normaloff>:/ui_icons/ico/refresh.png</iconset>
-    </property>
+    <layout class="QHBoxLayout" name="sliderlayout">
+     <item>
+      <widget class="QToolButton" name="refreshslice">
+       <property name="toolTip">
+        <string>Refresh image to test min and max values for tif-conversion</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ui_icons.qrc">
+         <normaloff>:/ui_icons/ico/refresh.png</normaloff>:/ui_icons/ico/refresh.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

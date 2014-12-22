@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Fri Dec 19 11:19:04 2014
+# Created: Mon Dec 22 09:31:10 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -722,12 +722,17 @@ class Ui_reco_mainwin(object):
         self.queue.addItem("")
         self.queue.addItem("")
         self.gridLayout_12.addWidget(self.queue, 0, 1, 1, 1)
-        self.refreshslice = QtGui.QToolButton(self.centralwidget)
-        self.refreshslice.setGeometry(QtCore.QRect(900, 830, 30, 26))
+        self.horizontalLayoutWidget_3 = QtGui.QWidget(self.centralwidget)
+        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(630, 830, 301, 31))
+        self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
+        self.sliderlayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget_3)
+        self.sliderlayout.setObjectName("sliderlayout")
+        self.refreshslice = QtGui.QToolButton(self.horizontalLayoutWidget_3)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/ui_icons/ico/refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.refreshslice.setIcon(icon1)
         self.refreshslice.setObjectName("refreshslice")
+        self.sliderlayout.addWidget(self.refreshslice)
         reco_mainwin.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(reco_mainwin)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1251, 23))
@@ -827,7 +832,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-9-g8b1b8a0", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-13-gacc2b5a", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))
