@@ -1,23 +1,32 @@
 from ui_main import Ui_reco_mainwin
 from ui_dialogs import DebugCommand, Postfix
-from dmp_reader import DMPreader
+from ui_slider import RangeSlider
+from io_img import Image
+from io_config import ConfigFile
 from arguments import ParameterWrap
 from connector import Connector
 from datasets import DatasetFolder
-from fileIO import ConfigFile
+from prj2sin import Prj2sinWrap
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from time import sleep,strftime # TODO: preliminary
+from time import sleep, strftime  # TODO: preliminary
 import sys
 
 
 class MainWindow(QMainWindow, Ui_reco_mainwin):
     '''
-    main class containing methods for ideally all window actions in the main app. other specific
-    methods should be contained in other classes
+    Main class containing methods for ideally all window actions in
+    the main application. All methods, which affect GUI-behavior
+    should be included/changed here whereas other specific methods
+    should be placed elsewhere.
     '''
- 
+
     def __init__(self):
+        '''
+        Initializing method for main application: when launched, all
+        necessary objects are created, GUI events and actions are set,
+        tabulator ordering is aligned etc.
+        '''
         QMainWindow.__init__(self)
         self.setupUi(self)  # set up User Interface (widgets, layout...)
 
@@ -27,123 +36,149 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         self.lastdir = self.dirs.homedir  # set the starting open directory to HOME
         self.lastdir_config = self.lastdir  # set the starting open directory for config-files
         self.changeSubmissionTarget('x02da')  # set the submission target standardly to x02da
-        
-        ## GUI settings
+
+        # GUI settings
         self.setAcceptDrops(True)  # accept Drag'n drop files
-        
-        ## GUI fields connections
+
+        # Range Slider
+        self.slider = RangeSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10000)
+        self.slider.setTickPosition(QSlider.TicksBelow)
+        QObject.connect(self.slider, SIGNAL('sliderMoved(int)'),
+                        self.changeMinMaxTifValues)
+        QObject.connect(self.slider, SIGNAL('sliderReleased()'),
+                        self.displayImageBig)
+        self.slider.show()
+        self.slider.raise_()
+        self.sliderlayout.insertWidget(0, self.slider)
+        self.slider.setStyleSheet("""
+        .RangeSlider {
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: rgb(255, 255, 255);
+            }
+        """)
+
+        # GUI fields connections
         QObject.connect(self.setinputdirectory,
-            SIGNAL("clicked()"),lambda param='inputdirectory': self.getDirectory(param))  # data input directory
+            SIGNAL("clicked()"), lambda param='inputdirectory': self.getDirectory(param))  # data input directory
         QObject.connect(self.setsinogramdirectory,
-            SIGNAL("clicked()"),lambda param='sindirectory': self.getDirectory(param))  # sinogram output
+            SIGNAL("clicked()"), lambda param='sindirectory': self.getDirectory(param))  # sinogram output
         QObject.connect(self.setcprdirectory,
-            SIGNAL("clicked()"),lambda param='cprdirectory': self.getDirectory(param))  # cpr output
+            SIGNAL("clicked()"), lambda param='cprdirectory': self.getDirectory(param))  # cpr output
         QObject.connect(self.setfltpdirectory,
-            SIGNAL("clicked()"),lambda param='fltpdirectory': self.getDirectory(param))  # fltp output
+            SIGNAL("clicked()"), lambda param='fltpdirectory': self.getDirectory(param))  # fltp output
         QObject.connect(self.setrecodirectory,
-            SIGNAL("clicked()"),lambda param='recodirectory': self.getDirectory(param))  # reconstructions output
+            SIGNAL("clicked()"), lambda param='recodirectory': self.getDirectory(param))  # reconstructions output
         QObject.connect(self.inputdirectory,
-            SIGNAL("returnPressed()"),self.dirs.initInputDirectory)  # data input through keyboard
+            SIGNAL("returnPressed()"), self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
-            SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+            SIGNAL("returnPressed()"), self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+        QObject.connect(self.tifmin,
+            SIGNAL("returnPressed()"), self.displayImageBig)  # Refresh Single slice from min-val
+        QObject.connect(self.tifmax,
+            SIGNAL("returnPressed()"), self.displayImageBig)  # Refresh Single slice from max-val
+        QObject.connect(self.refreshslice,
+            SIGNAL("clicked()"), self.displayImageBig)  # Refresh Single slice from Refresh button
         QObject.connect(self.addpostfix,
-            SIGNAL("clicked()"),self.appendPostfix)  # open textfield for defining postfix
+            SIGNAL("clicked()"), self.appendPostfix)  # open textfield for defining postfix
         QObject.connect(self.sinon,
-            SIGNAL("clicked()"),lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
+            SIGNAL("clicked()"), lambda param='sinon': self.setUnsetActionCheckBox(param))  # sinogram checkbox ("toggled" not working)
         QObject.connect(self.paganinon,
-            SIGNAL("clicked()"),lambda param='paganinon': self.setUnsetActionCheckBox(param))  # Paganin checkbox ("toggled" not working)
+            SIGNAL("clicked()"), lambda param='paganinon': self.setUnsetActionCheckBox(param))  # Paganin checkbox ("toggled" not working)
         QObject.connect(self.reconstructon,
-            SIGNAL("clicked()"),lambda param='reconstructon': self.setUnsetActionCheckBox(param))  # Reco checkbox ("toggled" not working)
+            SIGNAL("clicked()"), lambda param='reconstructon': self.setUnsetActionCheckBox(param))  # Reco checkbox ("toggled" not working)
         QObject.connect(self.openinfiji,
-            SIGNAL("clicked()"),self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
+            SIGNAL("clicked()"), self.setUnsetFijiOn)  # Fiji preview image checkbox ("toggled" not working)
         QObject.connect(self.sinograms,
-            SIGNAL("currentIndexChanged(const QString&)"),self.moveSliderBySinochange)  # change output-dir name according to output type
+            SIGNAL("currentIndexChanged(const QString&)"), self.moveSliderBySinochange)  # change output-dir name according to output type
         QObject.connect(self.outputtype,
-            SIGNAL("currentIndexChanged(const QString&)"),self.changeOutputType)  # change output-dir name according to output type
+            SIGNAL("currentIndexChanged(const QString&)"), self.changeOutputType)  # change output-dir name according to output type
         self.afsaccount.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.cons2.toggled.connect(self.setUnsetComputingLocation)  # Computing location radio box
         self.sinoslider.valueChanged.connect(self.setSinoWithSlider)  # Sinograms slider event
         self.sinoslider.setInvertedControls(1)  # invert the slider scrolling direction
-        
-        ## GUI buttons connections
+
+        # GUI buttons connections
         QObject.connect(self.submit,
-            SIGNAL("released()"),self.submitToCluster)  # BUTTON submit button
+            SIGNAL("released()"), self.submitToCluster)  # BUTTON submit button
         QObject.connect(self.clearfields,
-            SIGNAL("released()"),ParameterWrap.clearAllFields)  # BUTTON clear all fields method
+            SIGNAL("released()"), ParameterWrap.clearAllFields)  # BUTTON clear all fields method
         QObject.connect(self.singleslice,
-            SIGNAL("released()"),self.calcSingleSlice)  # BUTTON Single Slice calculation
-        
-        ## MENU connections
+            SIGNAL("released()"), self.calcSingleSlice)  # BUTTON Single Slice calculation
+
+        # MENU connections
         QObject.connect(self.menuloadsettings,
-            SIGNAL("triggered()"),self.loadConfigFile)  # MENU load settings
+            SIGNAL("triggered()"), self.loadConfigFile)  # MENU load settings
         QShortcut(QKeySequence("Ctrl+O"), self, self.loadConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menusavesettings,
-            SIGNAL("triggered()"),self.saveConfigFile)  # MENU save settings
+            SIGNAL("triggered()"), self.saveConfigFile)  # MENU save settings
         QShortcut(QKeySequence("Ctrl+S"), self, self.saveConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menuLoadOnlyPaganin,
-            SIGNAL("triggered()"),lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
+            SIGNAL("triggered()"), lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
         QObject.connect(self.menuLoadOnlyRingRemoval,
-            SIGNAL("triggered()"),lambda param=['waveletdecompositionlevel','sigmaingaussfilter','wavelettype','waveletpaddingmode']: \
+            SIGNAL("triggered()"), lambda param=['waveletdecompositionlevel', 'sigmaingaussfilter', 'wavelettype', 'waveletpaddingmode']:
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
         QObject.connect(self.menuCreateCpr,
-            SIGNAL("triggered()"),lambda param='createCpr': self.loadTemplate(param))  # MENU create CPR
+            SIGNAL("triggered()"), lambda param='createCpr': self.loadTemplate(param))  # MENU create CPR
         QObject.connect(self.menuCreateCprLog,
-            SIGNAL("triggered()"),lambda param='createCprLog': self.loadTemplate(param))  # MENU create CPR with log correction
+            SIGNAL("triggered()"), lambda param='createCprLog': self.loadTemplate(param))  # MENU create CPR with log correction
         QObject.connect(self.menuCreateFltp,
-            SIGNAL("triggered()"),lambda param='createFltp': self.loadTemplate(param))  # MENU create Fltp
+            SIGNAL("triggered()"), lambda param='createFltp': self.loadTemplate(param))  # MENU create Fltp
         QObject.connect(self.menuCreateFltpCpr,
-            SIGNAL("triggered()"),lambda param='createFltpCpr': self.loadTemplate(param))  # MENU create Fltp+CPR
+            SIGNAL("triggered()"), lambda param='createFltpCpr': self.loadTemplate(param))  # MENU create Fltp+CPR
         QObject.connect(self.menuCreateSinosQuick,
-            SIGNAL("triggered()"),lambda param='createSinosQuick': self.loadTemplate(param))  # MENU create Sinos quick
+            SIGNAL("triggered()"), lambda param='createSinosQuick': self.loadTemplate(param))  # MENU create Sinos quick
         QObject.connect(self.menuCreateSinosFromTif,
-            SIGNAL("triggered()"),lambda param='createSinosFromTif': self.loadTemplate(param))  # MENU create Sinos from TIF
+            SIGNAL("triggered()"), lambda param='createSinosFromTif': self.loadTemplate(param))  # MENU create Sinos from TIF
         QObject.connect(self.menuCreateSinosFromFltp,
-            SIGNAL("triggered()"),lambda param='createSinosFromFltp': self.loadTemplate(param))  # MENU create Sinos from FLTP
+            SIGNAL("triggered()"), lambda param='createSinosFromFltp': self.loadTemplate(param))  # MENU create Sinos from FLTP
         QObject.connect(self.menuCreateRecoStandard,
-            SIGNAL("triggered()"),lambda param='createRecoStandard': self.loadTemplate(param))  # MENU create Recos from TIF
+            SIGNAL("triggered()"), lambda param='createRecoStandard': self.loadTemplate(param))  # MENU create Recos from TIF
         QObject.connect(self.menuCreateRecoPaganin,
-            SIGNAL("triggered()"),lambda param='createRecoPaganin': self.loadTemplate(param))  # MENU create Recos from FLTP
+            SIGNAL("triggered()"), lambda param='createRecoPaganin': self.loadTemplate(param))  # MENU create Recos from FLTP
         QObject.connect(self.menuRingRemoval1,
-            SIGNAL("triggered()"),lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
+            SIGNAL("triggered()"), lambda param='ringRemoval1': self.loadTemplate(param))  # MENU run ringremoval setting 1
         QObject.connect(self.menuRingRemoval2,
-            SIGNAL("triggered()"),lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
+            SIGNAL("triggered()"), lambda param='ringRemoval2': self.loadTemplate(param))  # MENU run ringremoval setting 2
         QObject.connect(self.menuChangeMerlinMountPoint,
-            SIGNAL("triggered()"),lambda param='merlin_mount_dir': self.getDirectory(param))  # MENU change Merlin mount point
+            SIGNAL("triggered()"), lambda param='merlin_mount_dir': self.getDirectory(param))  # MENU change Merlin mount point
         QObject.connect(self.menuChangeTargetoX02da,
-            SIGNAL("triggered()"),lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
+            SIGNAL("triggered()"), lambda param='x02da': self.changeSubmissionTarget(param))  # MENU change submission target (x02da)
         QObject.connect(self.menuChangeTargetoMerlin,
-            SIGNAL("triggered()"),lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
+            SIGNAL("triggered()"), lambda param='Merlin': self.changeSubmissionTarget(param))  # MENU change submission target (Merlin)
 
-        
-        ## Context menus
-        self.submit.setContextMenuPolicy(Qt.CustomContextMenu);  # Submit button
-        self.singleslice.setContextMenuPolicy(Qt.CustomContextMenu);  # Single slice button
-        QObject.connect(self.submit,SIGNAL("customContextMenuRequested(const QPoint)"),
+        # Context menus
+        self.submit.setContextMenuPolicy(Qt.CustomContextMenu)  # Submit button
+        self.singleslice.setContextMenuPolicy(Qt.CustomContextMenu)  # Single slice button
+        QObject.connect(self.submit, SIGNAL("customContextMenuRequested(const QPoint)"),
                     self.submitAndSingleSliceContextMenu)  # Submit button
-        QObject.connect(self.singleslice,SIGNAL("customContextMenuRequested(const QPoint)"),
+        QObject.connect(self.singleslice, SIGNAL("customContextMenuRequested(const QPoint)"),
                     self.submitAndSingleSliceContextMenu)  # Single slice button
-        
-        ## Set tab order for all fields in GUI
-        field_order = ['afsaccount','cons2','inputdirectory','setinputdirectory','inputtype',\
-                       'prefix','stitchingtype','raws','darks','flats','interflats','flatfreq',\
-                       'preflatsonly','roion','roi_left','roi_right','roi_upper','roi_lower',\
-                       'binsize','scaleimagefactor','cprdirectory','setcprdirectory',\
-                       'fltpdirectory','setfltpdirectory','sindirectory','setsinogramdirectory',\
-                       'sinograms','recodirectory','setrecodirectory','jobname','pag_energy',\
-                       'pag_pxsize','pag_delta','pag_beta','pag_distance','runringremoval',\
-                       'wavelettype','waveletpaddingmode','waveletdecompositionlevel',
-                       'sigmaingaussfilter','filter','cutofffrequency','edgepadding',\
-                       'centerofrotation','outputtype','tifmin','tifmax','shiftcorrection',\
-                       'rotationangle','geometry','zingeron','zinger_thresh','zinger_width','cpron',\
-                       'withlog','paganinon','fltp_fromtif','fltp_fromcpr','sinon','sin_fromtif',\
-                       'sin_fromcpr','sin_fromfltp','steplines','reconstructon','rec_fromtif',\
-                       'rec_fromsino','openinfiji','submit','clearfields','singleslice','print_cmd',\
-                       'develbranchon']
-        for key in range(len(field_order)-1):
-            self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
 
- 
+        # Set tab order for all fields in GUI
+        field_order = ['afsaccount', 'cons2', 'inputdirectory', 'setinputdirectory', 'inputtype',
+                       'prefix', 'stitchingtype', 'raws', 'darks', 'flats', 'interflats',
+                       'flatfreq', 'preflatsonly', 'roion', 'roi_left', 'roi_right', 'roi_upper',
+                       'roi_lower', 'binsize', 'scaleimagefactor', 'addpostfix', 'cprdirectory',
+                       'setcprdirectory', 'fltpdirectory', 'setfltpdirectory', 'sindirectory',
+                       'setsinogramdirectory', 'sinograms', 'sinoslider', 'recodirectory',
+                       'setrecodirectory', 'jobname', 'pag_energy', 'pag_pxsize', 'pag_delta',
+                       'pag_beta', 'pag_distance', 'runringremoval', 'waveletfilterdest',
+                       'wavelettype', 'waveletpaddingmode', 'waveletdecompositionlevel',
+                       'sigmaingaussfilter', 'runringremovalstd', 'ring_std_mode', 'ring_std_diff',
+                       'ring_std_ringwidth', 'filter', 'cutofffrequency', 'edgepadding',
+                       'centerofrotation', 'outputtype', 'tifmin', 'tifmax', 'shiftcorrection',
+                       'rotationangle', 'geometry', 'zingeron', 'zinger_thresh', 'zinger_width',
+                       'cpron', 'withlog', 'paganinon', 'fltp_fromtif', 'fltp_fromcpr', 'sinon',
+                       'sin_fromtif', 'sin_fromcpr', 'sin_fromfltp', 'steplines', 'reconstructon',
+                       'rec_fromtif', 'rec_fromsino', 'openinfiji', 'submit', 'jobpriority',
+                       'clearfields', 'singleslice', 'print_cmd', 'develbranchon']
+        for key in range(len(field_order) - 1):
+            self.setTabOrder(getattr(self, field_order[key]), getattr(self, field_order[key + 1]))
+
     def submitToCluster(self):
         '''
         This method is launched when pressing the "Submit" button in
@@ -153,479 +188,105 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if not self.checkComputingLocation():  # self-explaining
             return
-        
+
         if not ParameterWrap.checkAllParamters():  # missing GUI-fields etc.
             return
-        
+
         if not str(self.jobname.text()):  # we need a job-name and it cannot
-            self.jobname_str = 'GRecoM'   # start with a digit
+            self.jobname_str = 'GRecoM'  # start with a digit
         else:
             if str(self.jobname.text())[0].isdigit():
-                self.jobname_str = 'z'+str(self.jobname.text())
+                self.jobname_str = 'z' + str(self.jobname.text())
             else:
                 self.jobname_str = str(self.jobname.text())
-            
-        if not self.createCommand():  # returns True if further checks succeed
+
+        if not Prj2sinWrap.createCommand(self):  # returns True if cmd was created
             return
-        
-        if self.print_cmd.isChecked():  # prints full CLS if checked 
+
+        if self.print_cmd.isChecked():  # prints full CLS if checked
             if not self.debugTextField():
-                 return
-        
-        if not self.job.performInitalCheck():  # check account credentials
-            return
-        
-        if self.job.checkIdenticalJobs(self.cmd):
-            if not self.displayYesNoMessage('Identical Job','You have' \
-                    ' submitted an identical job just before. Are you' \
-                    ' sure you want to submit it again?'):
-                self.statusBar().clearMessage()
                 return
-        
-        self.job.submitJob(self.cmd)
-        self.statusBar().showMessage('Job successfully submitted: '+strftime('%H:%M:%S - %x'))
-            
-            
+
+        if self.job.submitJob(Prj2sinWrap.cmd):
+            self.statusBar().showMessage('Job successfully submitted: ' +
+                                         strftime('%H:%M:%S - %x'))
+
     def calcSingleSlice(self):
         '''
         This method is launched when pressing "Single Slice" button
         from the GUI. It's similar to "submitToCluster", however, it
         doesn't utilize the "createCommand" method. Instead, it creates
-        the command line string (CLS) itself and in the end displays
-        the image.
+        the command line string (CLS) by calling
+        "createSingleSliceCommand" and in the end displays the image.
         '''
-        if not str(self.sinograms.currentText()):
-            self.displayErrorMessage('No sinogram selected', 'Select the Sinogram directory and press Enter. Then select one to be reconstructed.')
-            return
-        
-        if not self.checkComputingLocation():  # self-explaining
-            return
+        Prj2sinWrap.createSingleSliceCommand(self)
 
-        # create the command line string for single slice reconstruction
-        self.cmd = '/usr/bin/python /afs/psi.ch/project/tomcatsvn/executeables/grecoman/externals/singleSliceFunc.py '
-        
-        combos_single = ['filter','geometry']
-        for combo in combos_single:
-            if ParameterWrap.CLA_dict[combo].performCheck():
-                self.cmd += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' ' 
-        
-        if self.zingeron.isChecked():
-            self.cmd += self.setZingerParameters()
-        
-        optional_single = ['cutofffrequency','edgepadding','centerofrotation','rotationangle']
-        for param in optional_single:
-            if not getattr(self,param).text() == '':
-                self.cmd += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-        
-        if self.runringremoval.isChecked():  # the wavelet parameters are composed separately
-            self.cmd += self.setWavletParameters()
-            
-        if self.runringremovalstd.isChecked():
-            self.cmd += self.setStandardRingRemoval()
-        
-        # rewrite the sinogram-directory for use at the appropriate machine
-        single_sino = self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')
-        
-        self.cmd += '-x '+self.target+' '
-        self.cmd += '--Di '+single_sino+' -i '+self.sinograms.currentText()
-        
-        if ParameterWrap.getComboBoxContent('geometry') == '0':
-            angfile = self.dirs.glueOsPath([self.sindirectory.text(),'angles.txt'])
-            if not self.dirs.checkIfFileExist(angfile):
-                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the sin directory.')
-                return
-        
         if self.print_cmd.isChecked():
             if not self.debugTextField():
-                 return
+                return
 
-        if not self.job.performInitalCheck():  # check account credentials
-            return
-        
-        # TODO: probably whole part below should be rewritten and
-        # outsourced to "imageOpen class" or similar...
-        # we look for the image and delete it if it exists
-        basedir = self.dirs.rewriteDirectoryPath(self.dirs.getParentDir(single_sino),'backward')
-        
-        new_filename = self.sinograms.currentText()[:-7]+'rec.'
-        img = basedir+'viewrec/'+str(new_filename+self.sinograms.currentText()[-3:])
-        
+        # Create path for reconstructed single slice image
+        self.dirs.createSingleSliceImagePath()
+
         if self.openinfiji.isChecked():
-            self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"'+str(self.prefix.text())+'*\\");\"')
-        
-        if self.dirs.checkIfFileExist(img):
-            self.job.submitJobLocallyAndWait('rm '+img)  
-        
-        # after all checks completed, singleSliceFunc is called and we wait until image is done
-        self.job.submitJob(self.cmd)
-        
+            self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"' +
+                                    str(self.prefix.text()) + '*\\");\"')
+
+        if self.dirs.checkIfFileExist(self.dirs.img_reco):
+            self.job.submitJobLocallyAndWait('rm ' + self.dirs.img_reco)
+
+        # after all checks completed, singleSliceFunc is called and we wait
+        # until image is done
+        self.job.submitJob(Prj2sinWrap.cmd)
+
         for kk in range(30):
-            if self.dirs.checkIfFileExist(img):
+            if self.dirs.checkIfFileExist(self.dirs.img_reco):
                 break
             else:
                 sleep(0.5)
         else:
-            self.displayErrorMessage('No reconstructed slice found', 'After waiting 15 sec the reconstructed slice was not found')
+            self.displayErrorMessage('No reconstructed slice found',
+                'After waiting 15 sec the reconstructed slice was not found')
             return
-                                    
+
         # we display the image
         if self.openinfiji.isChecked():
-            self.job.submitJobLocally('fiji -eval \"open(\\"'+img+'\\")\"')
+            self.job.submitJobLocally('fiji -eval \"open(\\"' +
+                                      self.dirs.img_reco + '\\")\"')
         else:
-            self.displayImageBig(img)
- 
+            self.img_obj = Image(self.dirs.img_reco)
+            self.displayImageBig()
 
-    def createCommand(self):
-        '''
-        This is the main method for creating the command line stirng
-        (CLS) which dependent on the checked "actions" in the GUI calls
-        other methods like "createCprAndFltpCmd", "createSinCmd" etc.
-        We have three different properties in use: (i) self.cmd is full
-        CLS to be submitted to the cluster (ii) self.cmds is a list of
-        separate cluster commands and (ii) self.cmd0 is the cluster
-        command for executing a single action.
-        '''
-        self.cmd = ''
-        self.cmds = []
-        
-        if self.develbranchon.isChecked():
-            self.cmd0 = "/afs/psi/project/TOMCAT_pipeline/Devel/tomcat_pipeline/bin/prj2sinSGE.sh "
-        else:
-            self.cmd0 = "prj2sinSGE "
-        
-        # (1) We check whether we need to create CPR-s.
-        if self.cpron.isChecked():
-            if not self.createCprAndFltpCmd('cpr',self.jobname_str):
-                return False
-        
-        # (2) Then we check whether we need FLTP-s.
-        if self.paganinon.isChecked():
-            if not self.fltp_fromtif.isChecked() and not self.fltp_fromcpr.isChecked():
-                self.displayErrorMessage('Missing fltp source', 'Please select whether fltp-s should be created from tif or cpr-s!')
-                return False
-            if not self.createCprAndFltpCmd('fltp',self.jobname_str):
-                return False
-            
-        # (3) After that we check whether we need sinograms.
-        if self.sinon.isChecked():
-            if not self.createSinCmd(self.jobname_str):
-                return False
-            
-        ## (4) Finally we check whether reconstructions will be created.
-        if self.reconstructon.isChecked():
-            if not self.createRecoCmd(self.jobname_str):
-                return False
-        
-        for cmd_tmp in self.cmds:  # compose the full CLS
-            self.cmd = self.cmd+cmd_tmp+';' 
-        
-        return True
-            
-    
-    def createCprAndFltpCmd(self,mode,jobname):
-        '''
-        This method is used to compose both, the command line string
-        (CLS) for creating cprs and/or for creating fltps (since they
-        are both very similar). Understanding the following code is not
-        expected, as it requires also the understanding of the
-        reconstruction pipeline.
-        '''
-        ## Compose all mandatory
-        standard = '-d -C '
-        cmd1 = self.cmd0+standard
-        
-        if self.cpron.isChecked() and not self.paganinon.isChecked():
-            if self.withlog.isChecked():
-                g_param = 7
-            else:
-                g_param = 3
-        elif self.fltp_fromcpr.isChecked() and mode == 'fltp':
-            g_param = 0
-        elif self.fltp_fromtif.isChecked() and mode == 'fltp':
-            g_param = 3
-        else: # case for mode == 'cpr'
-            g_param = 3
-        
-        # only if CPR if set, else only in FLTP
-        if mode == 'cpr' or self.fltp_fromtif.isChecked():
-            optional = ['binsize', 'scaleimagefactor']
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ','+self.darks.text()
-            cmd1 += ','+self.flats.text()
-            cmd1 += ','+self.interflats.text()
-            cmd1 += ','+self.flatfreq.text()+' '
-            cmd1 += ParameterWrap.CLA_dict['inputtype'].flag+' '+ParameterWrap.getComboBoxContent('inputtype')+' '
-            for param in optional:
-                if not getattr(self,param).text() == '':
-                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-            
-            # Region of interest optional
-            if getattr(self,'roion').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    cmd1 += getattr(self,child).text()+','
-                cmd1 = cmd1[:-1]+' '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
-        else:
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ',0,0,0,0 '
-            cmd1 += '-I 0 '
-            if self.cpron.isChecked():
-                cmd1 += '--hold='+jobname+'_cpr '
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
-        
-        cmd1 += '--jobname='+jobname+'_'+mode+' '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-  
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-  
-        # only for Paganin phase retrieval
-        if mode == 'fltp':
-            cmd1 += ParameterWrap.CLA_dict['paganinon'].flag+' '
-            for child in ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
-                cmd1 += getattr(self,child).text()+','
-            cmd1 = cmd1[:-1]+' '
-                
-        # only in CPR if cpr is set , else only in FLTP
-        if mode == 'cpr' or not self.cpron.isChecked():
-            if getattr(self,'preflatsonly').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['preflatsonly'].flag+' '
-        
-        cmd1 += '-g '+str(g_param)+' '
-        
-        ## define input and output dirs
-        if mode == 'cpr':
-            inputdir = self.inputdirectory.text()
-            outputdir = self.cprdirectory.text()
-        elif mode == 'fltp':
-            if self.fltp_fromcpr.isChecked():
-                inputdir = self.cprdirectory.text()
-            else:
-                inputdir = self.inputdirectory.text()
-            outputdir = self.fltpdirectory.text()
-        else:
-            inputdir = self.cprdirectory.text()
-            outputdir = self.fltpdirectory.text()
-
-        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-
-        self.cmds.append(cmd1)
-        return True
-    
-    
-    def createSinCmd(self,jobname):
-        '''
-        This method is used to compose the command line string (CLS)
-        for creating sinograms. Again, understanding the following code
-        is not expected, as it requires also the understanding of the
-        reconstruction pipeline.
-        '''
-        if self.sin_fromtif.isChecked():
-            standard = '-d -g 7 -I 1 '
-            cmd1 = self.cmd0+standard
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ','+self.darks.text()
-            cmd1 += ','+self.flats.text()
-            cmd1 += ','+self.interflats.text()
-            cmd1 += ','+self.flatfreq.text()+' '
-            if getattr(self,'roion').isChecked():
-                cmd1 += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    cmd1 += getattr(self,child).text()+','
-                cmd1 = cmd1[:-1]+' '
-        else:
-            standard = '-d -g 0 -I 0 '
-            cmd1 = self.cmd0+standard
-            cmd1 += '-f '+self.raws.text()
-            cmd1 += ',0,0,0,0 '
-        
-        for param in ['preflatsonly','shiftcorrection']:
-            if getattr(self,param).isChecked():
-                    cmd1 += ParameterWrap.CLA_dict[param].flag+' '
-        
-        if self.runringremoval.isChecked():  # wavelet parameters
-            cmd1 += '-k 2 '
-            cmd1 += self.setWavletParameters()
-        else:
-            cmd1 += '-k 1 '
-        
-        # set correct jobname in order to wait for other jobs to finish
-        if self.cpron.isChecked() and not self.paganinon.isChecked():
-            cmd1 += '--hold='+jobname+'_cpr '
-        elif self.paganinon.isChecked():
-            cmd1 += '--hold='+jobname+'_fltp '
-            
-        cmd1 += '--jobname='+jobname+'_sin '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-        
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-        
-        if ParameterWrap.CLA_dict['steplines'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['steplines'].flag+' '+getattr(self,'steplines').text()+' '
-            
-        if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-            cmd1 += ParameterWrap.CLA_dict['stitchingtype'].flag+' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-        
-        if self.sin_fromcpr.isChecked():
-            inputdir = self.cprdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.cpr.DMP '
-        elif self.sin_fromfltp.isChecked():
-            inputdir = self.fltpdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.fltp.DMP '
-        elif self.sin_fromtif.isChecked():
-            inputdir = self.inputdirectory.text()
-            cmd1 += ParameterWrap.CLA_dict['prefix'].flag+' '+getattr(self,'prefix').text()+'####.tif '
-        else:
-            self.displayErrorMessage('No sinogram source defined', 'Check the radio box, from where to create sinograms')
-            return
-        
-        cmd1 += '-o '+self.dirs.rewriteDirectoryPath(self.sindirectory.text(),'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-            
-        self.cmds.append(cmd1)
-        return True
-    
-    
-    def createRecoCmd(self,jobname):
-        '''
-        This method is used to compose the command line string (CLS)
-        for creating tomographic reconstructions. Again, understanding
-        the following code is not expected, as it requires also the
-        understanding of the reconstruction pipeline.
-        '''
-        ## Compose all mandatory
-        if self.rec_fromtif.isChecked():
-            inputdir = self.inputdirectory.text()
-            standard = '-d -R 0 -k 0 -I 1 -g 7 '
-            standard += '-f '+self.raws.text()
-            standard += ','+self.darks.text()
-            standard += ','+self.flats.text()
-            standard += ','+self.interflats.text()
-            standard += ','+self.flatfreq.text()+' '
-            if ParameterWrap.CLA_dict['stitchingtype'].performCheck():
-                standard += ParameterWrap.CLA_dict['stitchingtype'].flag + \
-                        ' '+ParameterWrap.getComboBoxContent('stitchingtype')+' '
-            if self.runringremoval.isChecked():  # wavelet parameters
-                standard += self.setWavletParameters()
-            if getattr(self,'roion').isChecked():
-                standard += ParameterWrap.CLA_dict['roion'].flag+' '
-                for child in ParameterWrap.CLA_dict['roion'].child_list:
-                    standard += getattr(self,child).text()+','
-                standard = standard[:-1]+' '
-            standard += ParameterWrap.CLA_dict['prefix'].flag+' '+ \
-                        getattr(self,'prefix').text()+'####.tif '
-        elif self.rec_fromsino.isChecked():
-            inputdir = self.sindirectory.text()
-            standard = '-d -k 1 -I 3 -R 0 -g 0 '
-        else:
-            self.displayErrorMessage('No reconstruction source defined', 'Check the radio box, from where to create reconstructions')
-            return
-            
-        cmd1 = self.cmd0+standard
-
-        if ParameterWrap.getComboBoxContent('geometry') == '0':
-            angfile = self.dirs.glueOsPath([self.dirs.inputdir,'angles.txt'])
-            print angfile
-            if not self.dirs.checkIfFileExist(angfile):
-                self.displayErrorMessage('Missing angles file','The file "angles.txt" is missing in the tif directory.')
-                return
-
-        optional = ['cutofffrequency','edgepadding','centerofrotation','rotationangle','tifmin','tifmax']
-        for param in optional:
-            if not getattr(self,param).text() == '':
-                cmd1 += ParameterWrap.CLA_dict[param].flag+' '+getattr(self,param).text()+' '
-        
-        ## (4) Comboboxes with respective dictionaries (except wavelet)
-        comboboxes = ['filter', 'outputtype', 'geometry']
-        for combo in comboboxes:
-            if ParameterWrap.CLA_dict[combo].performCheck():
-                cmd1 += ParameterWrap.CLA_dict[combo].flag+' '+ParameterWrap.getComboBoxContent(combo)+' '
-                
-        ## (5) Standard ring removal parameters
-        if self.runringremovalstd.isChecked():
-            cmd1 += self.setStandardRingRemoval()
-            
-        ## (6) Zinger removal
-        if self.zingeron.isChecked() and self.zingermode.currentIndex() == 0:
-            cmd1 += self.setZingerParameters()
-                
-        # set correct jobname in order to wait for other jobs to finish
-        if self.sinon.isChecked() and self.rec_fromsino.isChecked():
-            cmd1 += '--hold='+jobname+'_sin '
-            
-        cmd1 += '--jobname='+jobname+'_reco '
-        
-        # optional job priority
-        if not getattr(self,'jobpriority').currentIndex() == 0:
-            cmd1 += ParameterWrap.CLA_dict['jobpriority'].flag+'='
-            cmd1 += ParameterWrap.getComboBoxContent('jobpriority')+' '
-        
-        # probably increases job priority on Merlin (?!)
-        if self.target == 'Merlin':
-            cmd1 += '--queue=prime_ti.q --ncores=16 '
-        else:
-            cmd1 +=  ParameterWrap.CLA_dict['queue'].flag+'='+ParameterWrap.getComboBoxContent('queue')+' '
-        
-        outputdir = self.recodirectory.text()
-        sinodir_tmp = self.dirs.getParentDir(inputdir)
-        sinodir_tmp = self.dirs.glueOsPath([sinodir_tmp,'sino_tmp'])
-        
-        if self.rec_fromtif.isChecked():
-            cmd1 += '-o '+self.dirs.rewriteDirectoryPath(sinodir_tmp,'forward')+' '
-        cmd1 += '-O '+self.dirs.rewriteDirectoryPath(outputdir,'forward')+' '
-        cmd1 += self.dirs.rewriteDirectoryPath(inputdir,'forward')
-        
-        self.cmds.append(cmd1)
-        return True
-        
-        
     def checkComputingLocation(self):
         '''
         This method makes sure that the radiobox from where GRecoMan is
-        run, is checked and will also determine this in future releases
-        automatically.
+        run, is checked because it is needed for creating the correct
+        directory paths.
         '''
         if not self.afsaccount.isChecked() and not self.cons2.isChecked():
-            self.displayErrorMessage('Missing radio box', 'From where are you running the application?')
+            self.displayErrorMessage('Missing radio box',
+                                     'From where are you running the '
+                                     'application?')
             return False
         return True
-    
-    
-    def setUnsetActionCheckBox(self,mode):
+
+    def setUnsetActionCheckBox(self, mode):
         '''
         When unchecking "action" checkboxes, this method makes sure
         that the depended radio-boxes are unset as well. Since we have
         3 different types of radio-boxes we treat 3 modes.
         '''
         if mode == 'sinon':
-            dependencies = ['sin_fromcpr','sin_fromfltp','sin_fromtif']
+            dependencies = ['sin_fromcpr', 'sin_fromfltp', 'sin_fromtif']
         elif mode == 'paganinon':
-            dependencies = ['fltp_fromcpr','fltp_fromtif']
+            dependencies = ['fltp_fromcpr', 'fltp_fromtif']
         elif mode == 'reconstructon':
-            dependencies = ['rec_fromtif','rec_fromsino']
-            
-        if not getattr(self,mode).isChecked():
+            dependencies = ['rec_fromtif', 'rec_fromsino', 'rec_fromfltp']
+
+        if not getattr(self, mode).isChecked():
             for param in dependencies:
                 ParameterWrap.CLA_dict[param].resetField()
-            
-            
+
     def setUnsetFijiOn(self):
         '''
         This method is called when setting to have the preview image in
@@ -636,59 +297,58 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             if not self.job.isInstalled('fiji'):
                 self.openinfiji.setCheckState(0)
-                self.displayErrorMessage('Fiji not found', \
-                    'fiji must be in PATH, e.g. installed in /urs/bin')
+                self.displayErrorMessage('Fiji not found',
+                                         'fiji must be in PATH, '
+                                         'e.g. installed in /urs/bin')
                 return
-            
-            
+
     def setUnsetComputingLocation(self):
         '''
         This method checks the computing location and directory paths
         and changes the directories if necessary. It should be run when
-        toggling the computing location and after loading config files. 
+        toggling the computing location and after loading config files.
         '''
-        paths = ['inputdirectory','cprdirectory','fltpdirectory','sindirectory','recodirectory']
-        
+        paths = ['inputdirectory', 'cprdirectory', 'fltpdirectory',
+                 'sindirectory', 'recodirectory']
+
         if not self.target == 'x02da':
             return
-        
+
         for path_item in paths:
-            path = str(getattr(self,path_item).text()) 
+            path = str(getattr(self, path_item).text())
             if self.afsaccount.isChecked():
                 if path[0:16] == '/sls/X02DA/data/' and \
                         self.dirs.homedir[0:16] == '/afs/psi.ch/user':
                     newpath = self.dirs.cons2Path2afs(path)
-                    getattr(self,path_item).setText(newpath)
-            
+                    getattr(self, path_item).setText(newpath)
+
             if self.cons2.isChecked():
                 if path[0:16] == '/afs/psi.ch/user':
                     newpath = self.dirs.afsPath2Cons2(path)
-                    getattr(self,path_item).setText(newpath)
-
+                    getattr(self, path_item).setText(newpath)
 
     def setSinoWithSlider(self):
-        ''' Changes the sinogram in combo by moving slider '''
+        ''' Changes the sinogram in combobox by moving slider '''
         if not self.sinograms.count() == 0:
             ind = self.sinoslider.value()
             self.sinograms.setCurrentIndex(int(ind))
-        
-            
+
     def saveConfigFile(self):
         '''
         This method is run when pressing Menu->Save settings.
         '''
-        savefile = QFileDialog.getSaveFileName(self,
-                        'Select where the config file should be saved',self.lastdir_config)
+        savefile = QFileDialog.getSaveFileName(self, 'Select where the config '
+                                                     'file should be saved',
+                                               self.lastdir_config)
         if not savefile:
             return
         if not str(savefile).lower().endswith('.txt'):
-            savefile = str(savefile)+'.txt'
-        file_obj = ConfigFile(self,savefile)
+            savefile = str(savefile) + '.txt'
+        file_obj = ConfigFile(self, savefile)
         file_obj.writeFile(ParameterWrap)
         self.lastdir_config = self.dirs.getParentDir(str(savefile))
-        
-        
-    def loadConfigFile(self, loadfile = '', returnvalue = False, overwrite = True):
+
+    def loadConfigFile(self, loadfile='', returnvalue=False, overwrite=True):
         '''
         This method is used for loading both, config-files (from Menu)
         and pre-set templates by stating the explicit filename. If
@@ -699,23 +359,24 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if not loadfile:
             loadfile = QFileDialog.getOpenFileName(self,
-                        'Select where the config file is located',self.lastdir_config)
+                                                   'Select where the config '
+                                                   'file is located',
+                                                   self.lastdir_config)
         if not loadfile:
             return
-        file_obj = ConfigFile(self,loadfile)
-        
+        file_obj = ConfigFile(self, loadfile)
+
         if returnvalue:
             return file_obj
-        
+
         self.lastdir_config = self.dirs.getParentDir(str(loadfile))
         file_obj.loadFile(overwrite)
         self.setUnsetComputingLocation()
         self.dirs.inputdir = self.inputdirectory.text()
         if not str(self.sindirectory.text()) == '':
             self.dirs.initSinDirectory()
-        
-        
-    def loadSpecificFromConfigFile(self,param_list):
+
+    def loadSpecificFromConfigFile(self, param_list):
         '''
         Loads specific parameters (GUI-fields) written in a list
         ("param_list").
@@ -723,9 +384,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         file_obj = self.loadConfigFile([], True, False)  # We open the configfile
         file_obj.config.read(file_obj.cfgfile)  # We load here the parameters from configfile
         for param in param_list:
-            file_obj.loadSingleParamter(param,True)
-        
-        
+            file_obj.loadSingleParamter(param, True)
+
     def loadTemplate(self, templatename):
         '''
         This method loads a given template for performing one or more
@@ -733,17 +393,18 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         config file (with "loadConfigFile" method), only with
         additional color-highlighting.
         '''
-        template_file = self.dirs.glueOsPath([self.dirs.runningdir, 'templates' ,templatename+'.txt'])
+        template_file = self.dirs.glueOsPath([self.dirs.runningdir,
+                                              'templates',
+                                              templatename + '.txt'])
         template_obj = self.loadConfigFile(template_file, True)
         template_obj.loadFile(False)
-        
+
         ParameterWrap.resetAllStyleSheets()
         for param in template_obj.config.options(template_obj.heading):
-            name_handle = getattr(self,param)
+            name_handle = getattr(self, param)
             name_handle.setStyleSheet("QLineEdit { border : 2px solid green;}")
-    
-    
-    def getDirectory(self,mode,infostring = ''):
+
+    def getDirectory(self, mode, infostring=''):
         '''
         Dialog for setting a directory source with QFileDialog. First,
         we update "lastdir" property. After that, depending on the
@@ -751,89 +412,66 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if not infostring:
             infostring = 'Select direcory'
-        
-        dir_temp = QFileDialog.getExistingDirectory(self,
-                            infostring,self.lastdir)
+
+        dir_temp = QFileDialog.getExistingDirectory(self, infostring,
+                                                    self.lastdir)
         if not dir_temp:
             return
 
         self.lastdir = self.dirs.getParentDir(str(dir_temp))
-        
+
         if mode == 'merlin_mount_dir':
             self.dirs.merlin_mount_dir = dir_temp
             return
         else:
-            getattr(self,mode).setText(dir_temp)
-        
+            getattr(self, mode).setText(dir_temp)
+
         if mode == 'inputdirectory':
             self.dirs.initInputDirectory()
             return
-        elif mode =='sindirectory':
+        elif mode == 'sindirectory':
             self.dirs.initSinDirectory()
             return
-            
-        
-    def setWavletParameters(self):
-        '''
-        Method for adding the wavelet correction to the command line
-        string.
-        '''
-        combos = ['wavelettype','waveletpaddingmode']
-        textedit = ['waveletdecompositionlevel','sigmaingaussfilter']
-        cmd = ParameterWrap.CLA_dict[combos[0]].flag+' '+str(getattr(self,combos[0]).currentText())+' '
-        cmd += ParameterWrap.CLA_dict[textedit[0]].flag+' '+getattr(self,textedit[0]).text()+' '
-        cmd += ParameterWrap.CLA_dict[textedit[1]].flag+' '+getattr(self,textedit[1]).text()+' '
-        cmd += ParameterWrap.CLA_dict[combos[1]].flag+' '+ParameterWrap.getComboBoxContent(combos[1])+' '
-        return cmd
-    
-    
-    def setStandardRingRemoval(self):
-        ''' Method for setting the standard ring removal parameters '''
-        cmd = ParameterWrap.CLA_dict['ring_std_mode'].flag+' '+ParameterWrap.getComboBoxContent('ring_std_mode')+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_diff'].flag+' '+getattr(self,'ring_std_diff').text()+' '
-        cmd += ParameterWrap.CLA_dict['ring_std_ringwidth'].flag+' '+getattr(self,'ring_std_ringwidth').text()+' '
-        return cmd
-        
-        
-    def setZingerParameters(self):
-        '''
-        method for adding zinger removal parameters
-        '''
-        cmd = '-z s ' ## TODO: has to be fixed after 2D version is implemented
-        cmd += ParameterWrap.CLA_dict['zinger_thresh'].flag+' '+str(getattr(self,'zinger_thresh').text())+' '
-        cmd += ParameterWrap.CLA_dict['zinger_width'].flag+' '+str(getattr(self,'zinger_width').text())+' '
-        return cmd
 
-        
-    def displayErrorMessage(self,head,msg):
+    def displayErrorMessage(self, head, msg):
         ''' Displays random error messages with QMessageBox '''
-        QMessageBox.warning(self, head, msg)        
+        QMessageBox.warning(self, head, msg)
 
-        
-    def displayYesNoMessage(self,head,txt):
+    def displayYesNoMessage(self, head, txt):
         ''' Displays dialog with "yes"/"no" and defined heading/text '''
-        question = QMessageBox.warning(self, head, txt, QMessageBox.Yes, QMessageBox.No)
-        
+        question = QMessageBox.warning(self, head, txt, QMessageBox.Yes,
+                                       QMessageBox.No)
+
         if question == QMessageBox.Yes:
             return True
         else:
-            return False 
-        
-        
-    def displayImageBig(self,img_file):
-        '''
-        method for displaying a single image in the big frame
-        TODO: to be outsourced
-        '''
-        if img_file[-3:].lower() == 'tif':
-            myPixmap = QPixmap(img_file)
-        elif img_file[-3:].lower() == 'dmp':
-            myPixmap = DMPreader(img_file)
-            
-        myScaledPixmap = myPixmap.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
+            return False
+
+    def displayImageBig(self):
+        ''' Displays the DMP image "img_file" in the preview window '''
+        if not hasattr(self, 'img_obj'):
+            return
+
+        if not self.tifmin.text():  # populate tif-min value
+            self.tifmin.setText(str(self.img_obj.min_val))
+        if not self.tifmax.text():  # populate tif-max value
+            self.tifmax.setText(str(self.img_obj.max_val))
+
+        self.img_obj.normalizeImage(str(self.tifmin.text()), str(self.tifmax.text()))
+
+        # Move the RangeSlider to the correct position
+        min, max = self.img_obj.floatMinMax2IntMinMax(str(self.tifmin.text()),
+                                                      str(self.tifmax.text()), 10000)
+        self.slider.setLow(min)
+        self.slider.setHigh(max)
+
+        img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
+                     self.img_obj.img_height, QImage.Format_RGB32)
+        img = QPixmap.fromImage(img)
+
+        myScaledPixmap = img.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)
         self.ImgViewer.setPixmap(myScaledPixmap)
-        
-        
+
     def debugTextField(self):
         '''
         Textfield that prints the command line string (CLS) for further
@@ -842,70 +480,68 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         "cmd" to which is then submitted to the cluster.
         '''
         debugwin = DebugCommand(self.parent)
-        QTextEdit.insertPlainText(debugwin.textfield, self.cmd)
+        QTextEdit.insertPlainText(debugwin.textfield, Prj2sinWrap.cmd)
         if debugwin.exec_() == QDialog.Accepted:
             tmp_string = str(QTextEdit.toPlainText(debugwin.textfield)).strip()
-            self.cmd = ' '.join(tmp_string.split())
+            self.Prj2sinWrap = ' '.join(tmp_string.split())
             return True
         else:
             return False
-        
-        
+
     def moveSliderBySinochange(self):
         '''
         This method moves the slider when selecting a sinogram from the
-        Dropdown menu. 
+        Dropdown menu.
         '''
         ind = self.sinograms.currentIndex()
         self.sinoslider.setSliderPosition(ind)
-        
-        
+
     def changeOutputType(self):
         '''
         This method is called whenever the combobox for output type is
         changed. It appends the correct reco-output directory.
         '''
-        types = ['rec_8bit','rec_DMP','rec_DMP_HF5','rec_16bit','rec_8bit','unknown_output']
+        types = ['rec_8bit', 'rec_DMP', 'rec_DMP_HF5', 'rec_16bit',
+                 'rec_8bit', 'unknown_output']
         ind = self.outputtype.currentIndex()
         self.dirs.setOutputDirectory(types[ind])
-        
-        
-    def submitAndSingleSliceContextMenu(self,point):
+
+    def submitAndSingleSliceContextMenu(self, point):
         '''
         Context menu for "Submit" and "SingleSlice" buttons. When right-
         clicking on one of these and "setting a target" the
         "changeSubmissionTarget" method gets executed.
         '''
-        menu     = QMenu()
+        menu = QMenu()
         button_handle = self.sender()
-        
+
         submit1 = menu.addAction("Set to x02da")
         submit2 = menu.addAction("Set to Merlin")
-    
-        self.connect(submit1,SIGNAL("triggered()"),
+
+        self.connect(submit1, SIGNAL("triggered()"),
                     lambda param='x02da': self.changeSubmissionTarget(param))
-        self.connect(submit2,SIGNAL("triggered()"),
+        self.connect(submit2, SIGNAL("triggered()"),
                     lambda param='Merlin': self.changeSubmissionTarget(param))
         menu.exec_(button_handle.mapToGlobal(point))
-        
-        
-    def changeSubmissionTarget(self,target):
+
+    def changeSubmissionTarget(self, target):
         '''
-        Sets the "target" property accordingly and addiotionally labels
+        Sets the "target" property accordingly and additionally labels
         the GUI buttons. If Merlin is the target, then the Merlin
         username is asked (by running "performInitalCheck" from the job
         object) in order to create correct directory paths on Merlin.
         '''
         self.target = target
-        self.submit.setText("Submit "+"("+target+")")
-        self.singleslice.setText("Single slice "+"("+target+")")
+        self.submit.setText("Submit " + "(" + target + ")")
+        self.singleslice.setText("Single slice " + "(" + target + ")")
         if target == 'Merlin':
             self.afsaccount.setChecked(1)
             self.job.performInitalCheck()
             if not self.dirs.merlin_mount_dir:
-                self.getDirectory('merlin_mount_dir','Select where the Merlin directory is mounted')
-        
-                
+                self.getDirectory('merlin_mount_dir', 'Select where the '
+                                                      'Merlin directory is '
+                                                      'mounted')
+
     def dragEnterEvent(self, event):
         '''
         This method accepts dragging files from outside into the
@@ -916,7 +552,6 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             event.ignore()
 
-
     def dropEvent(self, event):
         '''
         This method tries to load a config file after being dropped
@@ -924,9 +559,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         last one is loaded.
         '''
         for path in event.mimeData().urls():
-            self.loadConfigFile( path.toLocalFile().toLocal8Bit().data() )
-            
-            
+            self.loadConfigFile(path.toLocalFile().toLocal8Bit().data())
+
     def appendPostfix(self):
         '''
         This method opens a textfield and appends a postfix to all
@@ -939,12 +573,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if not logwin.postfix.text():  # if postfix text is empty
             added_string = '/'
         else:
-            added_string = '__'+str(logwin.postfix.text())+'/'
-            
-        fields = ['cprdirectory','fltpdirectory','sindirectory','recodirectory']
-        
+            added_string = '__' + str(logwin.postfix.text()) + '/'
+
+        fields = ['cprdirectory', 'fltpdirectory', 'sindirectory',
+                  'recodirectory']
+
         for item in fields:
-            handle = getattr(self,item)
+            handle = getattr(self, item)
             item_txt = str(handle.text())
             if not item_txt:
                 continue
@@ -957,18 +592,33 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                 ind = newstring.index('__')
             except ValueError:
                 ind = len(newstring)
-            handle.setText(newstring[0:ind]+added_string)
-        
+            handle.setText(newstring[0:ind] + added_string)
+
+    def changeMinMaxTifValues(self):
+        '''
+        This method changes the min and max values for the TIF-
+        conversion in the respective GUI-fields and is called when
+        the Range slider is changed.
+        '''
+        if not hasattr(self, 'img_obj'):
+            return
+
+        min, max = self.img_obj.intMinMax2FloatMinMax(self.slider.low(),
+                                                      self.slider.high(), 10000)
+
+        self.tifmin.setText("%.2e" % min)
+        self.tifmax.setText("%.2e" % max)
+
 
 if __name__ == "__main__":
-    sysargs = sys.argv+['-style', 'mac']
-    mainapp = QApplication(sysargs,True)  # create Qt application
+    sysargs = sys.argv + ['-style', 'mac']
+    mainapp = QApplication(sysargs, True)  # create Qt application
     win = MainWindow()  # create main window
     win.show()
- 
+
     # Connect signals for mainapp
     mainapp.connect(mainapp, SIGNAL("lastWindowClosed()"), mainapp, SLOT("quit()"))
     mainapp.connect(win.exitapp, SIGNAL("triggered()"), mainapp, SLOT("quit()"))
- 
+
     # Start up mainapp
     sys.exit(mainapp.exec_())

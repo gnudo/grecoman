@@ -1191,7 +1191,7 @@
         </widget>
        </widget>
       </item>
-      <item row="8" column="0" colspan="3">
+      <item row="8" column="0" colspan="4">
        <widget class="QWidget" name="widget_2" native="true">
         <property name="minimumSize">
          <size>
@@ -1204,7 +1204,7 @@
           <rect>
            <x>5</x>
            <y>2</y>
-           <width>211</width>
+           <width>281</width>
            <height>31</height>
           </rect>
          </property>
@@ -1235,6 +1235,13 @@
             </property>
             <property name="text">
              <string>from sino</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rec_fromfltp">
+            <property name="text">
+             <string>from fltp</string>
             </property>
            </widget>
           </item>
@@ -1612,7 +1619,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Activate wavelet ring removal</string>
+          <string>Wavelet ring removal</string>
          </property>
         </widget>
        </item>
@@ -1646,6 +1653,26 @@
        </item>
       </layout>
      </widget>
+     <widget class="QComboBox" name="waveletfilterdest">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>0</y>
+        <width>101</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>on reco</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>on sino</string>
+       </property>
+      </item>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -1667,7 +1694,7 @@
           <string/>
          </property>
          <property name="text">
-          <string>Activate standard ring removal</string>
+          <string>Standard ring removal</string>
          </property>
         </widget>
        </item>
@@ -1724,7 +1751,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>750</x>
@@ -1771,6 +1798,32 @@
          <string>Offline queue</string>
         </property>
        </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>830</y>
+      <width>301</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="sliderlayout">
+     <item>
+      <widget class="QToolButton" name="refreshslice">
+       <property name="toolTip">
+        <string>Refresh image to test min and max values for tif-conversion</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ui_icons.qrc">
+         <normaloff>:/ui_icons/ico/refresh.png</normaloff>:/ui_icons/ico/refresh.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>

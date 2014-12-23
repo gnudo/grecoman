@@ -11,7 +11,7 @@ class DatasetFolder(object):
     mainly in terms of directory path operations.
     '''
     def __init__(self, parent):
-        self.inputdir = []   # probably also obsolete
+        self.inputdir = []  # probably also obsolete
         self.homedir = os.path.expanduser('~')
         self.runningdir = self.getParentDir(os.path.dirname(os.path.realpath(
             __file__)))
@@ -41,11 +41,11 @@ class DatasetFolder(object):
         '''
         self.inputdir = os.path.join(str(self.parent.inputdirectory.text()),
                                      '')
-        
+
         if not self.inputdir[-4:-1] == 'tif':
-            if os.path.isdir(os.path.join(self.inputdir,'tif')):
-                self.inputdir = os.path.join(self.inputdir,'tif')
-            self.inputdir = os.path.join(self.inputdir,'')
+            if os.path.isdir(os.path.join(self.inputdir, 'tif')):
+                self.inputdir = os.path.join(self.inputdir, 'tif')
+            self.inputdir = os.path.join(self.inputdir, '')
             self.parent.inputdirectory.setText(self.inputdir)
 
         if not self.inputdir or not os.path.isdir(self.inputdir):
@@ -75,16 +75,18 @@ class DatasetFolder(object):
         self.sinodir = os.path.join(str(self.parent.sindirectory.text()), '')
 
         if not os.path.exists(self.sinodir):
-            self.parent.displayErrorMessage('"sin" folder missing', \
-                            'No sinograms found in standard sin folder')
+            self.parent.displayErrorMessage('"sin" folder missing',
+                                            'No sinograms found in standard '
+                                            'sin folder')
             return
 
         tif_list = [name for name in os.listdir(self.sinodir)
                     if name.lower().endswith('.tif') and
                     not name.startswith('.')]
         dmp_list = [name for name in os.listdir(self.sinodir)
-                    if name.lower().endswith('.sin.dmp') and not name.startswith('.')]
- 
+                    if name.lower().endswith('.sin.dmp') and
+                    not name.startswith('.')]
+
         dmp_list = tif_list + dmp_list
         dmp_list.sort()
         self.parent.sinograms.addItems(dmp_list)  # Populate sino comboxbox
@@ -103,8 +105,9 @@ class DatasetFolder(object):
         '''
         dir = self.glueOsPath([self.getParentDir(self.inputdir), subdir, ''])
         if os.path.exists(dir):
-            self.parent.displayErrorMessage('Existing directory',\
-                    'You should probably rename the ' + subdir + '-directory!')
+            self.parent.displayErrorMessage('Existing directory',
+                                            'You should probably rename the ' +
+                                            subdir + '-directory!')
 
         getattr(self.parent, subdir + 'directory').setText(dir)
 
@@ -112,8 +115,8 @@ class DatasetFolder(object):
             self.setOutputDirectory('rec_8bit')
         elif subdir == 'sin':
             self.initSinDirectory()
-            
-    def checkIfFileExist(self,file):
+
+    def checkIfFileExist(self, file):
         '''Check whether <file> exists and if yes returns true'''
         if os.path.isfile(file):
             return True
@@ -189,7 +192,7 @@ class DatasetFolder(object):
         split_merlin_mount = self.splitOsPath(self.merlin_mount_dir)
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_base + self.parent.job.merlinuser] + \
-                    splitted_dir[len(split_merlin_mount) - 1:]
+            splitted_dir[len(split_merlin_mount) - 1:]
         return os.path.join(*tmp_list)
 
     def merlin2SshfsPath(self, path):
@@ -254,27 +257,26 @@ class DatasetFolder(object):
                     line.split()[2] == 'projections'):
                     self.parent.raws.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'darks'):
+                      line.split()[2] == 'darks'):
                     self.parent.darks.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'flats'):
+                      line.split()[2] == 'flats'):
                     self.parent.flats.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'inter-flats'):
-                    self.parent.interflats.setText(
-                        str(line.split(':')[1]).strip())
+                      line.split()[2] == 'inter-flats'):
+                    self.parent.interflats.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Flat' and
-                       line.split()[1] == 'frequency'):
+                      line.split()[1] == 'frequency'):
                     self.parent.flatfreq.setText(
                         str(line.split(':')[1]).strip())
                 # Beam Energy
                 elif (line.split()[0] == 'Beam' and
-                       line.split()[1] == 'energy'):
+                      line.split()[1] == 'energy'):
                     self.parent.pag_energy.setText(
                         str(line.split(':')[1]).strip())
                 # Magnification and pixel size
                 elif (line.split()[0] == 'Actual' and
-                       line.split()[1] == 'pixel'):
+                      line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(
                         str(line.split(':')[1]).strip() + 'E-6')
                 # Rotation center
@@ -299,10 +301,10 @@ class DatasetFolder(object):
                 return True
         else:
             self.parent.displayErrorMessage('No images found',
-                'There are no tif, dmp, nor hd5 files in the input folder!')
+                                            'There are no tif, dmp, nor hd5 '
+                                            'files in the input folder!')
             return False
 
-            
     def determinePrefix(self):
         '''
         This method determines the prefix from the parent directory
@@ -311,3 +313,17 @@ class DatasetFolder(object):
         prefix = self.splitOsPath(str(self.inputdir))[-3]
         self.parent.prefix.setText(prefix)
         self.parent.jobname.setText(prefix)
+
+    def createSingleSliceImagePath(self):
+        '''
+        This method creates the path for the reconstructed single slice
+        and saves it to the "img_reco" property.
+        '''
+        single_sino = self.rewriteDirectoryPath(
+            self.parent.sindirectory.text(), 'forward')
+        basedir = self.rewriteDirectoryPath(self.getParentDir(single_sino),
+                                            'backward')
+
+        new_filename = self.parent.sinograms.currentText()[:-7] + 'rec.'
+        self.img_reco = basedir + 'viewrec/' + \
+            str(new_filename + self.parent.sinograms.currentText()[-3:])

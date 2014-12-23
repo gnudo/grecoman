@@ -10,6 +10,7 @@ class ConfigFile(object):
     arguments. In the current version no special characters (in the
     GUI-fields) are supported.
     '''
+
     def __init__(self, parent, cfgfile):
         self.parent = parent  # main app object
         self.cfgfile = str(cfgfile)
@@ -43,9 +44,10 @@ class ConfigFile(object):
         try:
             self.config.read(self.cfgfile)
         except ConfigParser.MissingSectionHeaderError:
-            self.parent.displayErrorMessage('Loading wrong file', \
-                'The file you are trying to load does not seem to be' \
-                ' a valid GRecoMan config file!')
+            self.parent.displayErrorMessage('Loading wrong file',
+                                            'The file you are trying to load '
+                                            'does not seem to be a valid '
+                                            'GRecoMan config file!')
             return
 
         for param in self.config.options(self.heading):
@@ -82,7 +84,7 @@ class ConfigFile(object):
             if overwrite or txt:
                 name_handle.setText(txt)
         if type(name_handle).__name__ == 'QCheckBox' or \
-            type(name_handle).__name__ == 'QRadioButton':
+                type(name_handle).__name__ == 'QRadioButton':
             checkstatus = self.config.getboolean(self.heading, param)
             name_handle.setChecked(checkstatus)
         if type(name_handle).__name__ == 'QComboBox':

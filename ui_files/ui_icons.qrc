@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="ui_icons">
     <file>ico/flag.png</file>
+    <file>ico/refresh.png</file>
   </qresource>
 </RCC>
