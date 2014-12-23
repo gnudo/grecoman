@@ -188,11 +188,11 @@ class ParameterWrap(object):
 
         # (0) Make sure that at least one action is checked
         if (
-            not cls.parent.cpron.isChecked()
-            and not cls.parent.paganinon.isChecked()
-            and not cls.parent.sinon.isChecked()
-            and not cls.parent.reconstructon.isChecked()
-            ):
+           not cls.parent.cpron.isChecked()
+           and not cls.parent.paganinon.isChecked()
+           and not cls.parent.sinon.isChecked()
+           and not cls.parent.reconstructon.isChecked()
+           ):
             cls.parent.displayErrorMessage('Missing action',
                                            'Check at least one action '
                                            'that should be calculated on '

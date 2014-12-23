@@ -11,7 +11,7 @@ class DatasetFolder(object):
     mainly in terms of directory path operations.
     '''
     def __init__(self, parent):
-        self.inputdir = []   # probably also obsolete
+        self.inputdir = []  # probably also obsolete
         self.homedir = os.path.expanduser('~')
         self.runningdir = self.getParentDir(os.path.dirname(os.path.realpath(
             __file__)))
@@ -192,7 +192,7 @@ class DatasetFolder(object):
         split_merlin_mount = self.splitOsPath(self.merlin_mount_dir)
         splitted_dir = self.splitOsPath(str(path))
         tmp_list = [self.merlin_base + self.parent.job.merlinuser] + \
-                    splitted_dir[len(split_merlin_mount) - 1:]
+            splitted_dir[len(split_merlin_mount) - 1:]
         return os.path.join(*tmp_list)
 
     def merlin2SshfsPath(self, path):
@@ -257,27 +257,26 @@ class DatasetFolder(object):
                     line.split()[2] == 'projections'):
                     self.parent.raws.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'darks'):
+                      line.split()[2] == 'darks'):
                     self.parent.darks.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'flats'):
+                      line.split()[2] == 'flats'):
                     self.parent.flats.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Number' and
-                       line.split()[2] == 'inter-flats'):
-                    self.parent.interflats.setText(
-                        str(line.split(':')[1]).strip())
+                      line.split()[2] == 'inter-flats'):
+                    self.parent.interflats.setText(str(line.split(':')[1]).strip())
                 elif (line.split()[0] == 'Flat' and
-                       line.split()[1] == 'frequency'):
+                      line.split()[1] == 'frequency'):
                     self.parent.flatfreq.setText(
                         str(line.split(':')[1]).strip())
                 # Beam Energy
                 elif (line.split()[0] == 'Beam' and
-                       line.split()[1] == 'energy'):
+                      line.split()[1] == 'energy'):
                     self.parent.pag_energy.setText(
                         str(line.split(':')[1]).strip())
                 # Magnification and pixel size
                 elif (line.split()[0] == 'Actual' and
-                       line.split()[1] == 'pixel'):
+                      line.split()[1] == 'pixel'):
                     self.parent.pag_pxsize.setText(
                         str(line.split(':')[1]).strip() + 'E-6')
                 # Rotation center
@@ -327,5 +326,4 @@ class DatasetFolder(object):
 
         new_filename = self.parent.sinograms.currentText()[:-7] + 'rec.'
         self.img_reco = basedir + 'viewrec/' + \
-                        str(new_filename +
-                            self.parent.sinograms.currentText()[-3:])
+            str(new_filename + self.parent.sinograms.currentText()[-3:])

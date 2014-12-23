@@ -26,14 +26,14 @@ class DebugCommand(QDialog):
         layout.addWidget(self.textfield)
         layout.addWidget(self.buttonsubmit)
         self.resize(600, 300)
-        
+
 
 class Login(QDialog):
     '''
     GUI window for entering credentials for various accounts, which
     can be (depending on "mode"): AFS, eaccount or Merlin. For the
     "Merlin" account we assume to have set up public key
-    authentification. Thus, only a Merlin username has to be provided. 
+    authentification. Thus, only a Merlin username has to be provided.
     '''
     def __init__(self, parent, mode):
         QDialog.__init__(self)

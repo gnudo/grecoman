@@ -40,7 +40,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         # GUI settings
         self.setAcceptDrops(True)  # accept Drag'n drop files
 
-        ## Range Slider
+        # Range Slider
         self.slider = RangeSlider(Qt.Horizontal)
         self.slider.setMinimum(0)
         self.slider.setMaximum(10000)
@@ -51,7 +51,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                         self.displayImageBig)
         self.slider.show()
         self.slider.raise_()
-        self.sliderlayout.insertWidget(0,self.slider)
+        self.sliderlayout.insertWidget(0, self.slider)
         self.slider.setStyleSheet("""
         .RangeSlider {
             border: 1px solid black;
@@ -59,7 +59,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             background-color: rgb(255, 255, 255);
             }
         """)
-        
+
         # GUI fields connections
         QObject.connect(self.setinputdirectory,
             SIGNAL("clicked()"), lambda param='inputdirectory': self.getDirectory(param))  # data input directory
@@ -74,13 +74,13 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         QObject.connect(self.inputdirectory,
             SIGNAL("returnPressed()"), self.dirs.initInputDirectory)  # data input through keyboard
         QObject.connect(self.sindirectory,
-            SIGNAL("returnPressed()"),self.dirs.initSinDirectory)  # sinogram dir input through keyboard
+            SIGNAL("returnPressed()"), self.dirs.initSinDirectory)  # sinogram dir input through keyboard
         QObject.connect(self.tifmin,
-            SIGNAL("returnPressed()"),self.displayImageBig)  # Refresh Single slice from min-val
+            SIGNAL("returnPressed()"), self.displayImageBig)  # Refresh Single slice from min-val
         QObject.connect(self.tifmax,
-            SIGNAL("returnPressed()"),self.displayImageBig)  # Refresh Single slice from max-val
+            SIGNAL("returnPressed()"), self.displayImageBig)  # Refresh Single slice from max-val
         QObject.connect(self.refreshslice,
-            SIGNAL("clicked()"),self.displayImageBig)  # Refresh Single slice from Refresh button
+            SIGNAL("clicked()"), self.displayImageBig)  # Refresh Single slice from Refresh button
         QObject.connect(self.addpostfix,
             SIGNAL("clicked()"), self.appendPostfix)  # open textfield for defining postfix
         QObject.connect(self.sinon,
@@ -116,7 +116,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             SIGNAL("triggered()"), self.saveConfigFile)  # MENU save settings
         QShortcut(QKeySequence("Ctrl+S"), self, self.saveConfigFile, context=Qt.WindowShortcut)  # comes from Qt.ShortcutContext
         QObject.connect(self.menuLoadOnlyPaganin,
-            SIGNAL("triggered()"), lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]: \
+            SIGNAL("triggered()"), lambda param=ParameterWrap.CLA_dict['paganinon'].child_list[:-1]:
             self.loadSpecificFromConfigFile(param))  # MENU load specific settings -> Paganin
         QObject.connect(self.menuLoadOnlyRingRemoval,
             SIGNAL("triggered()"), lambda param=['waveletdecompositionlevel', 'sigmaingaussfilter', 'wavelettype', 'waveletpaddingmode']:
@@ -157,8 +157,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                     self.submitAndSingleSliceContextMenu)  # Submit button
         QObject.connect(self.singleslice, SIGNAL("customContextMenuRequested(const QPoint)"),
                     self.submitAndSingleSliceContextMenu)  # Single slice button
-        
-        ## Set tab order for all fields in GUI
+
+        # Set tab order for all fields in GUI
         field_order = ['afsaccount', 'cons2', 'inputdirectory', 'setinputdirectory', 'inputtype',
                        'prefix', 'stitchingtype', 'raws', 'darks', 'flats', 'interflats',
                        'flatfreq', 'preflatsonly', 'roion', 'roi_left', 'roi_right', 'roi_upper',
@@ -168,16 +168,16 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
                        'setrecodirectory', 'jobname', 'pag_energy', 'pag_pxsize', 'pag_delta',
                        'pag_beta', 'pag_distance', 'runringremoval', 'waveletfilterdest',
                        'wavelettype', 'waveletpaddingmode', 'waveletdecompositionlevel',
-                       'sigmaingaussfilter', 'runringremovalstd', 'ring_std_mode','ring_std_diff',
+                       'sigmaingaussfilter', 'runringremovalstd', 'ring_std_mode', 'ring_std_diff',
                        'ring_std_ringwidth', 'filter', 'cutofffrequency', 'edgepadding',
-                       'centerofrotation', 'outputtype', 'tifmin', 'tifmax','shiftcorrection',
+                       'centerofrotation', 'outputtype', 'tifmin', 'tifmax', 'shiftcorrection',
                        'rotationangle', 'geometry', 'zingeron', 'zinger_thresh', 'zinger_width',
                        'cpron', 'withlog', 'paganinon', 'fltp_fromtif', 'fltp_fromcpr', 'sinon',
                        'sin_fromtif', 'sin_fromcpr', 'sin_fromfltp', 'steplines', 'reconstructon',
                        'rec_fromtif', 'rec_fromsino', 'openinfiji', 'submit', 'jobpriority',
-                       'clearfields','singleslice','print_cmd','develbranchon']
-        for key in range(len(field_order)-1):
-            self.setTabOrder(getattr(self,field_order[key]), getattr(self,field_order[key+1]))
+                       'clearfields', 'singleslice', 'print_cmd', 'develbranchon']
+        for key in range(len(field_order) - 1):
+            self.setTabOrder(getattr(self, field_order[key]), getattr(self, field_order[key + 1]))
 
     def submitToCluster(self):
         '''
@@ -193,7 +193,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             return
 
         if not str(self.jobname.text()):  # we need a job-name and it cannot
-            self.jobname_str = 'GRecoM'   # start with a digit
+            self.jobname_str = 'GRecoM'  # start with a digit
         else:
             if str(self.jobname.text())[0].isdigit():
                 self.jobname_str = 'z' + str(self.jobname.text())
@@ -231,7 +231,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if self.openinfiji.isChecked():
             self.job.submitJobLocallyAndWait('fiji -eval \"close(\\"' +
                                     str(self.prefix.text()) + '*\\");\"')
-        
+
         if self.dirs.checkIfFileExist(self.dirs.img_reco):
             self.job.submitJobLocallyAndWait('rm ' + self.dirs.img_reco)
 
@@ -256,7 +256,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         else:
             self.img_obj = Image(self.dirs.img_reco)
             self.displayImageBig()
-        
+
     def checkComputingLocation(self):
         '''
         This method makes sure that the radiobox from where GRecoMan is
@@ -445,26 +445,26 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         if question == QMessageBox.Yes:
             return True
         else:
-            return False 
-        
+            return False
+
     def displayImageBig(self):
         ''' Displays the DMP image "img_file" in the preview window '''
         if not hasattr(self, 'img_obj'):
             return
-        
+
         if not self.tifmin.text():  # populate tif-min value
             self.tifmin.setText(str(self.img_obj.min_val))
         if not self.tifmax.text():  # populate tif-max value
             self.tifmax.setText(str(self.img_obj.max_val))
-            
+
         self.img_obj.normalizeImage(str(self.tifmin.text()), str(self.tifmax.text()))
-        
+
         # Move the RangeSlider to the correct position
-        min,max = self.img_obj.floatMinMax2IntMinMax(str(self.tifmin.text()),
-                                                     str(self.tifmax.text()), 10000)
+        min, max = self.img_obj.floatMinMax2IntMinMax(str(self.tifmin.text()),
+                                                      str(self.tifmax.text()), 10000)
         self.slider.setLow(min)
         self.slider.setHigh(max)
-              
+
         img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
                      self.img_obj.img_height, QImage.Format_RGB32)
         img = QPixmap.fromImage(img)
@@ -593,7 +593,7 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
             except ValueError:
                 ind = len(newstring)
             handle.setText(newstring[0:ind] + added_string)
-            
+
     def changeMinMaxTifValues(self):
         '''
         This method changes the min and max values for the TIF-
@@ -602,10 +602,10 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         '''
         if not hasattr(self, 'img_obj'):
             return
-        
+
         min, max = self.img_obj.intMinMax2FloatMinMax(self.slider.low(),
                                                       self.slider.high(), 10000)
-        
+
         self.tifmin.setText("%.2e" % min)
         self.tifmax.setText("%.2e" % max)
 

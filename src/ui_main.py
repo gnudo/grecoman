@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Mon Dec 22 09:31:10 2014
+# Created: Tue Dec 23 10:06:19 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -487,7 +487,7 @@ class Ui_reco_mainwin(object):
         self.steplines.setObjectName("steplines")
         self.gridLayout_5.addWidget(self.steplines, 6, 3, 1, 1)
         self.label_36 = QtGui.QLabel(self.gridLayoutWidget_5)
-        self.label_36.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_36.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_36.setObjectName("label_36")
         self.gridLayout_5.addWidget(self.label_36, 6, 0, 1, 3)
         self.withlog = QtGui.QCheckBox(self.gridLayoutWidget_5)
@@ -602,7 +602,7 @@ class Ui_reco_mainwin(object):
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayoutWidget_10 = QtGui.QWidget(self.tab)
-        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 331, 151))
+        self.gridLayoutWidget_10.setGeometry(QtCore.QRect(0, 0, 291, 151))
         self.gridLayoutWidget_10.setObjectName("gridLayoutWidget_10")
         self.gridLayout_11 = QtGui.QGridLayout(self.gridLayoutWidget_10)
         self.gridLayout_11.setObjectName("gridLayout_11")
@@ -832,7 +832,7 @@ class Ui_reco_mainwin(object):
         QtCore.QMetaObject.connectSlotsByName(reco_mainwin)
 
     def retranslateUi(self, reco_mainwin):
-        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.1.6-13-gacc2b5a", None, QtGui.QApplication.UnicodeUTF8))
+        reco_mainwin.setWindowTitle(QtGui.QApplication.translate("reco_mainwin", "GRecoMan 1.2.0", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("reco_mainwin", "Input Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("reco_mainwin", "Flats", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("reco_mainwin", "Interflats", None, QtGui.QApplication.UnicodeUTF8))

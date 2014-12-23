@@ -30,7 +30,7 @@ f = open(filename, 'r')
 content = f.read()
 f.close()
 
-newcontent = content.replace('GRecoMan', 'GRecoMan '+label[:-1])
+newcontent = content.replace('GRecoMan', 'GRecoMan ' + label[:-1])
 
 '''
 (3) write a new GUI file
