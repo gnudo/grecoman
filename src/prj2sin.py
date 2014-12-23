@@ -447,6 +447,8 @@ class Prj2sinWrap(object):
         cls.cmd += '-x ' + parent.target + ' '
         cls.cmd += '--Di ' + single_sino + ' -i ' + parent.sinograms.currentText()
 
+        return True
+
     @classmethod
     def setWavletParameters(cls, parent):
         '''

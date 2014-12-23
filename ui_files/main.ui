@@ -1908,6 +1908,8 @@
     </widget>
     <addaction name="menuChangeMerlinMountPoint"/>
     <addaction name="menuChange_Target"/>
+    <addaction name="separator"/>
+    <addaction name="showsamplecoordinateson"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuRun"/>
@@ -1995,6 +1997,9 @@
    </property>
   </action>
   <action name="menuChangeMerlinMountPoint">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Change Merlin mount point</string>
    </property>
@@ -2007,6 +2012,17 @@
   <action name="menuChangeTargetoMerlin">
    <property name="text">
     <string>Merlin</string>
+   </property>
+  </action>
+  <action name="showsamplecoordinateson">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Show sample coordinates</string>
    </property>
   </action>
  </widget>

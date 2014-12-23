@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_files/main.ui'
 #
-# Created: Tue Dec 23 10:06:19 2014
+# Created: Tue Dec 23 11:42:39 2014
 #      by: PyQt4 UI code generator 4.6.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -487,7 +487,7 @@ class Ui_reco_mainwin(object):
         self.steplines.setObjectName("steplines")
         self.gridLayout_5.addWidget(self.steplines, 6, 3, 1, 1)
         self.label_36 = QtGui.QLabel(self.gridLayoutWidget_5)
-        self.label_36.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.label_36.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_36.setObjectName("label_36")
         self.gridLayout_5.addWidget(self.label_36, 6, 0, 1, 3)
         self.withlog = QtGui.QCheckBox(self.gridLayoutWidget_5)
@@ -792,11 +792,16 @@ class Ui_reco_mainwin(object):
         self.menuLoadOnlyRingRemoval = QtGui.QAction(reco_mainwin)
         self.menuLoadOnlyRingRemoval.setObjectName("menuLoadOnlyRingRemoval")
         self.menuChangeMerlinMountPoint = QtGui.QAction(reco_mainwin)
+        self.menuChangeMerlinMountPoint.setCheckable(False)
         self.menuChangeMerlinMountPoint.setObjectName("menuChangeMerlinMountPoint")
         self.menuChangeTargetoX02da = QtGui.QAction(reco_mainwin)
         self.menuChangeTargetoX02da.setObjectName("menuChangeTargetoX02da")
         self.menuChangeTargetoMerlin = QtGui.QAction(reco_mainwin)
         self.menuChangeTargetoMerlin.setObjectName("menuChangeTargetoMerlin")
+        self.showsamplecoordinateson = QtGui.QAction(reco_mainwin)
+        self.showsamplecoordinateson.setCheckable(True)
+        self.showsamplecoordinateson.setChecked(False)
+        self.showsamplecoordinateson.setObjectName("showsamplecoordinateson")
         self.menuLoad_specific.addAction(self.menuLoadOnlyPaganin)
         self.menuLoad_specific.addAction(self.menuLoadOnlyRingRemoval)
         self.menuMenu.addAction(self.menuloadsettings)
@@ -823,6 +828,8 @@ class Ui_reco_mainwin(object):
         self.menuChange_Target.addAction(self.menuChangeTargetoMerlin)
         self.menuSettings.addAction(self.menuChangeMerlinMountPoint)
         self.menuSettings.addAction(self.menuChange_Target.menuAction())
+        self.menuSettings.addSeparator()
+        self.menuSettings.addAction(self.showsamplecoordinateson)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuRun.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
@@ -1017,5 +1024,6 @@ class Ui_reco_mainwin(object):
         self.menuChangeMerlinMountPoint.setText(QtGui.QApplication.translate("reco_mainwin", "Change Merlin mount point", None, QtGui.QApplication.UnicodeUTF8))
         self.menuChangeTargetoX02da.setText(QtGui.QApplication.translate("reco_mainwin", "x02da", None, QtGui.QApplication.UnicodeUTF8))
         self.menuChangeTargetoMerlin.setText(QtGui.QApplication.translate("reco_mainwin", "Merlin", None, QtGui.QApplication.UnicodeUTF8))
+        self.showsamplecoordinateson.setText(QtGui.QApplication.translate("reco_mainwin", "Show sample coordinates", None, QtGui.QApplication.UnicodeUTF8))
 
 import ui_icons_rc
