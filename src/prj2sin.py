@@ -54,7 +54,7 @@ class Prj2sinWrap(object):
             if (
                not parent.sin_fromtif.isChecked()
                and not parent.sin_fromfltp.isChecked()
-               and not parent.sin_fromtif.isChecked()
+               and not parent.sin_fromcpr.isChecked()
                ):
                 parent.displayErrorMessage('No sinogram source defined',
                     'Check the radio box, from where to create sinograms!')
