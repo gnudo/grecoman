@@ -54,7 +54,7 @@ class Prj2sinWrap(object):
             if (
                not parent.sin_fromtif.isChecked()
                and not parent.sin_fromfltp.isChecked()
-               and not parent.sin_fromtif.isChecked()
+               and not parent.sin_fromcpr.isChecked()
                ):
                 parent.displayErrorMessage('No sinogram source defined',
                     'Check the radio box, from where to create sinograms!')
@@ -439,13 +439,15 @@ class Prj2sinWrap(object):
             cls.cmd += cls.setWavletParameters(parent)
 
         if parent.runringremovalstd.isChecked():
-            cls.cmd += cls.setStandardRingRemoval()
+            cls.cmd += cls.setStandardRingRemoval(parent)
 
         # rewrite the sinogram-directory for use at the appropriate machine
         single_sino = parent.dirs.rewriteDirectoryPath(parent.sindirectory.text(), 'forward')
 
         cls.cmd += '-x ' + parent.target + ' '
         cls.cmd += '--Di ' + single_sino + ' -i ' + parent.sinograms.currentText()
+
+        return True
 
     @classmethod
     def setWavletParameters(cls, parent):

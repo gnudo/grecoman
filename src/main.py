@@ -219,7 +219,8 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
         the command line string (CLS) by calling
         "createSingleSliceCommand" and in the end displays the image.
         '''
-        Prj2sinWrap.createSingleSliceCommand(self)
+        if not Prj2sinWrap.createSingleSliceCommand(self):
+            return
 
         if self.print_cmd.isChecked():
             if not self.debugTextField():
@@ -467,6 +468,15 @@ class MainWindow(QMainWindow, Ui_reco_mainwin):
 
         img = QImage(self.img_obj.img_disp, self.img_obj.img_width,
                      self.img_obj.img_height, QImage.Format_RGB32)
+
+        if self.showsamplecoordinateson.isChecked():
+            img_beam = QImage(':/ui_icons/misc/beam_direction.png')
+            img_beam = img_beam.scaled(img.size() * 0.2, Qt.KeepAspectRatio)
+            painter = QPainter()
+            painter.begin(img)
+            painter.drawImage(100, 100, img_beam)
+            painter.end()
+
         img = QPixmap.fromImage(img)
 
         myScaledPixmap = img.scaled(self.ImgViewer.size(), Qt.KeepAspectRatio)

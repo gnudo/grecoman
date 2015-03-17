@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="ui_icons">
+    <file>misc/beam_direction.png</file>
     <file>ico/flag.png</file>
     <file>ico/refresh.png</file>
   </qresource>

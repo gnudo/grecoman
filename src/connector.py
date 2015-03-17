@@ -156,12 +156,6 @@ class Connector(object):
         # (2) establish the connection to gateway
         sshProcess = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE, shell=True)
-
-        # TODO: substitute below lines so that we don't save cleartext pw-files
-        # >> didn't work for eaccount
-        # sshProcess.stdin.write('export SSH_ASKPASS=~/returnpass.sh\n')
-        # sshProcess.stdin.write('echo \\\"' + self.afspw + '\\\"|ssh ' +
-        #                        self.afsuser + '@' + x02dagw + '\n')
         sshProcess.stdin.write('export SSH_ASKPASS=' + afshome + '/pw1.sh\n')
         sshProcess.stdin.write('export DISPLAY=dummydisplay:0\n')
         sshProcess.stdin.write('ssh -o \"GSSAPIAuthentication no\" ' +
