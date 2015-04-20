@@ -76,7 +76,7 @@ class Prj2sinWrap(object):
                 if not parent.dirs.checkIfFileExist(angfile):
                     parent.displayErrorMessage('Missing angles file',
                     'The file "angles.txt" is missing in the tif directory.')
-                return False
+                    return False
             cls.createRecoCmd(parent)
 
         for cmd_tmp in cls.cmds:  # compose the full CLS
