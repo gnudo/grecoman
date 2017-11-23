@@ -170,8 +170,7 @@ def main():
     if args.wavelet_type is not None:
         if args.machine == 'x02da':
             command_line = 'module load xbl/epd_free/7.3-2-2013.06; ' + \
-                           'module load xbl/PyWavelets/0.2.2; ' + \
-                           'module load intel/16.3; '
+                           'module load xbl/PyWavelets/0.2.2; '
         elif args.machine == 'Merlin':
             command_line = 'module use /opt/xbl-software/modulefiles-private; ' + \
                            'module load xbl/epd; ' + \
@@ -202,7 +201,7 @@ def main():
 
     # #  Reconstruction with gridrec
     if args.machine == 'x02da':
-        command_line = '/afs/psi/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/bin/Reconstruction/lib/gridRec '
+        command_line = 'module load intel/16.3;/afs/psi/project/TOMCAT_pipeline/Beamline/tomcat_pipeline/bin/Reconstruction/lib/gridRec '
     elif args.machine == 'Merlin':
         command_line = '/afs/psi.ch/project/TOMCAT_pipeline/Merlin/tomcat_pipeline/bin/Reconstruction/lib/gridRec '
 
